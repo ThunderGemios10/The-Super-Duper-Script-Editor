@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Progress</class>
+ <widget class="QDialog" name="Progress">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>449</width>
+    <height>286</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Progress Calculator</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../res/icons.qrc">
+    <normaloff>:/chart_bar.png</normaloff>:/chart_bar.png</iconset>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Chapter</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>(n)everyday life</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Class Trial</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Full Script</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="checkBox_2">
+       <property name="text">
+        <string>Prologue</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="checkBox_3">
+       <property name="text">
+        <string>Chapter 1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QCheckBox" name="checkBox_4">
+       <property name="text">
+        <string>Chapter 2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QCheckBox" name="checkBox_5">
+       <property name="text">
+        <string>Chapter 3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QCheckBox" name="checkBox_6">
+       <property name="text">
+        <string>Chapter 4</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QCheckBox" name="checkBox_7">
+       <property name="text">
+        <string>Chapter 5</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QCheckBox" name="checkBox_8">
+       <property name="text">
+        <string>Chapter 6</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QCheckBox" name="checkBox_9">
+       <property name="text">
+        <string>Epilogue</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QCheckBox" name="checkBox_10">
+       <property name="text">
+        <string>System Text</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QCheckBox" name="checkBox_11">
+       <property name="text">
+        <string>Miscellaneous</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>neveryday life</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="checkBox_12">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QCheckBox" name="checkBox_13">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QCheckBox" name="checkBox_14">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QCheckBox" name="checkBox_15">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QCheckBox" name="checkBox_16">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3">
+      <widget class="QCheckBox" name="checkBox_17">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QCheckBox" name="checkBox_18">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QCheckBox" name="checkBox_19">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QCheckBox" name="checkBox_20">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="checkBox_21">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QCheckBox" name="checkBox_22">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="QCheckBox" name="checkBox_23">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QCheckBox" name="checkBox_24">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QCheckBox" name="checkBox_25">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="3">
+      <widget class="QCheckBox" name="checkBox_26">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Post-Trial</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="4">
+      <widget class="QCheckBox" name="checkBox_27">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="4">
+      <widget class="QCheckBox" name="checkBox_28">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="4">
+      <widget class="QCheckBox" name="checkBox_29">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QCheckBox" name="checkBox_30">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="3">
+      <widget class="QCheckBox" name="checkBox_31">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="checkBox_32">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QCheckBox" name="checkBox_33">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../res/icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Progress</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Progress</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
