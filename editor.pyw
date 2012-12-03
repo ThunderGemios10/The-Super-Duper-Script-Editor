@@ -2262,6 +2262,7 @@ Attributions:
 <li>enum, Copyright © 2007–2009 Ben Finney <ben+python@benfinney.id.au>, Licensed under the GNU GPL, Version 3</li>
 <li>MeCab, Copyright (c) 2001-2008, Taku Kudo, Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation, Licensed under the GNU GPL, Version 3</li>
 <li>mkisofs, Copyright (C) 1993-1997 Eric Youngdale (C) 1997-2010 Joerg Schilling, Licensed under the GNU GPL</li>
+<li>Unique Postfix, Copyright (c) 2010 Denis Barmenkov, Licensed under the MIT License</li>
 <li>Silk Icon Set, Copyright Mark James, Licensed under the Creative Commons Attribution 2.5 License, <a href="http://www.famfamfam.com/lab/icons/silk/">Website</a></li>
 </ol>""",
       buttons = QtGui.QMessageBox.Ok,
