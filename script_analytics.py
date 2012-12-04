@@ -29,7 +29,6 @@ except:
 
 import common
 import list_files
-from text_files import load_text
 from script_file import ScriptFile
 
 DATA_FILE = "data/analytics.bin"
@@ -41,7 +40,7 @@ SEARCH_COMMENTS       = 0b0100
 SEARCH_NOTAGS         = 0b1000
 DEFAULT_SEARCH_FLAGS  = SEARCH_ORIGINAL | SEARCH_TRANSLATED | SEARCH_COMMENTS
 
-MIN_INTERVAL          = 0.167
+MIN_INTERVAL          = 0.100
 
 ################################################################################
 ### @class ScriptData
@@ -51,13 +50,13 @@ class ScriptData():
   ####################################################################
   ### @fn __init__()
   ####################################################################
-  def __init__(self, filename = ""):
+  def __init__(self, filename = None):
     self.filename = ""
     self.filesize = None
     self.last_edited = None
     self.data = None
     
-    if not filename == "":
+    if filename:
       self.load_file(filename)
   
   ####################################################################
@@ -71,7 +70,6 @@ class ScriptData():
       return
     
     stats = os.stat(filename)
-    #data = load_text(filename)
     data = ScriptFile(filename, mecab = False)
     
     self.filename     = filename
@@ -83,15 +81,14 @@ class ScriptData():
   ### @fn update()
   ####################################################################
   def update(self):
-    if self.needs_update():
-      self.load_file(self.filename)
+    self.load_file(self.filename)
   
   ####################################################################
   ### @fn needs_update()
   ####################################################################
   def needs_update(self):
     if not isinstance(self.data, ScriptFile):
-      print "Probably not this, either."
+      print "Probably shouldn't be doing this."
       return True
     
     stats = os.stat(self.filename)
@@ -99,7 +96,7 @@ class ScriptData():
     filesize    = int(stats.st_size)
     last_edited = int(stats.st_mtime)
     
-    return last_edited != self.last_edited or filesize != self.filesize
+    return (filesize != int(self.filesize) or last_edited != int(self.last_edited))
 
 ################################################################################
 ### @class ScriptAnalytics

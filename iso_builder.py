@@ -22,6 +22,7 @@ from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtGui import QProgressDialog, QProgressBar
 from PyQt4.QtCore import QProcess, QString
 
+import os
 import re
 
 OUTPUT_RE = re.compile(ur".*?([0-9\.]+)\%\sdone")
@@ -31,7 +32,10 @@ class IsoBuilder():
     self.parent = parent
     self.process = None
   
-  def parse_output(self):
+  def __parse_output(self):
+    if not self.process:
+      return
+    
     output = QString(self.process.readAll())
     output = output.split("\n", QString.SkipEmptyParts)
     
@@ -48,6 +52,12 @@ class IsoBuilder():
   
   def build_iso(self, directory, iso_file):
     
+    if self.process:
+      return
+    
+    directory = os.path.abspath(directory)
+    iso_file  = os.path.abspath(iso_file)
+    
     self.progress = QProgressDialog("Building ISO...", QtCore.QString(), 0, 0, self.parent)
     self.progress.setWindowTitle("Building ISO")
     self.progress.setWindowModality(Qt.Qt.WindowModal)
@@ -59,12 +69,12 @@ class IsoBuilder():
     self.progress.setMaximum(100)
     
     self.process = QProcess()
-    self.process.finished.connect(self.build_finished)
+    self.process.finished.connect(self.__build_finished)
     self.process.setReadChannel(QProcess.StandardError)
-    self.process.readyRead.connect(self.parse_output)
+    self.process.readyRead.connect(self.__parse_output)
     self.process.start("tools/mkisofs", ["-sort", "data/file_order.txt", "-iso-level", "4", "-xa", "-A", "PSP GAME", "-V", "DANGANRONPA", "-sysid", "PSP GAME", "-volset", "DANGANRONPA", "-p", "SPIKE", "-publisher", "SPIKE", "-o", iso_file, directory])
     
-  def build_finished(self, code, status):
+  def __build_finished(self, code, status):
     self.progress.close()
     self.process = None
 

@@ -167,7 +167,6 @@ class DatPacker():
         toc_lines = toc_text.splitlines()
       
       toc_info = {}
-      file_list = None
       file_list = []
       
       for line in toc_lines:
@@ -179,6 +178,9 @@ class DatPacker():
           # toc_info[file name] = [position of file pos, position of file size]
           toc_info[entry[0]] = [BitStream(hex = entry[1]), BitStream(hex = entry[2])]
           file_list.append(entry[0])
+      
+      # Causes memory issues if I use the original order, for whatever reason.
+      file_list = None
       
       archive_data, table_of_contents = self.pack_dir(archive["dir"], file_list = file_list)
       

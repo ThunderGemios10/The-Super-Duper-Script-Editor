@@ -2446,6 +2446,7 @@ SCRIPT_MAP = [
       "e08_000_014.lin",
       "e08_000_015.lin",
       "e08_000_016.lin",
+      "script_pak_e08_0002.lin",
     ]
   ),
   (
@@ -2489,14 +2490,8 @@ SCRIPT_MAP = [
     [
       "e08_016_000.lin",
       "e08_020_000.lin",
+      "script_pak_e08_0000.lin",
       "event.pak",
-      (
-        "script_pak_e08.pak",
-        [
-          "script_pak_e08_0000.lin",
-          "script_pak_e08_0002.lin",
-        ]
-      ),
       "voice.pak",
     ]
   ),

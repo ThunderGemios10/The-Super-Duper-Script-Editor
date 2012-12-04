@@ -51,7 +51,6 @@ import wrd_inserter
 
 from dat_packer import DatPacker
 from list_files import list_all_files
-from iso_builder import IsoBuilder
 from map_names import get_map_name
 from mtb import MTBParser
 from nonstop import NonstopParser
@@ -60,6 +59,8 @@ from script_pack import ScriptPack
 from similarity_db import SimilarityDB
 from voice import get_voice_file
 from word_count import count_words
+
+from iso_builder import IsoBuilder
 
 IMAGE_POS = Enum("original", "translated")
 
@@ -2260,8 +2261,10 @@ Attributions:
 <li>Bitstring, Copyright (c) 2006-2012 Scott Griffiths, Licensed under the MIT License</li>
 <li>Diff Match and Patch, Copyright 2006 Google Inc., Licensed under the Apache License, Version 2.0</li>
 <li>enum, Copyright © 2007–2009 Ben Finney <ben+python@benfinney.id.au>, Licensed under the GNU GPL, Version 3</li>
+<li>GIM2PNG, Copyright (c) 2008, <a href="http://www.geocities.jp/junk2ool/">Website</a></li>
 <li>MeCab, Copyright (c) 2001-2008, Taku Kudo, Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation, Licensed under the GNU GPL, Version 3</li>
 <li>mkisofs, Copyright (C) 1993-1997 Eric Youngdale (C) 1997-2010 Joerg Schilling, Licensed under the GNU GPL</li>
+<li>squish, Copyright (c) 2006 Simon Brown</li>
 <li>Unique Postfix, Copyright (c) 2010 Denis Barmenkov, Licensed under the MIT License</li>
 <li>Silk Icon Set, Copyright Mark James, Licensed under the Creative Commons Attribution 2.5 License, <a href="http://www.famfamfam.com/lab/icons/silk/">Website</a></li>
 </ol>""",
