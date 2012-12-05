@@ -1,3 +1,3 @@
-﻿# The Super Duper Script Editor #
+﻿# The Super Duper Script Editor
 
 Working on it~
