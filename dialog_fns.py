@@ -18,7 +18,30 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from .umdimage_ex import extract_umdimage, UMDIMAGE_TYPE
-from .pak_ex import extract_pak
+from PyQt4 import QtGui
+from PyQt4.QtGui import QFileDialog
+
+import os
+
+def get_save_file(parent, default, filter):
+  file = QFileDialog.getSaveFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
+  if not file == "":
+    return os.path.abspath(file)
+  else:
+    return file
+
+def get_open_file(parent, default, filter):
+  file = QFileDialog.getOpenFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
+  if not file == "":
+    return os.path.abspath(file)
+  else:
+    return file
+
+def get_existing_dir(parent, default):
+  dir = QFileDialog.getExistingDirectory(parent, directory = default)
+  if not dir == "":
+    return os.path.abspath(dir)
+  else:
+    return dir
 
 ### EOF ###

@@ -18,8 +18,8 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from ..bitstring import ConstBitStream
-from ..enum import Enum
+from bitstring import ConstBitStream
+from enum import Enum
 
 import os
 import re

@@ -31,9 +31,6 @@ class GimConverter():
   def __init__(self, parent = None):
     self.parent = parent
     self.process = QProcess()
-    # self.process.finished.connect(self.__build_finished)
-    # self.process.setReadChannel(QProcess.StandardError)
-    # self.process.readyRead.connect(self.__parse_output)
   
   def convert(self, gim_file, png_file):
     # So there's no confusion.
@@ -48,7 +45,7 @@ class GimConverter():
     output = QString(self.process.readAllStandardOutput())
     output = output.split("\n", QString.SkipEmptyParts)
     
-    out_file = None
+    saved_file = None
     
     for line in output:
       line = unicode(line.toUtf8(), "utf-8")
@@ -58,12 +55,12 @@ class GimConverter():
       if match == None:
         continue
       
-      out_file = match.group(1)
+      saved_file = match.group(1)
       break
     
     # And move it to the requested location.
-    if out_file:
-      shutil.move(out_file, png_file)
+    if saved_file:
+      shutil.move(saved_file, png_file)
     else:
       print "Error generating PNG file."
 

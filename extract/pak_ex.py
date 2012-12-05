@@ -18,8 +18,8 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from ..bitstring import ConstBitStream
-from ..enum import Enum
+from bitstring import ConstBitStream
+from enum import Enum
 
 import os
 
@@ -35,6 +35,10 @@ NULL_BYTE = ConstBitStream(hex = "0x00")
 ### 
 ##################################################
 def get_pak_files(data, recursive = False, file_ext = None, ext_mode = EXT_MODE.suggest, toc = None):
+  
+  # If we don't have enough to even get a file count, we're obviously no good.
+  if data.len < 32:
+    raise InvalidArchiveException
   
   num_files = data.read("uintle:32")
   # One extra for the file count.
@@ -235,9 +239,9 @@ def get_txt_files(data, *vargs, **kargs):
 ##################################################
 ### 
 ##################################################
-def extract_pak(filename, base_dir = ".", get_files_fn = get_pak_files, file_ext = None, recursive = True):
-  #name, ext = os.path.splitext(os.path.basename(filename))
-  out_dir = os.path.join(base_dir, filename) + "-out"
+def extract_pak(filename, out_dir = None, get_files_fn = get_pak_files, file_ext = None, recursive = True):
+  if out_dir == None:
+    out_dir = filename + "-out"
   
   data = ConstBitStream(filename = filename)
   #get_files_fn(data, True)

@@ -18,7 +18,7 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from ..bitstring import ConstBitStream
+from bitstring import ConstBitStream
 import os
 
 EXTENSION_MAP = {

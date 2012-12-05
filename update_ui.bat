@@ -10,5 +10,6 @@ call pyuic4 "qt\ui\search.ui" -o "ui_search.py"
 call pyuic4 "qt\ui\settings.ui" -o "ui_settings.py"
 call pyuic4 "qt\ui\terminology.ui" -o "ui_terminology.py"
 call pyuic4 "qt\ui\termedit.ui" -o "ui_termedit.py"
+call pyuic4 "qt\ui\wizard.ui" -o "ui_wizard.py"
 
 call pyrcc4 "qt\res\icons.qrc" -o "icons_rc.py"

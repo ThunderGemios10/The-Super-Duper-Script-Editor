@@ -52,4 +52,3 @@
 \PSP_GAME\USRDIR\movie_31.pmf	73264
 \PSP_GAME\USRDIR\movie_32.pmf	68464
 \PSP_GAME\USRDIR\movie_33.pmf	67984
-\PSP_GAME\USRDIR\voice_trial.pak	28112

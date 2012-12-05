@@ -19,11 +19,12 @@
 ################################################################################
 
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QFileDialog
 from ui_settings import Ui_SettingsMenu
 
+import os
+
 import common
-import os.path
+from dialog_fns import get_save_file, get_open_file, get_existing_dir
 
 class SettingsMenu(QtGui.QDialog):
   def __init__(self, parent=None):
@@ -60,85 +61,61 @@ class SettingsMenu(QtGui.QDialog):
     self.ui.txtBackup.setText       (common.editor_config.backup_dir)
   
   ##############################################################################
-  ### DIALOG FUNCTIONS
-  ##############################################################################
-  def get_save_file(self, default, filter):
-    file = QFileDialog.getSaveFileName(self, directory = default, filter = filter + ";;All files (*.*)")
-    if not file == "":
-      return os.path.abspath(file)
-    else:
-      return file
-  
-  def get_open_file(self, default, filter):
-    file = QFileDialog.getOpenFileName(self, directory = default, filter = filter + ";;All files (*.*)")
-    if not file == "":
-      return os.path.abspath(file)
-    else:
-      return file
-  
-  def get_dir(self, default):
-    dir = QFileDialog.getExistingDirectory(self, directory = default)
-    if not dir == "":
-      return os.path.abspath(dir)
-    else:
-      return dir
-  
-  ##############################################################################
   ### DIALOG STUFF
   ##############################################################################
   def get_iso_dir(self):
-    dir = self.get_dir(self.ui.txtIsoDir.text())
+    dir = get_existing_dir(self, self.ui.txtIsoDir.text())
     if not dir == "":
       self.ui.txtIsoDir.setText(dir)
 
   def get_iso_file(self):
-    file = self.get_save_file(self.ui.txtIsoFile.text(), filter = "PSP ISO Files (*.iso)")
+    file = get_save_file(self, self.ui.txtIsoFile.text(), filter = "PSP ISO Files (*.iso)")
     if not file == "":
       self.ui.txtIsoFile.setText(file)
 
   def get_umd_dir(self):
-    dir = self.get_dir(self.ui.txtUmdDir.text())
+    dir = get_existing_dir(self, self.ui.txtUmdDir.text())
     if not dir == "":
       self.ui.txtUmdDir.setText(dir)
 
   def get_umd2_dir(self):
-    dir = self.get_dir(self.ui.txtUmd2Dir.text())
+    dir = get_existing_dir(self, self.ui.txtUmd2Dir.text())
     if not dir == "":
       self.ui.txtUmd2Dir.setText(dir)
 
   def get_eboot_orig(self):
-    file = self.get_open_file(self.ui.txtEbootOrig.text(), filter = "EBOOT-ORIG.BIN (*.bin)")
+    file = get_open_file(self, self.ui.txtEbootOrig.text(), filter = "EBOOT-ORIG.BIN (*.bin)")
     if not file == "":
       self.ui.txtEbootOrig.setText(file)
 
   def get_toc(self):
-    file = self.get_open_file(self.ui.txtToc.text(), filter = "!toc.txt (*.txt)")
+    file = get_open_file(self, self.ui.txtToc.text(), filter = "!toc.txt (*.txt)")
     if not file == "":
       self.ui.txtToc.setText(file)
     return
 
   def get_toc2(self):
-    file = self.get_open_file(self.ui.txtToc2.text(), filter = "!toc2.txt (*.txt)")
+    file = get_open_file(self, self.ui.txtToc2.text(), filter = "!toc2.txt (*.txt)")
     if not file == "":
       self.ui.txtToc2.setText(file)
 
   def get_terminology(self):
-    file = self.get_open_file(self.ui.txtTerminology.text(), filter = "terminology.csv (*.csv)")
+    file = get_open_file(self, self.ui.txtTerminology.text(), filter = "Terminology.csv (*.csv)")
     if not file == "":
       self.ui.txtTerminology.setText(file)
 
   def get_voice(self):
-    dir = self.get_dir(self.ui.txtVoice.text())
+    dir = get_existing_dir(self, self.ui.txtVoice.text())
     if not dir == "":
       self.ui.txtVoice.setText(dir)
 
   def get_copy(self):
-    dir = self.get_dir(self.ui.txtCopy.text())
+    dir = get_existing_dir(self, self.ui.txtCopy.text())
     if not dir == "":
       self.ui.txtCopy.setText(dir)
 
   def get_backup(self):
-    dir = self.get_dir(self.ui.txtBackup.text())
+    dir = get_existing_dir(self, self.ui.txtBackup.text())
     if not dir == "":
       self.ui.txtBackup.setText(dir)
   
