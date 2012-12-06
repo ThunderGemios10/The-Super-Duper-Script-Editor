@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\wizard.ui'
 #
-# Created: Tue Dec 04 16:14:17 2012
+# Created: Wed Dec 05 21:19:59 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -161,13 +161,17 @@ class Ui_SetupWizard(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.grpStep4)
         self.horizontalLayout_2.setContentsMargins(9, 2, 9, 9)
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        spacerItem2 = QtGui.QSpacerItem(213, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QtGui.QSpacerItem(172, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.btnSetupWorkspace = QtGui.QPushButton(self.grpStep4)
         self.btnSetupWorkspace.setText(QtGui.QApplication.translate("SetupWizard", "Set up workspace", None, QtGui.QApplication.UnicodeUTF8))
         self.btnSetupWorkspace.setObjectName(_fromUtf8("btnSetupWorkspace"))
         self.horizontalLayout_2.addWidget(self.btnSetupWorkspace)
-        spacerItem3 = QtGui.QSpacerItem(212, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.btnWorkspaceSkip = QtGui.QPushButton(self.grpStep4)
+        self.btnWorkspaceSkip.setText(QtGui.QApplication.translate("SetupWizard", "Skip", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnWorkspaceSkip.setObjectName(_fromUtf8("btnWorkspaceSkip"))
+        self.horizontalLayout_2.addWidget(self.btnWorkspaceSkip)
+        spacerItem3 = QtGui.QSpacerItem(172, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem3)
         self.verticalLayout.addWidget(self.grpStep4)
         self.grpStep5 = QtGui.QGroupBox(SetupWizard)

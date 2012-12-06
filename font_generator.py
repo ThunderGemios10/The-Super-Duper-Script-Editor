@@ -30,13 +30,13 @@ from make_unique import make_unique
 
 FONTS = Enum("font01", "font02")
 GAMES = Enum("dr", "sdr2")
-FONT_TO_GEN = FONTS.font02
-GAME_TO_GEN = GAMES.sdr2
+FONT_TO_GEN = FONTS.font01
+GAME_TO_GEN = GAMES.dr
 
 HEIGHT_ADJUST = 0
 WIDTH_ADJUST  = 0
-X_OFFSET      = 0
-Y_OFFSET      = 0
+X_SHIFT       = 0
+Y_SHIFT       = 0
 X_MARGIN      = 2
 Y_MARGIN      = 1
 LINE_HEIGHT   = 25
@@ -50,7 +50,7 @@ UNKNOWN2      = BitStream(hex = '0x01000000')
 UNKNOWN3      = BitStream(hex = '0x00000000FA08')
 
 if FONT_TO_GEN == FONTS.font01:
-  CHAR_LIST = "data/font1_chars.txt"
+  CHAR_LIST = "data/font1-dr1.txt"
   SAVE_AS   = "font_gen/Font01"
   FONT_NAME = "Meiryo"
   FONT_ALT  = "Meiryo UI"
@@ -58,8 +58,8 @@ if FONT_TO_GEN == FONTS.font01:
   FONT_SIZE = 11
   FONT_WEIGHT = 50
   PEN_WIDTH = 0.25
-  IMG_WIDTH = 1024
-  IMG_HEIGHT = 1024 + 512
+  IMG_WIDTH = 512
+  IMG_HEIGHT = 2048
   
   CHAR_SUBS = {
     u"…":  u"...",
@@ -69,16 +69,16 @@ if FONT_TO_GEN == FONTS.font01:
   if GAME_TO_GEN == GAMES.dr:
     HEIGHT_ADJUST = 2
     WIDTH_ADJUST  = 0
-    X_OFFSET      = 0
-    Y_OFFSET      = 2
+    X_SHIFT       = 0
+    Y_SHIFT       = 2
     #X_MARGIN      = 2
     #Y_MARGIN      = 1
   
   elif GAME_TO_GEN == GAMES.sdr2:
     HEIGHT_ADJUST = -4
     WIDTH_ADJUST  = 0
-    X_OFFSET      = 0
-    Y_OFFSET      = -1
+    X_SHIFT       = 0
+    Y_SHIFT       = -1
     X_MARGIN      = 2
     Y_MARGIN      = 3
     UNKNOWN1      = BitStream(hex = '0x24000000')
@@ -86,7 +86,7 @@ if FONT_TO_GEN == FONTS.font01:
     UNKNOWN3      = BitStream(hex = '0x000000000200')
 
 elif FONT_TO_GEN == FONTS.font02:
-  CHAR_LIST = "data/font2_chars.txt"
+  CHAR_LIST = "data/font2.txt"
   SAVE_AS   = "font_gen/Font02"
   FONT_NAME = "DFSoGei-W7"
   FONT_ALT  = "DFGSoGei-W7"
@@ -104,8 +104,8 @@ elif FONT_TO_GEN == FONTS.font02:
   if GAME_TO_GEN == GAMES.dr:
     HEIGHT_ADJUST = 2
     WIDTH_ADJUST  = 0
-    X_OFFSET      = 0
-    Y_OFFSET      = 2
+    X_SHIFT       = 0
+    Y_SHIFT       = 2
     #X_MARGIN      = 2
     #Y_MARGIN      = 1
     UNKNOWN1      = BitStream(hex = '0x30000000')
@@ -113,8 +113,8 @@ elif FONT_TO_GEN == FONTS.font02:
   elif GAME_TO_GEN == GAMES.sdr2:
     HEIGHT_ADJUST = 2
     WIDTH_ADJUST  = 0
-    X_OFFSET      = 0
-    Y_OFFSET      = 0
+    X_SHIFT       = 0
+    Y_SHIFT       = 0
     X_MARGIN      = 2
     #Y_MARGIN      = 1
     UNKNOWN3      = BitStream(hex = '0x00000000FD00')
@@ -180,11 +180,11 @@ class FontData:
     padding = UNKNOWN3
     
     for entry in self.data:
-      char = BitStream(bytes = bytearray(entry['char'], encoding = 'utf-16le'))
-      x_pos = BitStream(uintle = entry['x'], length = 16)
-      y_pos = BitStream(uintle = entry['y'], length = 16)
-      width = BitStream(uintle = entry['w'], length = 16)
-      height = BitStream(uintle = entry['h'], length = 16)
+      char    = BitStream(bytes = bytearray(entry['char'], encoding = 'utf-16le'))
+      x_pos   = BitStream(uintle = entry['x'], length = 16)
+      y_pos   = BitStream(uintle = entry['y'], length = 16)
+      width   = BitStream(uintle = entry['w'], length = 16)
+      height  = BitStream(uintle = entry['h'], length = 16)
       
       font_table += char + x_pos + y_pos + width + height + padding
     
@@ -235,7 +235,7 @@ def gen_font(text):
   metric = QFontMetrics(font)
   metric_alt = QFontMetrics(font_alt)
   
-  LINE_HEIGHT = metric.height() + HEIGHT_ADJUST #abs(HEIGHT_ADJUST)
+  # LINE_HEIGHT = metric.height() + HEIGHT_ADJUST #abs(HEIGHT_ADJUST)
   
   game_font = GameFont()
   
@@ -296,7 +296,7 @@ def gen_font(text):
     #painter.drawText(QtCore.QRectF(x_pos, y_pos + HEIGHT_ADJUST, char_w, LINE_HEIGHT), Qt.Qt.AlignCenter, char)
     
     path = QPainterPath()
-    path.addText(x_pos + X_OFFSET, y_pos + cur_metric.ascent() + Y_OFFSET, cur_font, char_to_print)
+    path.addText(x_pos + X_SHIFT, y_pos + cur_metric.ascent() + Y_SHIFT, cur_font, char_to_print)
     painter.drawPath(path)
     
     x_pos += char_w + X_MARGIN

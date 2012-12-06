@@ -38,9 +38,7 @@ import eboot_text
 import text_files
 
 from anagram_file import AnagramFile
-
-PATCH_XMB_LANG   = {'enabled': True,  'pos': 0x1B290, 'data': ConstBitStream(hex = "0x01000424")}
-PATCH_XMB_BUTTON = {'enabled': False, 'pos': 0x1B3DC, 'data': ConstBitStream(hex = "0x01000424")}
+from eboot_patch import apply_eboot_patches
 
 RE_SCRIPT  = re.compile(ur"(.*?)\0.*", re.UNICODE | re.S)
 # UTF-16LE byte-order-marker, since we lose it loading the text
@@ -224,10 +222,7 @@ class DatPacker():
       data = ConstBitStream(bytes = data)
       eboot.overwrite(data, replacement.pos.int * 8)
     
-    if PATCH_XMB_LANG['enabled']:
-      eboot.overwrite(PATCH_XMB_LANG['data'],   PATCH_XMB_LANG['pos'] * 8)
-    if PATCH_XMB_BUTTON['enabled']:
-      eboot.overwrite(PATCH_XMB_BUTTON['data'], PATCH_XMB_BUTTON['pos'] * 8)
+    eboot = apply_eboot_patches(eboot)
     
     eboot_out = os.path.join(common.editor_config.iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN")
     

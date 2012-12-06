@@ -290,7 +290,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>213</width>
+          <width>172</width>
           <height>20</height>
          </size>
         </property>
@@ -304,13 +304,20 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="btnWorkspaceSkip">
+        <property name="text">
+         <string>Skip</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_8">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>212</width>
+          <width>172</width>
           <height>20</height>
          </size>
         </property>

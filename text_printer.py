@@ -67,30 +67,30 @@ IMG_FILTERS  = Enum("unfiltered", "sepia", "inverted")
 
 #SCENE_MODES = Enum("normal", "trial", "rules", "ammo", "ammoname", "present", "presentname", "debate", "mtb", "climax", "anagram", "menu", "map", "report", "report2", "skill", "skill2", "music", "eventname", "moviename", "theatre", "help", "other")
 TEXT_FORMAT = {
-  common.SCENE_MODES.normal:      {"x":  18, "y": 202, "w": 444, "h": 24, "a": TEXT_ALIGN.left,       "clt":  0, "killblanks": True},
-  common.SCENE_MODES.trial:       {"x":  18, "y": 202, "w": 444, "h": 24, "a": TEXT_ALIGN.left,       "clt":  0, "killblanks": True},
-  common.SCENE_MODES.rules:       {"x":  32, "y": 159, "w": 416, "h": 18, "a": TEXT_ALIGN.center,     "clt":  0, "killblanks": True},
-  common.SCENE_MODES.ammo:        {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,       "clt":  7, "killblanks": False},
-  common.SCENE_MODES.ammoname:    {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center,     "clt":  7, "killblanks": True},
-  common.SCENE_MODES.present:     {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,       "clt":  7, "killblanks": False},
-  common.SCENE_MODES.presentname: {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center,     "clt":  7, "killblanks": True},
-  common.SCENE_MODES.debate:      {"x":  18, "y": 160, "w": 444, "h": 24, "a": TEXT_ALIGN.center,     "clt":  8, "killblanks": True},
-  common.SCENE_MODES.mtb:         {"x":  18, "y": 160, "w": 444, "h": 24, "a": TEXT_ALIGN.center,     "clt": 12, "killblanks": True},
-  common.SCENE_MODES.climax:      {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,       "clt":  0, "killblanks": True},
-  common.SCENE_MODES.anagram:     {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,       "clt":  8, "killblanks": True},
-  common.SCENE_MODES.menu:        {"x":  55, "y": 198, "w": 370, "h": 14, "a": TEXT_ALIGN.left,       "clt":  7, "killblanks": True},
-  common.SCENE_MODES.map:         {"x":  38, "y":  59, "w": 200, "h": 14, "a": TEXT_ALIGN.offcenter,  "clt":  7, "killblanks": True},
-  common.SCENE_MODES.report:      {"x": 170, "y":  84, "w": 292, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.report2:     {"x": 182, "y": 181, "w": 292, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.skill:       {"x":  18, "y": 100, "w": 292, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": False},
-  common.SCENE_MODES.skill2:      {"x": 248, "y": 148, "w": 292, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.music:       {"x": 173, "y":  78, "w": 180, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.eventname:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.moviename:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": True},
-  common.SCENE_MODES.theatre:     {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,       "clt":  0, "killblanks": True},
-  common.SCENE_MODES.help:        {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": False},
-  common.SCENE_MODES.other:       {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,       "clt":  6, "killblanks": False},
-  common.SCENE_SPECIAL.option:    {"x": 227, "y":  85, "w": 254, "h": 25, "a": TEXT_ALIGN.left,       "clt":  0, "killblanks": True},
+  common.SCENE_MODES.normal:      {"x":  18, "y": 202, "w": 444, "h": 24, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
+  common.SCENE_MODES.trial:       {"x":  18, "y": 202, "w": 444, "h": 24, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
+  common.SCENE_MODES.rules:       {"x":  32, "y": 159, "w": 416, "h": 18, "a": TEXT_ALIGN.center, "clt":  0, "killblanks": True},
+  common.SCENE_MODES.ammo:        {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": False},
+  common.SCENE_MODES.ammoname:    {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center, "clt":  7, "killblanks": True},
+  common.SCENE_MODES.present:     {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": False},
+  common.SCENE_MODES.presentname: {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center, "clt":  7, "killblanks": True},
+  common.SCENE_MODES.debate:      {"x":  18, "y": 160, "w": 444, "h": 24, "a": TEXT_ALIGN.center, "clt":  8, "killblanks": True},
+  common.SCENE_MODES.mtb:         {"x":  18, "y": 160, "w": 444, "h": 24, "a": TEXT_ALIGN.center, "clt": 12, "killblanks": True},
+  common.SCENE_MODES.climax:      {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
+  common.SCENE_MODES.anagram:     {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,   "clt":  8, "killblanks": True},
+  common.SCENE_MODES.menu:        {"x":  55, "y": 198, "w": 370, "h": 14, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": True},
+  common.SCENE_MODES.map:         {"x":  38, "y":  59, "w": 200, "h": 14, "a": TEXT_ALIGN.center, "clt":  7, "killblanks": True},
+  common.SCENE_MODES.report:      {"x": 170, "y":  84, "w": 292, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.report2:     {"x": 182, "y": 181, "w": 292, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.skill:       {"x":  18, "y": 100, "w": 292, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
+  common.SCENE_MODES.skill2:      {"x": 248, "y": 148, "w": 292, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.music:       {"x": 173, "y":  78, "w": 180, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.eventname:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.moviename:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
+  common.SCENE_MODES.theatre:     {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
+  common.SCENE_MODES.help:        {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
+  common.SCENE_MODES.other:       {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
+  common.SCENE_SPECIAL.option:    {"x": 227, "y":  85, "w": 254, "h": 25, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
 }
 
 # Just some arbitrary tuning to make things look a little closer to the original.
@@ -1075,25 +1075,25 @@ def print_text(image, text, scene_mode = common.SCENE_MODES.normal, mangle = Tru
         x = center_x - (line_length / 2.0) - 7
         
         # This is hackish as hell, but I want guidelines.
-        painter.end()
-        stripped_len = line_length
+        # painter.end()
+        # stripped_len = line_length
         
         # Strip the widths of any leading and trailing spaces
-        for j in range(len(line)):
-          if line[j] == ' ' or line[j] == u'　':
-            stripped_len -= lengths[i][j]
-          else:
-            break
-        for j in reversed(range(len(line))):
-          if line[j] == ' ' or line[j] == u'　':
-            stripped_len -= lengths[i][j]
-          else:
-            break
+        # for j in range(len(line)):
+          # if line[j] == ' ' or line[j] == u'　':
+            # stripped_len -= lengths[i][j]
+          # else:
+            # break
+        # for j in reversed(range(len(line))):
+          # if line[j] == ' ' or line[j] == u'　':
+            # stripped_len -= lengths[i][j]
+          # else:
+            # break
           
-        out = draw_centering_guides(out, center_x, y, stripped_len, 40)
-        painter = QPainter(out)
-        painter.setCompositionMode(QPainter.CompositionMode_DestinationOver)
-        painter.setRenderHint(QPainter.Antialiasing, True)
+        # out = draw_centering_guides(out, center_x, y, stripped_len, 40)
+        # painter = QPainter(out)
+        # painter.setCompositionMode(QPainter.CompositionMode_DestinationOver)
+        # painter.setRenderHint(QPainter.Antialiasing, True)
       # if format["a"] == blah
       
       for j in range(len(line)):
