@@ -18,12 +18,17 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+from PyQt4 import QtGui
+from PyQt4.QtGui import QImage, QColor
+
 from bitstring import ConstBitStream
 import os.path
 import re
 
-BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
-FONT_FOLDER   = os.path.join(BASE_DIR, "data/gfx/font")
+# BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
+
+# GFX_DIR         = common.editor_config.gfx_dir
+# FONT_FOLDER   = os.path.join(GFX_DIR, "font")
 FONT1_TABLE   = "Font01.font"
 FONT2_TABLE   = "Font02.font"
 
@@ -33,7 +38,7 @@ RE_DEFAULT_CLT = re.compile(ur"<CLT>", re.UNICODE | re.S)
 RE_CLT         = re.compile(ur"\<CLT (?P<CLT_INDEX>\d+)\>", re.UNICODE | re.S)
 RE_DIG         = re.compile(ur"<DIG.*?>", re.UNICODE | re.S)
 
-FONT_DATA = { 1: {}, 2: {}}
+FONT_DATA = { 1: {}, 2: {} }
 
 CLT = {
          0: {'font': 1, 'hscale': 1.00,       'vscale': 1.00,       'xshift': 0.00,   'yshift': 0.00},
@@ -67,19 +72,19 @@ CLT = {
         99: {'font': 2, 'hscale': 1.00,       'vscale': 1.00,       'xshift': 0.00,   'yshift': 0.00},
       }
 
-def parse_font(font_num):
+def parse_font(font_num, spft_filename):
   
   FONT_DATA[font_num] = {}
   
-  spft_filename = ""
+  # spft_filename = ""
   
-  if font_num == 1:
-    spft_filename = os.path.join(FONT_FOLDER, FONT1_TABLE)
-  elif font_num == 2:
-    spft_filename = os.path.join(FONT_FOLDER, FONT2_TABLE)
-  else:
+  # if font_num == 1:
+    # spft_filename = os.path.join(FONT_FOLDER, FONT1_TABLE)
+  # elif font_num == 2:
+    # spft_filename = os.path.join(FONT_FOLDER, FONT2_TABLE)
+  if not font_num in [1, 2]:
     print "Invalid font number. Valid values: 1, 2"
-    exit()
+    return None
   
   # Header: 
   # 74467053 -- Magic
@@ -117,11 +122,11 @@ def parse_font(font_num):
   
   if num_entries == 0:
     print "No entries in SPFT table."
-    exit()
+    return None
   
   if table_start * 8 > spft.len:
     print "Invalid SPFT table position."
-    exit()
+    return None
   
   #print "Characters in font:", num_entries
   
@@ -136,20 +141,21 @@ def parse_font(font_num):
   #   XXXX -- Height
   #   0000 -- Dummy
   #   0000 -- Dummy
-  #   FA08 -- Dummy
+  #   FA08 -- Something to do with rendering offset. FA -> -6 -> renders six pixels down
   
   #print "    XXXX YYYY WWW HHH"
   
   for i in range(0, num_entries):
-    char = spft.read(16)
-    char = char.bytes.decode('utf-16le')    
-    xpos = spft.read('uintle:16')
-    ypos = spft.read('uintle:16')
-    width = spft.read('uintle:16')
-    height = spft.read('uintle:16')
-    dummy = spft.read('uintle:16')
-    dummy = spft.read('uintle:16')
-    dummy = spft.read('uintle:16')
+    char    = spft.read(16)
+    char    = char.bytes.decode('utf-16le')    
+    xpos    = spft.read('uintle:16')
+    ypos    = spft.read('uintle:16')
+    width   = spft.read('uintle:16')
+    height  = spft.read('uintle:16')
+    dummy   = spft.read('uintle:16')
+    dummy   = spft.read('uintle:16')
+    yshift  = spft.read('intle:8')
+    dummy   = spft.read('uintle:8')
     
     info = {'x': xpos, 'y': ypos, 'w': width, 'h': height}
     FONT_DATA[font_num][char] = info
@@ -219,8 +225,27 @@ def get_len(string, default_clt = 0):
   
   return string, lengths, clt_changes
 
-parse_font(1)
-parse_font(2)
+def font_bmp_to_alpha(filename):
+  
+  image = QImage(filename)
+  image = image.convertToFormat(QImage.Format_ARGB32_Premultiplied)
+  
+  # Because the game uses 8bit grayscale bitmaps for its fonts with white as
+  # fully visible and black as fully transparent, I'm using a naive technique
+  # that averages the RGB value of a pixel and sets that as its alpha value.
+  # I'm sure this will do fun stuff to other images, but it does the job
+  # for the game's fonts, and that's all that really matters. ヽ(´ー｀)ノ
+  for i in range(image.width()):
+    for j in range(image.height()):
+      color = QColor(image.pixel(i, j))
+      alpha = (color.red() + color.green() + color.blue()) / 3
+      color.setAlpha(alpha)
+      image.setPixel(i, j, color.rgba())
+  
+  return image
+
+# parse_font(1)
+# parse_font(2)
 
 if __name__ == '__main__':
   #for char in sorted(FONT_DATA[1].keys()):

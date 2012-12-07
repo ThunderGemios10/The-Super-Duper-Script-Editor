@@ -22,14 +22,17 @@ from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtGui import QFileDialog, QProgressDialog
 from ui_wizard import Ui_SetupWizard
 
+import glob
 import os
 import shutil
+import zipfile
 from bitstring import ConstBitStream
 
 import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
 from extract import extract_umdimage, UMDIMAGE_TYPE, extract_pak
-
+from font_parser import font_bmp_to_alpha
+from tools.gim_to_png import GimConverter
 
 UMDIMAGE_DAT    = os.path.join("PSP_GAME", "USRDIR", "umdimage.dat")
 UMDIMAGE2_DAT   = os.path.join("PSP_GAME", "USRDIR", "umdimage2.dat")
@@ -161,6 +164,16 @@ class SetupWizard(QtGui.QDialog):
   ##############################################################################
   ### STEP 4
   ##############################################################################
+  def generate_directories(self):
+    self.umdimage_dir    = os.path.join(self.workspace_dir, UMDIMAGE_DIR)
+    self.umdimage2_dir   = os.path.join(self.workspace_dir, UMDIMAGE2_DIR)
+    self.voice_dir       = os.path.join(self.workspace_dir, VOICE_DIR)
+    self.toc_file        = os.path.join(self.workspace_dir, TOC_FILE)
+    self.toc2_file       = os.path.join(self.workspace_dir, TOC2_FILE)
+    self.changes_dir     = os.path.join(self.workspace_dir, CHANGES_DIR)
+    self.backup_dir      = os.path.join(self.workspace_dir, BACKUP_DIR)
+    self.edited_iso_dir  = os.path.join(self.workspace_dir, EDITED_ISO_DIR)
+    
   def skip_setup(self):
     
     answer = QtGui.QMessageBox.warning(
@@ -174,6 +187,8 @@ class SetupWizard(QtGui.QDialog):
     if answer == QtGui.QMessageBox.No:
       return
     
+    self.generate_directories()
+    
     self.ui.grpStep4.setEnabled(False)
     self.ui.grpStep5.setEnabled(True)
   
@@ -182,39 +197,32 @@ class SetupWizard(QtGui.QDialog):
     umdimage2 = os.path.join(self.iso_dir, UMDIMAGE2_DAT)
     voice     = os.path.join(self.iso_dir, VOICE_PAK)
     
-    umdimage_dir    = os.path.join(self.workspace_dir, UMDIMAGE_DIR)
-    umdimage2_dir   = os.path.join(self.workspace_dir, UMDIMAGE2_DIR)
-    voice_dir       = os.path.join(self.workspace_dir, VOICE_DIR)
-    toc_file        = os.path.join(self.workspace_dir, TOC_FILE)
-    toc2_file       = os.path.join(self.workspace_dir, TOC2_FILE)
-    changes_dir     = os.path.join(self.workspace_dir, CHANGES_DIR)
-    backup_dir      = os.path.join(self.workspace_dir, BACKUP_DIR)
-    edited_iso_dir  = os.path.join(self.workspace_dir, EDITED_ISO_DIR)
+    self.generate_directories()
     
     # Do the easy stuff first.
-    if not os.path.isdir(changes_dir):
-      os.makedirs(changes_dir)
-    if not os.path.isdir(backup_dir):
-      os.makedirs(backup_dir)
+    if not os.path.isdir(self.changes_dir):
+      os.makedirs(self.changes_dir)
+    if not os.path.isdir(self.backup_dir):
+      os.makedirs(self.backup_dir)
     
     # Now, extract our archives.
-    # extract_umdimage(umdimage,  out_dir = umdimage_dir,   eboot = self.eboot_path, type = UMDIMAGE_TYPE.best,   toc_filename = toc_file)
-    # extract_umdimage(umdimage2, out_dir = umdimage2_dir,  eboot = self.eboot_path, type = UMDIMAGE_TYPE.best2,  toc_filename = toc2_file)
-    # extract_pak(voice, out_dir = voice_dir)
+    # extract_umdimage(umdimage,  out_dir = self.umdimage_dir,   eboot = self.eboot_path, type = UMDIMAGE_TYPE.best,   toc_filename = self.toc_file)
+    # extract_umdimage(umdimage2, out_dir = self.umdimage2_dir,  eboot = self.eboot_path, type = UMDIMAGE_TYPE.best2,  toc_filename = self.toc2_file)
+    # extract_pak(voice, out_dir = self.voice_dir)
     
     # ISO directory needs to not exist for copytree.
-    if os.path.isdir(edited_iso_dir):
-      shutil.rmtree(edited_iso_dir)
+    # if os.path.isdir(self.edited_iso_dir):
+      # shutil.rmtree(self.edited_iso_dir)
     
     # Give us an ISO directory for the editor to place modified files in.
-    shutil.copytree(self.iso_dir, edited_iso_dir)
+    # shutil.copytree(self.iso_dir, self.edited_iso_dir)
     
     # Files we want to make blank, because they're unnecessary.
     blank_files = [
-      os.path.join(edited_iso_dir, "PSP_GAME", "INSDIR", "UMDIMAGE.DAT"),
-      os.path.join(edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "DATA.BIN"),
-      os.path.join(edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "EBOOT.BIN"),
-      os.path.join(edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "PARAM.SFO"),
+      os.path.join(self.edited_iso_dir, "PSP_GAME", "INSDIR", "UMDIMAGE.DAT"),
+      os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "DATA.BIN"),
+      os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "EBOOT.BIN"),
+      os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "UPDATE", "PARAM.SFO"),
     ]
     
     for blank in blank_files:
@@ -222,7 +230,13 @@ class SetupWizard(QtGui.QDialog):
         pass
     
     # Copy the decrypted EBOOT into the ISO folder so the builder can use it.
-    shutil.copy(self.eboot_path, os.path.join(edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
+    shutil.copy(self.eboot_path, os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
+    
+    # Extract the similarity database.
+    similarity_db = zipfile.ZipFile("data/similarity-db.zip", "r")
+    # similarity_db.extract("similarity-db.sql", "data")
+    similarity_db.extract("similarity-db.sql", self.workspace_dir)
+    similarity_db.close()
     
     self.ui.grpStep4.setEnabled(False)
     self.ui.grpStep5.setEnabled(True)
@@ -231,6 +245,151 @@ class SetupWizard(QtGui.QDialog):
   ### STEP 5
   ##############################################################################
   def copy_gfx(self):
+    gfx_dir = os.path.join(self.workspace_dir, "gfxyayay")
+    
+    if not os.path.isdir(gfx_dir):
+      os.makedirs(gfx_dir)
+    
+    # Extract the images we can't just take directly from the game's data.
+    gfx_base = zipfile.ZipFile("data/gfx-base.zip", "r")
+    gfx_base.extractall(gfx_dir)
+    gfx_base.close()
+    
+    # We can mostly loop this.
+    gfx_data = [
+      ("ammo",      "kotodama_icn_???.gim"),
+      ("bgd",       "bgd_???.gim"),
+      ("cutin",     "cutin_icn_???.gim"),
+      ("events",    "gallery_icn_???.gim"),
+      ("movies",    "bin_movie_gallery_l.pak/0000/000[1789].gim"),
+      ("movies",    "bin_movie_gallery_l.pak/0000/00[123]?.gim"),
+      ("nametags",  "tex_system.pak/00[12]?.gim"),
+      ("nametags",  "tex_system.pak/003[0123456].gim"),
+      ("presents",  "present_icn_???.gim"),
+      ("sprites",   "bustup_??_??.gim"),
+      ("sprites",   "stand_??_??.gmo"),
+    ]
+    
+    progress = QProgressDialog("", "Abort", 0, 0, self)
+    progress.setWindowTitle("Copying GFX...")
+    progress.setWindowModality(Qt.Qt.WindowModal)
+    progress.setMinimumDuration(0)
+    progress.setValue(0)
+    progress.setAutoClose(False)
+    
+    for (dir, file_glob) in gfx_data:
+      out_dir = os.path.join(gfx_dir, dir)
+      files   = glob.glob(os.path.join(self.umdimage_dir, file_glob))
+      
+      progress.setLabelText("Copying %s." % dir)
+      progress.setMaximum(len(files))
+      progress.setValue(0)
+      
+      if not os.path.isdir(out_dir):
+        os.makedirs(out_dir)
+      
+      for i, image in enumerate(files):
+        if i % 10 == 0:
+          progress.setValue(i)
+        
+        if progress.wasCanceled():
+          return
+        
+        src  = image
+        dest = os.path.join(out_dir, os.path.basename(src))
+        shutil.copy(src, dest)
+      
+      progress.setValue(len(files))
+    
+    progress.setLabelText("Copying font.")
+    progress.setMaximum(4)
+    progress.setValue(0)
+    
+    # The font we have to get from umdimage2.
+    font_dir = os.path.join(gfx_dir, "font")
+    if not os.path.isdir(font_dir):
+      os.makedirs(font_dir)
+    
+    progress.setValue(1)
+    # And convert to PNG with an alpha channel so our editor can use it.
+    font1 = font_bmp_to_alpha(os.path.join(self.umdimage2_dir, "font.pak", "0000.bmp"))
+    progress.setValue(2)
+    font2 = font_bmp_to_alpha(os.path.join(self.umdimage2_dir, "font.pak", "0002.bmp"))
+    progress.setValue(3)
+    
+    font1.save(os.path.join(font_dir, "Font01.png"))
+    font2.save(os.path.join(font_dir, "Font02.png"))
+    shutil.copy(os.path.join(self.umdimage2_dir, "font.pak", "0001.font"), os.path.join(font_dir, "Font01.font"))
+    shutil.copy(os.path.join(self.umdimage2_dir, "font.pak", "0003.font"), os.path.join(font_dir, "Font02.font"))
+    
+    progress.setValue(4)
+    
+    # And then the flash files. This'll be fun.
+    flash_dir = os.path.join(gfx_dir, "flash")
+    if not os.path.isdir(flash_dir):
+      os.makedirs(flash_dir)
+    
+    # Because there's so many in so many different places, I just stored a list
+    # of the flash files we need in the gfx-base archive. So let's load that.
+    with open(os.path.join(gfx_dir, "fla.txt"), "rb") as fla:
+      fla_list = fla.readlines()
+      
+      progress.setLabelText("Copying flash.")
+      progress.setMaximum(len(fla_list))
+      progress.setValue(0)
+      
+      for i, flash in enumerate(fla_list):
+        if i % 10 == 0:
+          progress.setValue(i)
+        
+        if progress.wasCanceled():
+          return
+        
+        flash = flash.strip()
+        fla_name = flash[:7] # fla_###
+        
+        src  = os.path.join(self.umdimage_dir, flash)
+        dest = os.path.join(flash_dir, "%s.gim" % fla_name)
+        
+        shutil.copy(src, dest)
+        
+      progress.setValue(len(fla_list))
+    
+    # We have a couple sets of files that aren't named the way we want them to
+    # be, just because of how they're stored in umdimage.
+    progress.setLabelText("Renaming files.")
+    to_rename = [
+      ("movies",    "movie_%03d.gim"),
+      ("nametags",  "%02d.gim"),
+    ]
+    
+    for (folder, pattern) in to_rename:
+      folder  = os.path.join(gfx_dir, folder)
+      files   = glob.glob(os.path.join(folder, "*.gim"))
+      
+      progress.setMaximum(len(files))
+      progress.setValue(0)
+      
+      for i, image in enumerate(files):
+        if i % 10 == 0:
+          progress.setValue(i)
+        
+        if progress.wasCanceled():
+          return
+        
+        src  = image
+        dest = os.path.join(folder, pattern % i)
+        
+        if os.path.isfile(dest):
+          os.remove(dest)
+        
+        shutil.move(src, dest)
+    
+    progress.setLabelText("Extracting GMO files.")
+    progress.setValue(0)
+    
+    progress.close()
+    
     self.ui.grpStep5.setEnabled(False)
     self.ui.grpStep6.setEnabled(True)
     

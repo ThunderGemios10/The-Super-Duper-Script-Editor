@@ -31,7 +31,8 @@ import time
 
 import common
 
-from font_parser import *
+import font_parser
+from font_parser import FONT_DATA, CLT
 #from gfx import filters # Crashes on exit for whatever reason.
 from text_files import load_text
 from sprite import get_sprite_file, SPRITE_TYPE
@@ -42,9 +43,10 @@ from sprite import get_sprite_file, SPRITE_TYPE
 IMG_W           = 480
 IMG_H           = 272
 
-BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
 
-GFX_DIR         = os.path.join(BASE_DIR, "data/gfx")
+# GFX_DIR         = os.path.join(BASE_DIR, "data/gfx")
+GFX_DIR         = common.editor_config.gfx_dir
 AMMO_DIR        = os.path.join(GFX_DIR, "ammo")
 ANAGRAM_DIR     = os.path.join(GFX_DIR, "anagram")
 BG_DIR          = os.path.join(GFX_DIR, "bg")
@@ -52,6 +54,7 @@ BGD_DIR         = os.path.join(GFX_DIR, "bgd")
 CUTIN_DIR       = os.path.join(GFX_DIR, "cutin")
 EVENT_DIR       = os.path.join(GFX_DIR, "events")
 FLASH_DIR       = os.path.join(GFX_DIR, "flash")
+FONT_FOLDER     = os.path.join(GFX_DIR, "font")
 MENU_DIR        = os.path.join(GFX_DIR, "menu")
 MOVIEFRAME_DIR  = os.path.join(GFX_DIR, "movieframes") # Full-sized background frames
 MOVIE_DIR       = os.path.join(GFX_DIR, "movies") # Icons for the movie gallery
@@ -181,6 +184,9 @@ FONTS = {}
 def load_fonts():
   FONTS[1] = QImage(os.path.join(FONT_FOLDER, "Font01.png"))
   FONTS[2] = QImage(os.path.join(FONT_FOLDER, "Font02.png"))
+  
+  font_parser.parse_font(1, os.path.join(FONT_FOLDER, "Font01.font"))
+  font_parser.parse_font(2, os.path.join(FONT_FOLDER, "Font02.font"))
 
 ##############################################################################
 ### @fn   replace_all_colors(image, color)
@@ -849,9 +855,9 @@ def get_letter(clt, char):
   if not clt in CLT:
     clt = 0
   
-  font = CLT[clt]['font']
-  hscale = CLT[clt]['hscale']
-  vscale = CLT[clt]['vscale']
+  font    = CLT[clt]['font']
+  hscale  = CLT[clt]['hscale']
+  vscale  = CLT[clt]['vscale']
   
   try:
     info = FONT_DATA[font][char]
@@ -1012,7 +1018,7 @@ def print_text(image, text, scene_mode = common.SCENE_MODES.normal, mangle = Tru
     # Start the line off with the last-used CLT, so the parsers know what it is.
     line = ("<CLT %d>" % last_clt) + line
     
-    line, length, clt = get_len(line, format["clt"])
+    line, length, clt = font_parser.get_len(line, format["clt"])
     # If there isn't an initial CLT, start the line off with
     # the CLT still in use at the end of the previous line.
     if not 0 in clt.keys():

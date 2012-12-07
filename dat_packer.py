@@ -133,7 +133,7 @@ class DatPacker():
     self.progress.setWindowModality(Qt.Qt.WindowModal)
     self.progress.setValue(0)
     self.progress.setAutoClose(False)
-    # self.progress.setMinimumDuration(1000)
+    self.progress.setMinimumDuration(0)
     
     # with open(common.editor_config.eboot_orig, "rb") as f:
     with open(os.path.join(common.editor_config.iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"), "rb") as f:

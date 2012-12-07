@@ -74,6 +74,9 @@
             <pointsize>8</pointsize>
            </font>
           </property>
+          <property name="text">
+           <string>X:\Danganronpa\Danganronpa_BEST\!ISO</string>
+          </property>
          </widget>
         </item>
         <item>
@@ -150,7 +153,11 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLineEdit" name="txtWorkspace"/>
+         <widget class="QLineEdit" name="txtWorkspace">
+          <property name="text">
+           <string>X:\Danganronpa\Workspace-test</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btnWorkspaceBrowse">
@@ -364,6 +371,9 @@ p, li { white-space: pre-wrap; }
          <widget class="QCheckBox" name="chkGimToPng">
           <property name="text">
            <string>Convert to PNG</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

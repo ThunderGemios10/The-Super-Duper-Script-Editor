@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\wizard.ui'
 #
-# Created: Wed Dec 05 21:19:59 2012
+# Created: Thu Dec 06 17:06:57 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,6 +55,7 @@ class Ui_SetupWizard(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.txtIso.setFont(font)
+        self.txtIso.setText(QtGui.QApplication.translate("SetupWizard", "X:\\Danganronpa\\Danganronpa_BEST\\!ISO", None, QtGui.QApplication.UnicodeUTF8))
         self.txtIso.setObjectName(_fromUtf8("txtIso"))
         self.horizontalLayout.addWidget(self.txtIso)
         self.btnIsoBrowse = QtGui.QPushButton(self.grpStep1)
@@ -101,6 +102,7 @@ class Ui_SetupWizard(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.txtWorkspace = QtGui.QLineEdit(self.grpStep2)
+        self.txtWorkspace.setText(QtGui.QApplication.translate("SetupWizard", "X:\\Danganronpa\\Workspace-test", None, QtGui.QApplication.UnicodeUTF8))
         self.txtWorkspace.setObjectName(_fromUtf8("txtWorkspace"))
         self.horizontalLayout_3.addWidget(self.txtWorkspace)
         self.btnWorkspaceBrowse = QtGui.QPushButton(self.grpStep2)
@@ -191,6 +193,7 @@ class Ui_SetupWizard(object):
         self.horizontalLayout_7.addWidget(self.btnCopyGfx)
         self.chkGimToPng = QtGui.QCheckBox(self.grpStep5)
         self.chkGimToPng.setText(QtGui.QApplication.translate("SetupWizard", "Convert to PNG", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkGimToPng.setChecked(True)
         self.chkGimToPng.setObjectName(_fromUtf8("chkGimToPng"))
         self.horizontalLayout_7.addWidget(self.chkGimToPng)
         spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)

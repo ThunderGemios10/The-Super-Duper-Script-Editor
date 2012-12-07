@@ -37,6 +37,7 @@ DEFAULT_SETTINGS = {
   "toc2":               "./!toc2.txt",
   "voice_dir":          "./voice",
   "bgm_dir":            "./bgm",
+  "gfx_dir":            "./data/gfx",
   "changes_dir":        "./!changes",
   "backup_dir":         "./!backup",
   "terminology":        "X:/My Dropbox/Danganronpa/Terminology.csv",
