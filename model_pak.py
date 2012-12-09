@@ -18,4 +18,12 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+from extract import get_pak_files
+from gmo_file import GmoFile
+
+class ModelPak():
+  def __init__(self, filename = None):
+    self.__data = None
+    self.__gmo_files = []    
+
 ### EOF ###

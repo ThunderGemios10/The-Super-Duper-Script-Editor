@@ -1,5 +1,6 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt, Copyright © 2012 /a/nonymous scanlations
+### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012 /a/nonymous scanlations
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -51,12 +52,22 @@ EBOOT_PATCHES = [
   },
   {NAME: "Map Name Centering", ENABLED: True, DATA:
     [
-      {POS: 0x00083380, ORIG: ConstBitStream(hex = "0x02001446"), PATCH: ConstBitStream(hex = "0x8C38240A")}, # j 0x0890E230          ; jump to a arbitrary piece of code
+      {POS: 0x00083380, ORIG: ConstBitStream(hex = "0x02001446"), PATCH: ConstBitStream(hex = "0x8038240A")}, # j 0x0890E200          ; jump to a arbitrary piece of code
       {POS: 0x00083384, ORIG: ConstBitStream(hex = "0x02000146"), PATCH: ConstBitStream(hex = "0x02001446")}, # mul.s $f0, $f20
-      {POS: 0x0010A2F0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x02000146")}, # mul.s $f0, $f1        ; round the glyphs of the widths down
-      {POS: 0x0010A2F4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0D000046")}, # trunc.w.s $f0, $f0
-      {POS: 0x0010A2F8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x20008046")}, # cvt.s.w $f0, $f0
-      {POS: 0x0010A2FC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xBA1C220A")}, # j 0x088872E8
+      {POS: 0x0010A2C0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1400BF8F")}, # lw $ra, 20($sp)       ; round the widths of the glyphs down
+      {POS: 0x0010A2C4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1000B4AF")}, # sw $s4, 16($sp)
+      {POS: 0x0010A2C8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x8808143C")}, # lui $s4, 0x0888
+      {POS: 0x0010A2CC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xD4759426")}, # addiu $s4, $s4, 0x75D4
+      {POS: 0x0010A2D0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0600F413")}, # beq $ra, $s4, 0x0890E22C
+      {POS: 0x0010A2D4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x02000146")}, # mul.s $f0, $f1
+      {POS: 0x0010A2D8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xD4009426")}, # addiu $s4, $s4, 0xD4
+      {POS: 0x0010A2DC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0300F413")}, # beq $ra, $s4, 0x0890E22C
+      {POS: 0x0010A2E0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00000000")}, # nop
+      {POS: 0x0010A2E4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xBA1C220A")}, # j 0x088872E8
+      {POS: 0x0010A2E8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1000B48F")}, # lw $s4, 16($sp)
+      {POS: 0x0010A2EC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0D000046")}, # trunc.w.s $f0, $f0
+      {POS: 0x0010A2F0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x8938240A")}, # j 0x0890E224
+      {POS: 0x0010A2F4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x20008046")}, # cvt.s.w $f0, $f0
       {POS: 0x00083718, ORIG: ConstBitStream(hex = "0x42060246"), PATCH: ConstBitStream(hex = "0x42161446")}, # mul.s $f25, $f2, $f20 ; make the game stop doing weird shit
       {POS: 0x0008EA14, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138           ; make the game use the right center coordinate
       {POS: 0x0008EA7C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
@@ -67,6 +78,14 @@ EBOOT_PATCHES = [
       {POS: 0x0009006C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
       {POS: 0x000902F8, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
       {POS: 0x00090358, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
+    ]
+  },
+  {NAME: "Ammo/Present Menu (Names)", ENABLED: True, DATA:
+    [
+      {POS: 0x0000AAC4, ORIG: ConstBitStream(hex = "0x02180046"), PATCH: ConstBitStream(hex = "0x01000046")}, # sub.s $f0, $f0, $f0   ; stop placing the glyphs in weird manner
+      {POS: 0x00083C2C, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")}, # mul.s $f31, $f2, $f20 ; stop doing strange things to the center coordinate
+      {POS: 0x00083E34, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")}, # mul.s $f31, $f2, $f20 ; stop doing strange things to the center coordinate
+      {POS: 0x000DDEBC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")}, # 132.0                 ; fix the center coordinate
     ]
   },
   {NAME: "Fix Glyph Height", ENABLED: True, DATA:

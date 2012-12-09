@@ -19,6 +19,6 @@
 ################################################################################
 
 from .umdimage_ex import extract_umdimage, UMDIMAGE_TYPE
-from .pak_ex import extract_pak
+from .pak_ex import extract_pak, get_pak_files
 
 ### EOF ###

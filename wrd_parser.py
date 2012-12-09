@@ -1,5 +1,6 @@
 ﻿################################################################################
 ### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012 /a/nonymous scanlations
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -40,14 +41,14 @@ WRD_CUTIN         = ConstBitStream(hex='0x7006')
 #???              = ConstBitStream(hex='0x7007')
 WRD_VOICE         = ConstBitStream(hex='0x7008')
 WRD_BGM           = ConstBitStream(hex='0x7009')
-#???              = ConstBitStream(hex='0x700A')
-#???              = ConstBitStream(hex='0x700B')
+WRD_SFX           = ConstBitStream(hex='0x700A')
+WRD_SFX2          = ConstBitStream(hex='0x700B')
 WRD_AMMO          = ConstBitStream(hex='0x700C')
 #???              = ConstBitStream(hex='0x700D')
 #???              = ConstBitStream(hex='0x700E')
-#???              = ConstBitStream(hex='0x700F')
+WRD_CHAR_TITLE    = ConstBitStream(hex='0x700F')
 
-#???              = ConstBitStream(hex='0x7010')
+WRD_REPORT_INFO   = ConstBitStream(hex='0x7010')
 #???              = ConstBitStream(hex='0x7011')
 #???              = ConstBitStream(hex='0x7012')
 #???              = ConstBitStream(hex='0x7013')
@@ -72,7 +73,7 @@ WRD_SPEAKER       = ConstBitStream(hex='0x7021')
 #???              = ConstBitStream(hex='0x7024')
 WRD_CHANGEUI      = ConstBitStream(hex='0x7025')
 WRD_SETFLAG       = ConstBitStream(hex='0x7026')
-#???              = ConstBitStream(hex='0x7027')
+WRD_CHECKCHAR     = ConstBitStream(hex='0x7027')
 #???              = ConstBitStream(hex='0x7028')
 WRD_CHECKOBJ      = ConstBitStream(hex='0x7029')
 WRD_SETLABEL      = ConstBitStream(hex='0x702A')
@@ -93,7 +94,7 @@ WRD_CHECKFLAG     = ConstBitStream(hex='0x7035')
 #???              = ConstBitStream(hex='0x7038')
 #???              = ConstBitStream(hex='0x7039')
 WRD_WAIT          = ConstBitStream(hex='0x703A')
-#???              = ConstBitStream(hex='0x703B')
+WRD_WAIT_FRAME    = ConstBitStream(hex='0x703B')
 WRD_FLAGCHECK_END = ConstBitStream(hex='0x703C')
 #???              = ConstBitStream(hex='0x703D')
 #???              = ConstBitStream(hex='0x703E')
@@ -120,6 +121,7 @@ def parse_wrd(in_file):
   
   cur_speaker   = 0x1F
   cur_sprite    = SpriteId()
+  last_sprite   = -1
   cur_voice     = VoiceId()
   cur_bgm       = -1
   cur_trialcam  = None
@@ -131,7 +133,7 @@ def parse_wrd(in_file):
   show_tag      = True
   is_speaking   = True
   
-  img_filter      = False
+  img_filter    = False
   
   cur_mode      = None
   cur_room      = -1
@@ -249,6 +251,10 @@ def parse_wrd(in_file):
       if state == 0:
         cur_room = room
         cur_mode = common.SCENE_MODES.normal
+        
+    elif command == WRD_CHECKCHAR:
+      # 70 27 XX -- Check object XX
+      cur_object = wrd.read('uint:8')
     
     elif command == WRD_CHECKOBJ:
       # 70 29 XX -- Check object XX
@@ -322,6 +328,8 @@ def parse_wrd(in_file):
       sprite_info = SpriteId(SPRITE_TYPE.bustup, char_id, sprite_id)
       loaded_sprites[char_id] = sprite_info
       
+      last_sprite = char_id
+      
       # If we have a camera, that means we might not be showing a sprite
       # just because we loaded it. Wait for the camera flag to point at a sprite.
       if cur_trialcam == None:
@@ -368,6 +376,42 @@ def parse_wrd(in_file):
       
       else:
         cur_bgm = bgm_id
+    
+    elif command == WRD_SFX or command == WRD_SFX2:
+      # 70 0A XX YY <-- Play SFX
+      # 70 0B XX YY <-- Play SFX
+      #   * XX    = SFX ID
+      #     * 0xFF = Off
+      #   * YY    = Transition (?)
+      #     * 0x00 = Stop
+      #     * 0x3C = Fade Out
+      #     * 0x64 = Fade In
+      sfx_id     = wrd.read('uint:8')
+      transition = wrd.read('uint:8')
+      
+      if sfx_id == 0xFF:
+        cur_sfx = -1
+      
+      else:
+        cur_sfx = sfx_id
+    
+    elif command == WRD_CHAR_TITLE:
+      # 70 0F XX 00 YY
+      #   * XX = Title status
+      #     * 0x00 = Default title
+      #     * 0x01 = Alternate title
+      #   * YY = Char ID
+      title_status = wrd.read("uint:8")
+      wrd.read(8)
+      char_id      = wrd.read("uint:8")
+    
+    elif command == WRD_REPORT_INFO:
+      # 70 10 XX 00 YY
+      #   * XX = Char ID
+      #   * YY = # of pieces of info known
+      char_id    = wrd.read("uint:8")
+      wrd.read(8)
+      info_known = wrd.read("uint:8")
       
     elif command == WRD_SPEAKER:
       # 70 21 XX <-- Change speaker tag
@@ -376,6 +420,9 @@ def parse_wrd(in_file):
       
       if char_id in common.CHAR_IDS:
         cur_speaker = char_id
+        speaker_set = True
+      elif char_id == 0x1C:
+        cur_speaker = last_sprite
         speaker_set = True
     
     elif command == WRD_BGD:
@@ -405,7 +452,7 @@ def parse_wrd(in_file):
       #   * XX XX = 0x0BB8 + Cutin ID (base 10: 3000 + Cutin ID)
       #     * if < 1000 (base 10), then it's a flash event.
       #     * I've seen numbers between 1000 and 3000, but I'm not sure what they're for.
-      #   * YY    = Show/hide
+      #   * YY = Show/hide
       #     * 01 = Show
       #     * 02 = Hide
       #     * 03 = Load/prepare flash (?)
@@ -456,9 +503,10 @@ def parse_wrd(in_file):
     elif command == WRD_AMMO:
       # 70 0C XX YY
       #   * XX = Ammo ID
-      #   * YY    = Show/hide
-      #     * 01 = Show
-      #     * ?? = Hide
+      #   * YY = Status
+      #     * 00 = If ID == 0xFF & status == 0x00, clear all ammo from ElectroiD
+      #     * 01 = Add to ElectroiD
+      #     * 02 = Update info
       
       ammo_id    = wrd.read("uint:8")
       ammo_state = wrd.read("uint:8")
@@ -471,7 +519,7 @@ def parse_wrd(in_file):
     elif command == WRD_MOVIE:
       # 70 05 XX YY
       #   * XX = Movie ID
-      #   * YY    = Show/hide
+      #   * YY = Show/hide
       #     * 01 = Show
       #     * ?? = Hide
       
@@ -488,26 +536,28 @@ def parse_wrd(in_file):
         cur_movie = movie_id
     
     elif command == WRD_SETFLAG:
-      # 70 26 XX XX YY
-      #   * XX XX = Flag ID
-      #   * YY    = Flag State
+      # 70 26 XX YY XX
+      #   * XX = Flag group
+      #   * YY = Flag ID
+      #   * ZZ = Flag State
       #     * 00 = Off
       #     * 01 = On
       
-      flag_id    = wrd.read('uint:16')
+      flag_group = wrd.read('uint:8')
+      flag_id    = wrd.read('uint:8')
       flag_state = wrd.read('uint:8')
       #print '0x%04X -> %d' % (flag_id, flag_state)
     
     elif command == WRD_CHECKFLAG:
-      # 70 35 XX XX YY YY 
+      # 70 35 XX XX 00 YY 
       #   * If there are multiple flags (as many as needed)
-      #   -> WW XX XX YY YY 
+      #   -> WW XX XX 00 YY 
       #
       #   * When all the flags have been listed.
       #   -> 70 3C 70 34 ZZ ZZ
       #
-      #   * XX XX = Flag ID
-      #   * YY YY = Flag State
+      #   * XX XX = Flag group/ID
+      #   * YY = Flag State
       #     * 00 00 = Off
       #     * 00 01 = On
       #
@@ -521,7 +571,8 @@ def parse_wrd(in_file):
       flag_ops = []
       
       while True:
-        flag_id    = wrd.read('uint:16')
+        flag_group = wrd.read('uint:8')
+        flag_id    = wrd.read('uint:8')
         flag_state = wrd.read('uint:8')
         
         # Some weird edge cases where the flag marker is only three bytes?
@@ -531,7 +582,7 @@ def parse_wrd(in_file):
         # 70 35 0F 1B 01 70 3C 70 2A 01 F7 -> !e06_007_152.scp.wrd
         if flag_state == 0:
           flag_state = wrd.read('uint:8')
-        flags.append((flag_id, flag_state))
+        flags.append((flag_group, flag_id, flag_state))
         
         if wrd.peek('uint:8') in [0x06, 0x07]:
           operator = wrd.read('uint:8')
@@ -558,14 +609,14 @@ def parse_wrd(in_file):
       
       check_str = ["if"]
       for i, flag in enumerate(flags):
-        if flag[1] == 0:
+        if flag[2] == 0:
           check_str.append("not")
-        check_str.append('0x%04X' % flag[0])
+        check_str.append('0x%02X%02X' % (flag[0], flag[1]))
         
         if i < len(flag_ops):
           check_str.append(flag_ops[i])
       check_str = ' '.join(check_str)
-      #print check_str
+      # print check_str
     
     elif command == WRD_IMGFILTER:
       # 70 04 01 XX 00 00
@@ -591,7 +642,7 @@ def parse_wrd(in_file):
         #print "Unknown filter! 0x%x" % filter
     
     elif command == WRD_GOTOFOLDER:
-      # 70 1B XX YY ZZ 
+      # 70 1B XX YY ZZ
       #   * XX = Chapter
       #   * YY = Scene
       #   * ZZ = Room
@@ -614,6 +665,11 @@ def parse_wrd(in_file):
     elif command == WRD_WAIT:
       # 70 3A
       # No parameters. Just tells the script to wait for button press.
+      pass
+    
+    elif command == WRD_WAIT_FRAME:
+      # 70 3B
+      # No parameters. Just tells the script to wait for a frame.
       pass
       
     elif command == WRD_TEXT:

@@ -38,7 +38,7 @@ class GimConverter():
     png_file = os.path.abspath(png_file)
     
     # Convert our GIM.
-    self.process.start("gim2png", ["-9", gim_file])
+    self.process.start("tools/gim2png", ["-9", gim_file])
     self.process.waitForFinished(-1)
     
     # Now get the output location.
@@ -69,9 +69,9 @@ if __name__ == "__main__":
   app = QtGui.QApplication(sys.argv)
   
   conv = GimConverter()
-  conv.convert("adv_map_l_001.gim", "yay.png")
-  conv.convert("adv_map_l_001.gim", "yay2.png")
-  conv.convert("adv_map_l_001.gim", "yay3.png")
-  conv.convert("adv_map_l_001.gim", "yay4.png")
+  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay.png")
+  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay2.png")
+  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay3.png")
+  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay4.png")
 
 ### EOF ###
