@@ -32,7 +32,8 @@ import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
 from extract import extract_umdimage, UMDIMAGE_TYPE, extract_pak
 from font_parser import font_bmp_to_alpha
-from tools.gim_to_png import GimConverter
+from gim_to_png import GimConverter
+from gmo_file import GmoFile
 
 UMDIMAGE_DAT    = os.path.join("PSP_GAME", "USRDIR", "umdimage.dat")
 UMDIMAGE2_DAT   = os.path.join("PSP_GAME", "USRDIR", "umdimage2.dat")
@@ -247,8 +248,10 @@ class SetupWizard(QtGui.QDialog):
   def copy_gfx(self):
     gfx_dir = os.path.join(self.workspace_dir, "gfxyayay")
     
-    if not os.path.isdir(gfx_dir):
-      os.makedirs(gfx_dir)
+    if os.path.isdir(gfx_dir):
+      shutil.rmtree(gfx_dir)
+    
+    os.makedirs(gfx_dir)
     
     # Extract the images we can't just take directly from the game's data.
     gfx_base = zipfile.ZipFile("data/gfx-base.zip", "r")
@@ -385,8 +388,52 @@ class SetupWizard(QtGui.QDialog):
         
         shutil.move(src, dest)
     
+    sprite_dir = os.path.join(gfx_dir, "sprites")
+    gmo_files = glob.glob(os.path.join(sprite_dir, "*.gmo"))
+    
     progress.setLabelText("Extracting GMO files.")
     progress.setValue(0)
+    progress.setMaximum(len(gmo_files))
+    
+    for i, gmo_file in enumerate(gmo_files):
+      if i % 10 == 0:
+        progress.setValue(i)
+      
+      if progress.wasCanceled():
+        return
+      
+      name, ext = os.path.splitext(os.path.basename(gmo_file))
+      gim_file  = os.path.join(sprite_dir, name + ".gim")
+      
+      gmo = GmoFile(filename = gmo_file)
+      
+      # Once we've loaded it, we're all done with it, so make it go away.
+      os.remove(gmo_file)
+      
+      if gmo.gim_count() == 0:
+        continue
+      
+      gim = gmo.get_gim(0)
+      
+      with open(gim_file, "wb") as f:
+        gim.tofile(f)
+    
+    if self.ui.chkGimToPng.isChecked():
+      gim_files = glob.glob(os.path.join(gfx_dir, "*", "*.gim"))
+      
+      progress.setLabelText("Converting GIM to PNG.")
+      progress.setValue(0)
+      progress.setMaximum(len(gim_files))
+      
+      converter = GimConverter()
+      
+      for i, gim_file in enumerate(gim_files):
+        progress.setValue(i)
+        if progress.wasCanceled():
+          return
+        
+        converter.convert(gim_file)
+        os.remove(gim_file)
     
     progress.close()
     

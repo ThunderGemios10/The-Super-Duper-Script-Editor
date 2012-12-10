@@ -34,11 +34,13 @@ NULL_BYTE = ConstBitStream(hex = "0x00")
 ##################################################
 ### 
 ##################################################
-def get_pak_files(data, recursive = False, file_ext = None, ext_mode = EXT_MODE.suggest, toc = None):
+def parse_pak_toc(data):
   
   # If we don't have enough to even get a file count, we're obviously no good.
   if data.len < 32:
     raise InvalidArchiveException
+    
+  data.bytepos = 0
   
   num_files = data.read("uintle:32")
   # One extra for the file count.
@@ -49,35 +51,52 @@ def get_pak_files(data, recursive = False, file_ext = None, ext_mode = EXT_MODE.
   
   file_starts = []
   file_ends   = []
-  filenames   = None
+  
+  for i in xrange(num_files):
+    file_start = data.read("uintle:32")
+    
+    # Obviously, a file can't start after the end of the archive
+    # or inside the table of contents.
+    if file_start < toc_len or file_start >= data.len / 8:
+      raise InvalidArchiveException
+      
+    # Doesn't make much sense if they're not in order.
+    if i > 0 and file_start < file_starts[-1]:
+      raise InvalidArchiveException
+    
+    file_starts.append(file_start)
+  
+  for i in xrange(num_files):
+  
+    file_start = file_starts[i]
+    if i == num_files - 1:
+      file_end = (data.len / 8)
+    else:
+      file_end = file_starts[i + 1]
+    
+    file_ends.append(file_end)
+  
+  return file_starts, file_ends
+
+##################################################
+### 
+##################################################
+def get_pak_files(data, recursive = False, file_ext = None, ext_mode = EXT_MODE.suggest, toc = None):
+  
+  # If we don't have enough to even get a file count, we're obviously no good.
+  if data.len < 32:
+    raise InvalidArchiveException
+  
+  filenames = None
   
   if toc == None:
-  
-    for i in xrange(num_files):
-      file_start = data.read("uintle:32")
-      
-      # Obviously, a file can't start after the end of the archive
-      # or inside the table of contents.
-      if file_start < toc_len or file_start >= data.len / 8:
-        raise InvalidArchiveException
-        
-      # Doesn't make much sense if they're not in order.
-      if i > 0 and file_start < file_starts[-1]:
-        raise InvalidArchiveException
-      
-      file_starts.append(file_start)
     
-    for i in xrange(num_files):
-    
-      file_start = file_starts[i]
-      if i == num_files - 1:
-        file_end = (data.len / 8)
-      else:
-        file_end = file_starts[i + 1]
-      
-      file_ends.append(file_end)
+    file_starts, file_ends = parse_pak_toc(data)
+    num_files = len(file_starts)
   
   else:
+    
+    num_files = data.read("uintle:32")
     
     filenames = []
     for entry in toc:

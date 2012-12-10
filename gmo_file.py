@@ -41,9 +41,9 @@ class GmoFile():
     self.data = None
     self.__gim_files = []
     
-    if data:
+    if not data == None:
       self.load_data(data, offset)
-    elif filename:
+    elif not filename == None:
       self.load_file(filename)
   
   def load_file(self, filename):
@@ -61,6 +61,10 @@ class GmoFile():
     self.data = BitStream(data[offset * 8 : (offset + gmo_size) * 8])
     
     self.__find_gims()
+  
+  def save(self, filename):
+    with open(filename, "wb") as f:
+      self.data.tofile(f)
   
   def __find_gims(self):
     if self.data == None:
@@ -121,8 +125,7 @@ if __name__ == "__main__":
   gmo.replace_gim_file(27, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
   gmo.replace_gim_file(28, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0028-2-fs8.gim")
   
-  with open("debug/test.gmo", "wb") as f:
-    gmo.data.tofile(f)
+  gmo.save("debug/test.gmo")
   with open("debug/test.gim", "wb") as f:
     gim.tofile(f)
   

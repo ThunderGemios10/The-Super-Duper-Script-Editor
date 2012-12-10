@@ -88,7 +88,7 @@ EBOOT_PATCHES = [
       {POS: 0x000DDEBC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")}, # 132.0                 ; fix the center coordinate
     ]
   },
-  {NAME: "Fix Glyph Height", ENABLED: True, DATA:
+  {NAME: "Fix Glyph Height", ENABLED: False, DATA:
     [
       {POS: 0x00082EFC, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x19001724")}, # li $s7, 25         ; change glyph height
       {POS: 0x00082F18, ORIG: ConstBitStream(hex = "0x2110E202"), PATCH: ConstBitStream(hex = "0x10004224")}, # addiu $v0, $v0, 16 ; fix the offset

@@ -32,10 +32,11 @@ class GimConverter():
     self.parent = parent
     self.process = QProcess()
   
-  def convert(self, gim_file, png_file):
+  def convert(self, gim_file, png_file = None):
     # So there's no confusion.
     gim_file = os.path.abspath(gim_file)
-    png_file = os.path.abspath(png_file)
+    if png_file:
+      png_file = os.path.abspath(png_file)
     
     # Convert our GIM.
     self.process.start("tools/gim2png", ["-9", gim_file])
@@ -58,11 +59,14 @@ class GimConverter():
       saved_file = match.group(1)
       break
     
-    # And move it to the requested location.
-    if saved_file:
-      shutil.move(saved_file, png_file)
-    else:
+    # Make sure we actually generated a file.
+    if not saved_file:
       print "Error generating PNG file."
+      return
+    
+    # And move it to the requested location, if one exists.
+    if png_file:
+      shutil.move(saved_file, png_file)
 
 if __name__ == "__main__":
   import sys
