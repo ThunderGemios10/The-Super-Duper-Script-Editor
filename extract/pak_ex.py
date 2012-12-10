@@ -87,7 +87,9 @@ def get_pak_files(data, recursive = False, file_ext = None, ext_mode = EXT_MODE.
   if data.len < 32:
     raise InvalidArchiveException
   
-  filenames = None
+  file_starts = []
+  file_ends   = []
+  filenames   = None
   
   if toc == None:
     

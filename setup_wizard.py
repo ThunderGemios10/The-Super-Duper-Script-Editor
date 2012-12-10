@@ -207,16 +207,16 @@ class SetupWizard(QtGui.QDialog):
       os.makedirs(self.backup_dir)
     
     # Now, extract our archives.
-    # extract_umdimage(umdimage,  out_dir = self.umdimage_dir,   eboot = self.eboot_path, type = UMDIMAGE_TYPE.best,   toc_filename = self.toc_file)
-    # extract_umdimage(umdimage2, out_dir = self.umdimage2_dir,  eboot = self.eboot_path, type = UMDIMAGE_TYPE.best2,  toc_filename = self.toc2_file)
-    # extract_pak(voice, out_dir = self.voice_dir)
+    extract_umdimage(umdimage,  out_dir = self.umdimage_dir,   eboot = self.eboot_path, type = UMDIMAGE_TYPE.best,   toc_filename = self.toc_file)
+    extract_umdimage(umdimage2, out_dir = self.umdimage2_dir,  eboot = self.eboot_path, type = UMDIMAGE_TYPE.best2,  toc_filename = self.toc2_file)
+    extract_pak(voice, out_dir = self.voice_dir)
     
     # ISO directory needs to not exist for copytree.
-    # if os.path.isdir(self.edited_iso_dir):
-      # shutil.rmtree(self.edited_iso_dir)
+    if os.path.isdir(self.edited_iso_dir):
+      shutil.rmtree(self.edited_iso_dir)
     
     # Give us an ISO directory for the editor to place modified files in.
-    # shutil.copytree(self.iso_dir, self.edited_iso_dir)
+    shutil.copytree(self.iso_dir, self.edited_iso_dir)
     
     # Files we want to make blank, because they're unnecessary.
     blank_files = [
