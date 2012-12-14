@@ -948,19 +948,20 @@ def mangle_line(line, lengths, index, scene_mode, cur_font, default_clt):
   
   # The max length is even tighter 
   if scene_mode == common.SCENE_MODES.ammo or scene_mode == common.SCENE_MODES.present:
-    if index == 0:   max_len = 14
-    else:            max_len = 17
+    if index == 0:   max_len = 61
+    else:            max_len = 61
     
-    min_len = 14
-    too_short = u'®'
+    # Keep the code here for posterity, but we don't need it to do anything.
+    # min_len = 14
+    # too_short = u'®'
     
-    if (index == 0 or index == 1) and len(line) < min_len:
-      extra_chars = min_len - len(line)
+    # if (index == 0 or index == 1) and len(line) < min_len:
+      # extra_chars = min_len - len(line)
       
-      line += too_short * (extra_chars)
+      # line += too_short * (extra_chars)
       
-      char_width = FONT_DATA[cur_font][too_short]['w'] * CLT[default_clt]["hscale"]
-      lengths[index][max_len:] = [char_width] * extra_chars
+      # char_width = FONT_DATA[cur_font][too_short]['w'] * CLT[default_clt]["hscale"]
+      # lengths[index][max_len:] = [char_width] * extra_chars
   
   elif scene_mode == common.SCENE_SPECIAL.option:
     max_len = 24

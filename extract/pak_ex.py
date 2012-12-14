@@ -269,6 +269,8 @@ def extract_pak(filename, out_dir = None, get_files_fn = get_pak_files, file_ext
   for filename, file_data in get_files_fn(data, recursive, file_ext):
     out_path = os.path.join(out_dir, filename)
     
+    print filename
+    
     final_dir = os.path.dirname(out_path)
     try:
       os.makedirs(final_dir)

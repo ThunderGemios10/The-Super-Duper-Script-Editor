@@ -22,9 +22,12 @@ from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtGui import QFileDialog, QProgressDialog
 from ui_wizard import Ui_SetupWizard
 
+import cStringIO
 import glob
 import os
 import shutil
+import sys
+import threading
 import zipfile
 from bitstring import ConstBitStream
 
@@ -200,23 +203,72 @@ class SetupWizard(QtGui.QDialog):
     
     self.generate_directories()
     
+    progress = QProgressDialog("", QtCore.QString(), 0, 10600, self)
+    progress.setWindowTitle("Setting up workspace...")
+    progress.setWindowModality(Qt.Qt.WindowModal)
+    progress.setMinimumDuration(0)
+    progress.setValue(0)
+    progress.setAutoClose(False)
+    
+    progress.setLabelText("Creating directories...")
+    
     # Do the easy stuff first.
     if not os.path.isdir(self.changes_dir):
       os.makedirs(self.changes_dir)
+    progress.setValue(progress.value() + 1)
+    
     if not os.path.isdir(self.backup_dir):
       os.makedirs(self.backup_dir)
+    progress.setValue(progress.value() + 1)
     
-    # Now, extract our archives.
-    extract_umdimage(umdimage,  out_dir = self.umdimage_dir,   eboot = self.eboot_path, type = UMDIMAGE_TYPE.best,   toc_filename = self.toc_file)
-    extract_umdimage(umdimage2, out_dir = self.umdimage2_dir,  eboot = self.eboot_path, type = UMDIMAGE_TYPE.best2,  toc_filename = self.toc2_file)
-    extract_pak(voice, out_dir = self.voice_dir)
+    thread_fns = [
+      {"target": extract_umdimage, "kwargs": {"filename": umdimage,  "out_dir": self.umdimage_dir,  "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best,  "toc_filename": self.toc_file}},
+      {"target": extract_umdimage, "kwargs": {"filename": umdimage2, "out_dir": self.umdimage2_dir, "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best2, "toc_filename": self.toc2_file}},
+      {"target": extract_pak,      "kwargs": {"filename": voice,     "out_dir": self.voice_dir}},
+    ]
+    
+    THREAD_TIMEOUT = 0.1
+    
+    # Going to capture stdout because I don't feel like
+    # rewriting the extract functions to play nice with GUI.
+    stdout      = sys.stdout
+    sys.stdout  = cStringIO.StringIO()
+    
+    for thread_fn in thread_fns:
+      thread = threading.Thread(**thread_fn)
+      thread.start()
+      
+      while thread.isAlive():
+        thread.join(THREAD_TIMEOUT)
+        
+        output = [line for line in sys.stdout.getvalue().split('\n') if len(line) > 0]
+        progress.setValue(progress.value() + len(output))
+        if len(output) > 0:
+          progress.setLabelText("Extracting %s..." % output[-1])
+        
+        sys.stdout = cStringIO.StringIO()
+    
+    sys.stdout = stdout
+    
+    # Give us an ISO directory for the editor to place modified files in.
+    progress.setLabelText("Copying ISO files...")
     
     # ISO directory needs to not exist for copytree.
     if os.path.isdir(self.edited_iso_dir):
       shutil.rmtree(self.edited_iso_dir)
     
-    # Give us an ISO directory for the editor to place modified files in.
-    shutil.copytree(self.iso_dir, self.edited_iso_dir)
+    # One more thing we want threaded so it doesn't lock up the GUI.
+    thread = threading.Thread(target = shutil.copytree, kwargs = {"src": self.iso_dir, "dst": self.edited_iso_dir})
+    thread.start()
+    
+    while thread.isAlive():
+      thread.join(1.0)
+      progress.setLabelText("Copying ISO files...")
+      # It has to increase by some amount or it won't update and the UI will lock up.
+      progress.setValue(progress.value() + 1)
+      
+    # shutil.copytree(self.iso_dir, self.edited_iso_dir)
+    progress.setValue(progress.value() + 1)
     
     # Files we want to make blank, because they're unnecessary.
     blank_files = [
@@ -233,11 +285,16 @@ class SetupWizard(QtGui.QDialog):
     # Copy the decrypted EBOOT into the ISO folder so the builder can use it.
     shutil.copy(self.eboot_path, os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
     
+    progress.setLabelText("Extracting similarity database...")
+    
     # Extract the similarity database.
     similarity_db = zipfile.ZipFile("data/similarity-db.zip", "r")
     # similarity_db.extract("similarity-db.sql", "data")
     similarity_db.extract("similarity-db.sql", self.workspace_dir)
     similarity_db.close()
+    
+    progress.setValue(progress.maximum())
+    progress.close()
     
     self.ui.grpStep4.setEnabled(False)
     self.ui.grpStep5.setEnabled(True)
@@ -455,6 +512,9 @@ class SetupWizard(QtGui.QDialog):
   
   def check_terminology(self):
     self.ui.grpStep6.setEnabled(False)
+    
+    self.ui.btnClose.disconnect(self.reject)
+    self.ui.btnClose.connect(self.accept)
     self.ui.btnClose.setText("Finish")
   
   ##############################################################################

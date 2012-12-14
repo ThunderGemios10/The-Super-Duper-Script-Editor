@@ -269,8 +269,10 @@ class DiffsMenu(QtGui.QDialog):
 
 if __name__ == "__main__":
 
-  folder1 = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage"
-  folder2 = "X:\\Danganronpa\\Danganronpa_BEST\\!changes"
+  # folder1 = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage"
+  # folder2 = "X:\\Danganronpa\\Danganronpa_BEST\\!changes"
+  folder1 = "X:\\My Dropbox\\Danganronpa\\Best\\bdh-umdimage_ch2"
+  folder2 = "X:\\My Dropbox\\Danganronpa\\Best\\rito-umdimage_ch2"
   
   import sys
 

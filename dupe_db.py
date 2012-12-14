@@ -288,25 +288,36 @@ class DupesDB:
 
 db = DupesDB()
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-  import pprint
-  import time
-  import glob
-  pp = pprint.PrettyPrinter()
+  # import pprint
+  # import time
+  # import glob
+  # pp = pprint.PrettyPrinter()
   
-  test_files = glob.glob("X:/Danganronpa/Danganronpa_BEST/umdimage/e04*/*/*.txt")
+  # gfx_db = DupesDB("data/dupes-gfx-pruned.csv")
   
-  start = time.time()
-  #pp.pprint(db.files_in_same_group("umdimage\\e04_121_000.lin\\e04_121_000.pak\\0023.txt"))
-  #for filename in test_files:
-    #filename = filename[32:]
-    #if not db.group_from_file(filename) == None:
-    #db.remove_file(filename)
-  #db.remove_file("umdimage\\e04_121_000.lin\\e04_121_000.pak\\0023.txt")
-  print "New method: took %s seconds." % (time.time() - start)
-  
-  db.save_csv()
+  # for i in xrange(1000):
+    # files = gfx_db.files_in_group(i)
+    # if files == None:
+      # continue
+    
+    # for file in files:
+      # temp = db.group_from_file(file)
+      
+      # if temp == None:
+        # continue
+      
+      # db.remove_file(file)
+    
+    # group = None
+    # for file in files:
+      # group = db.add_file(file, group)
+      
+      # if group == None:
+        # print "Failed to add %s" % file
+    
+  # db.save_csv()
   
 ################################################################################
 ### ALL DONE

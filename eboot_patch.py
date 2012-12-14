@@ -88,6 +88,14 @@ EBOOT_PATCHES = [
       {POS: 0x000DDEBC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")}, # 132.0                 ; fix the center coordinate
     ]
   },
+  {NAME: "Ammo/Present Menu (Line Length)", ENABLED: True, DATA:
+    [
+      {POS: 0x00088F38, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (presents)
+      {POS: 0x0008C110, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (ammo)
+      {POS: 0x00088F6C, ORIG: ConstBitStream(hex = "0x11000B24"), PATCH: ConstBitStream(hex = "0x3D000B24")}, # li $t3, 0x3D     ; make the game copy more characters into the array (presents)
+      {POS: 0x0008C144, ORIG: ConstBitStream(hex = "0x11000D24"), PATCH: ConstBitStream(hex = "0x3D000D24")}, # li $t5, 0x3D     ; make the game copy more characters into the array (ammo)
+    ]
+  },
   {NAME: "Fix Glyph Height", ENABLED: False, DATA:
     [
       {POS: 0x00082EFC, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x19001724")}, # li $s7, 25         ; change glyph height
