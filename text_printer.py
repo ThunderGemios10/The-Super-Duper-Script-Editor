@@ -75,6 +75,7 @@ TEXT_FORMAT = {
   common.SCENE_MODES.rules:       {"x":  32, "y": 159, "w": 416, "h": 18, "a": TEXT_ALIGN.center, "clt":  0, "killblanks": True},
   common.SCENE_MODES.ammo:        {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": False},
   common.SCENE_MODES.ammoname:    {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center, "clt":  7, "killblanks": True},
+  common.SCENE_MODES.ammosummary: {"x":  41, "y": 192, "w": 200, "h": 12, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": False},
   common.SCENE_MODES.present:     {"x": 247, "y":  72, "w": 185, "h": 14, "a": TEXT_ALIGN.left,   "clt":  7, "killblanks": False},
   common.SCENE_MODES.presentname: {"x":  32, "y": 199, "w": 200, "h": 14, "a": TEXT_ALIGN.center, "clt":  7, "killblanks": True},
   common.SCENE_MODES.debate:      {"x":  18, "y": 160, "w": 444, "h": 24, "a": TEXT_ALIGN.center, "clt":  8, "killblanks": True},
@@ -984,6 +985,15 @@ def mangle_line(line, lengths, index, scene_mode, cur_font, default_clt):
 ### @desc Prints the given text onto the given image.
 ##############################################################################
 def print_text(image, text, scene_mode = common.SCENE_MODES.normal, mangle = True):
+  
+  # A couple exceptions.
+  if scene_mode in [common.SCENE_MODES.ammo, common.SCENE_MODES.present]:
+    text_lines = text.split('\n')
+    temp_text = text_lines[:2]
+    temp_text = '\n'.join(temp_text)
+    if len(text_lines) > 2:
+      temp_text += "..."
+    image = print_text(image, temp_text, common.SCENE_MODES.ammosummary, False)
   
   #default_clt = 0
   format = TEXT_FORMAT[scene_mode]

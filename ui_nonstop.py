@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\nonstop.ui'
 #
-# Created: Thu Dec 06 17:06:56 2012
+# Created: Mon Dec 17 00:23:43 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!

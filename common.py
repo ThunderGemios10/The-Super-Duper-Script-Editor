@@ -23,7 +23,7 @@ import re
 
 from config import EditorConfig
 
-SCENE_MODES   = Enum("normal", "trial", "rules", "ammo", "ammoname", "present", "presentname", "debate", "mtb", "climax", "anagram", "menu", "map", "report", "report2", "skill", "skill2", "music", "eventname", "moviename", "theatre", "help", "other")
+SCENE_MODES   = Enum("normal", "trial", "rules", "ammo", "ammoname", "ammosummary", "present", "presentname", "debate", "mtb", "climax", "anagram", "menu", "map", "report", "report2", "skill", "skill2", "music", "eventname", "moviename", "theatre", "help", "other")
 SCENE_SPECIAL = Enum("option", "showopt", "react", "debate", "chatter", "checkobj")
 BOX_COLORS    = Enum("orange", "green", "blue")
 BOX_TYPES     = Enum("normal", "flat")

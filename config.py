@@ -57,9 +57,23 @@ DEFAULT_SECTION = "DEFAULT"
 
 HISTORY_FILE    = os.path.join(CONFIG_DIR, "data/history.bin")
 
+def sanitize_name(section):
+  return section.lower().replace(' ', '')
+
 class EditorConfig:
   def __init__(self):
+    self.other_sections = set()
     self.load_config()
+  
+  def add_section(self, section):
+    section = sanitize_name(section)
+    
+    if not section in vars(self):
+      vars(self)[section] = {}
+    
+    self.other_sections.add(section)
+    
+    return section
   
   def load_config(self):
     config = ConfigParser.ConfigParser(DEFAULT_SETTINGS)
@@ -78,6 +92,15 @@ class EditorConfig:
     if config.has_option(DEFAULT_SECTION, "auto_play"):
       self.auto_play_voice = ast.literal_eval(config.get(DEFAULT_SECTION, "auto_play"))
     
+    # Get any other sections we have.
+    for section in config.sections():
+      items = config.items(section)
+      section = self.add_section(section)
+      
+      for (name, val) in items:
+        if name not in DEFAULT_SETTINGS:
+          vars(self)[section][name] = val
+    
     # Load our last-viewed-file history.
     if os.path.isfile(HISTORY_FILE):
       f = open(HISTORY_FILE, "rb")
@@ -87,20 +110,33 @@ class EditorConfig:
       self.last_file = {}
   
   def save_config(self):
-    outfile = open(CONFIG_FILENAME, "w")
+    with open(CONFIG_FILENAME, "w") as outfile:
+    # with open("config-test.ini", "w") as outfile:
     
-    config = ConfigParser.ConfigParser()
+      config = ConfigParser.ConfigParser()
+      
+      for item in DEFAULT_SETTINGS.keys():
+        config.set(DEFAULT_SECTION, item, str(vars(self)[item]))
+      
+      # And store our other sections.
+      for section in self.other_sections:
+        items = vars(self)[section]
+        
+        config.add_section(section)
+        for item in items:
+          config.set(section, item, str(items[item]))
+      
+      config.write(outfile)
     
-    for item in DEFAULT_SETTINGS.keys():
-      config.set(DEFAULT_SECTION, item, str(vars(self)[item]))
-    
-    config.write(outfile)
-    
-    outfile.close()
-    
-    # Load our last-opened history.
-    f = open(HISTORY_FILE, "wb")
-    pickle.dump(self.last_file, f)
-    f.close()
+    # Save our last-opened history.
+    with open(HISTORY_FILE, "wb") as f:
+      pickle.dump(self.last_file, f)
+
+# if __name__ == "__main__":
+  # test = EditorConfig()
+  # test.hacks["mapcenter"] = True
+  # test.add_section("tags")
+  # test.tags["iffy"] = (1, "#FF0000")
+  # test.save_config()
 
 ### EOF ###

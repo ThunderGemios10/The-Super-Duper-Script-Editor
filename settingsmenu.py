@@ -39,7 +39,7 @@ class SettingsMenu(QtGui.QDialog):
     self.connect(self.ui.btnIsoFile,      QtCore.SIGNAL("clicked()"), self.get_iso_file)
     self.connect(self.ui.btnUmdDir,       QtCore.SIGNAL("clicked()"), self.get_umd_dir)
     self.connect(self.ui.btnUmd2Dir,      QtCore.SIGNAL("clicked()"), self.get_umd2_dir)
-    self.connect(self.ui.btnEbootOrig,    QtCore.SIGNAL("clicked()"), self.get_eboot_orig)
+    self.connect(self.ui.btnGFXDir,       QtCore.SIGNAL("clicked()"), self.get_gfx_dir)
     self.connect(self.ui.btnToc,          QtCore.SIGNAL("clicked()"), self.get_toc)
     self.connect(self.ui.btnToc2,         QtCore.SIGNAL("clicked()"), self.get_toc2)
     self.connect(self.ui.btnTerminology,  QtCore.SIGNAL("clicked()"), self.get_terminology)
@@ -52,7 +52,7 @@ class SettingsMenu(QtGui.QDialog):
     self.ui.txtIsoFile.setText      (common.editor_config.iso_file)
     self.ui.txtUmdDir.setText       (common.editor_config.umdimage_dir)
     self.ui.txtUmd2Dir.setText      (common.editor_config.umdimage2_dir)
-    self.ui.txtEbootOrig.setText    (common.editor_config.eboot_orig)
+    self.ui.txtGFXDir.setText       (common.editor_config.gfx_dir)
     self.ui.txtToc.setText          (common.editor_config.toc)
     self.ui.txtToc2.setText         (common.editor_config.toc2)
     self.ui.txtTerminology.setText  (common.editor_config.terminology)
@@ -60,9 +60,13 @@ class SettingsMenu(QtGui.QDialog):
     self.ui.txtCopy.setText         (common.editor_config.changes_dir)
     self.ui.txtBackup.setText       (common.editor_config.backup_dir)
   
-  ##############################################################################
-  ### DIALOG STUFF
-  ##############################################################################
+################################################################################
+### TAB: PREFERENCES
+################################################################################
+
+################################################################################
+### TAB: FILE LOCATIONS
+################################################################################
   def get_iso_dir(self):
     dir = get_existing_dir(self, self.ui.txtIsoDir.text())
     if not dir == "":
@@ -83,10 +87,10 @@ class SettingsMenu(QtGui.QDialog):
     if not dir == "":
       self.ui.txtUmd2Dir.setText(dir)
 
-  def get_eboot_orig(self):
-    file = get_open_file(self, self.ui.txtEbootOrig.text(), filter = "EBOOT-ORIG.BIN (*.bin)")
-    if not file == "":
-      self.ui.txtEbootOrig.setText(file)
+  def get_gfx_dir(self):
+    dir = get_existing_dir(self, self.ui.txtGFXDir.text())
+    if not dir == "":
+      self.ui.txtGFXDir.setText(dir)
 
   def get_toc(self):
     file = get_open_file(self, self.ui.txtToc.text(), filter = "!toc.txt (*.txt)")
@@ -119,9 +123,21 @@ class SettingsMenu(QtGui.QDialog):
     if not dir == "":
       self.ui.txtBackup.setText(dir)
   
-  ##############################################################################
-  ### SLOTS
-  ##############################################################################
+################################################################################
+### TAB: TAGS
+################################################################################
+  
+################################################################################
+### TAB: TEXT REPLACEMENT
+################################################################################
+  
+################################################################################
+### TAB: HACKS
+################################################################################
+  
+################################################################################
+### SLOTS
+################################################################################
   
   ##############################################################################
   ### @fn   accept()
@@ -132,27 +148,27 @@ class SettingsMenu(QtGui.QDialog):
        self.ui.txtIsoFile.text().length() == 0 or \
        self.ui.txtUmdDir.text().length() == 0 or \
        self.ui.txtUmd2Dir.text().length() == 0 or \
-       self.ui.txtEbootOrig.text().length() == 0 or \
+       self.ui.txtGFXDir.text().length() == 0 or \
        self.ui.txtToc.text().length() == 0 or \
        self.ui.txtToc2.text().length() == 0 or \
        self.ui.txtTerminology.text().length() == 0 or \
        self.ui.txtVoice.text().length() == 0 or \
        self.ui.txtCopy.text().length() == 0 or \
        self.ui.txtBackup.text().length() == 0:
-      QtGui.QMessageBox.critical(self, "Error", "Please fill in all the boxes.")
+      QtGui.QMessageBox.critical(self, "Error", "Please supply locations for all the listed files or folders.")
       return
     
-    common.editor_config.iso_dir = unicode(self.ui.txtIsoDir.text().toUtf8(), "UTF-8")
-    common.editor_config.iso_file = unicode(self.ui.txtIsoFile.text().toUtf8(), "UTF-8")
-    common.editor_config.umdimage_dir = unicode(self.ui.txtUmdDir.text().toUtf8(), "UTF-8")
-    common.editor_config.umdimage2_dir = unicode(self.ui.txtUmd2Dir.text().toUtf8(), "UTF-8")
-    common.editor_config.eboot_orig = unicode(self.ui.txtEbootOrig.text().toUtf8(), "UTF-8")
-    common.editor_config.toc = unicode(self.ui.txtToc.text().toUtf8(), "UTF-8")
-    common.editor_config.toc2 = unicode(self.ui.txtToc2.text().toUtf8(), "UTF-8")
-    common.editor_config.terminology = unicode(self.ui.txtTerminology.text().toUtf8(), "UTF-8")
-    common.editor_config.voice_dir = unicode(self.ui.txtVoice.text().toUtf8(), "UTF-8")
-    common.editor_config.changes_dir = unicode(self.ui.txtCopy.text().toUtf8(), "UTF-8")
-    common.editor_config.backup_dir = unicode(self.ui.txtBackup.text().toUtf8(), "UTF-8")
+    common.editor_config.iso_dir        = unicode(self.ui.txtIsoDir.text().toUtf8(), "UTF-8")
+    common.editor_config.iso_file       = unicode(self.ui.txtIsoFile.text().toUtf8(), "UTF-8")
+    common.editor_config.umdimage_dir   = unicode(self.ui.txtUmdDir.text().toUtf8(), "UTF-8")
+    common.editor_config.umdimage2_dir  = unicode(self.ui.txtUmd2Dir.text().toUtf8(), "UTF-8")
+    common.editor_config.gfx_dir        = unicode(self.ui.txtGFXDir.text().toUtf8(), "UTF-8")
+    common.editor_config.toc            = unicode(self.ui.txtToc.text().toUtf8(), "UTF-8")
+    common.editor_config.toc2           = unicode(self.ui.txtToc2.text().toUtf8(), "UTF-8")
+    common.editor_config.terminology    = unicode(self.ui.txtTerminology.text().toUtf8(), "UTF-8")
+    common.editor_config.voice_dir      = unicode(self.ui.txtVoice.text().toUtf8(), "UTF-8")
+    common.editor_config.changes_dir    = unicode(self.ui.txtCopy.text().toUtf8(), "UTF-8")
+    common.editor_config.backup_dir     = unicode(self.ui.txtBackup.text().toUtf8(), "UTF-8")
     
     common.editor_config.save_config()
     

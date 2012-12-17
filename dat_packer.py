@@ -35,10 +35,10 @@ from enum import Enum
 
 import common
 import eboot_text
+import eboot_patch
 import text_files
 
 from anagram_file import AnagramFile
-from eboot_patch import apply_eboot_patches
 
 RE_SCRIPT  = re.compile(ur"(.*?)\0.*", re.UNICODE | re.S)
 # UTF-16LE byte-order-marker, since we lose it loading the text
@@ -222,7 +222,7 @@ class DatPacker():
       data = ConstBitStream(bytes = data)
       eboot.overwrite(data, replacement.pos.int * 8)
     
-    eboot = apply_eboot_patches(eboot)
+    eboot = eboot_patch.apply_eboot_patches(eboot)
     
     eboot_out = os.path.join(common.editor_config.iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN")
     

@@ -29,7 +29,7 @@ POS     = "pos"
 ORIG    = "orig"
 PATCH   = "patch"
 
-LANGUAGES   = Enum("Japanese", "English", "French", "Spanish", "German", "Italian", "Dutch", "Portuguese", "Russian", "Korean", "TradChinese", "SimpChinese")
+LANGUAGES   = Enum("Japanese", "English", "French", "Spanish", "German", "Italian", "Dutch", "Portuguese", "Russian", "Korean", "Traditional Chinese", "Simplified Chinese")
 SYS_MENU_LANG = LANGUAGES.English
 
 EBOOT_PATCHES = [
@@ -94,6 +94,61 @@ EBOOT_PATCHES = [
       {POS: 0x0008C110, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (ammo)
       {POS: 0x00088F6C, ORIG: ConstBitStream(hex = "0x11000B24"), PATCH: ConstBitStream(hex = "0x3D000B24")}, # li $t3, 0x3D     ; make the game copy more characters into the array (presents)
       {POS: 0x0008C144, ORIG: ConstBitStream(hex = "0x11000D24"), PATCH: ConstBitStream(hex = "0x3D000D24")}, # li $t5, 0x3D     ; make the game copy more characters into the array (ammo)
+    ]
+  },
+  {NAME: "Ammo/Present Descriptions in Lists", ENABLED: True, DATA:
+    [
+      # Description length limit (presents)
+      {POS: 0x0008A2D8, ORIG:  ConstBitStream(hex = "0x1D000224"), 
+                        PATCH: ConstBitStream(hex = "0xFF000224")
+      },
+      # Line length limit (presents)
+      {POS: 0x0008A2E4, ORIG:  ConstBitStream(hex = "0x0F000224"), 
+                        PATCH: ConstBitStream(hex = "0xFF000224")
+      },
+      # Newline behavior (presents)
+      {POS: 0x0008A2FC, ORIG:  ConstBitStream(hex = "0x8128020800300924"), 
+                        PATCH: ConstBitStream(hex = "0x6028040800000000")
+      },
+      # Painting ellipsis (presents)
+      {POS: 0x0008A3D4, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B245B27020800000000"), 
+                        PATCH: ConstBitStream(hex = "0x7038240EDA0053267038240E000000007038240E00000000000000005B270208000000000000000000000000")
+      },
+
+      # Description length limit (ammo)
+      {POS: 0x0008D1D0, ORIG:  ConstBitStream(hex = "0x1D000224"), 
+                        PATCH: ConstBitStream(hex = "0xFF000224")
+      },
+      # Line length limit (ammo)
+      {POS: 0x0008D1DC, ORIG:  ConstBitStream(hex = "0x0F000224"), 
+                        PATCH: ConstBitStream(hex = "0xFF000224")
+      },
+      # Newline behavior (ammo)
+      {POS: 0x0008D1FC, ORIG:  ConstBitStream(hex = "0x3F34020800300924"), 
+                        PATCH: ConstBitStream(hex = "0x6828040800000000")
+      },
+      # Painting ellipsis (ammo)
+      {POS: 0x0008D2E4, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B24FB31020800000000"), 
+                        PATCH: ConstBitStream(hex = "0x7038240EDA0053267038240E000000007038240E0000000000000000FB310208000000000000000000000000")
+      },
+      
+      # Newline behavior, continued (presents)
+      {POS: 0x0010A240, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"), 
+                        PATCH: ConstBitStream(hex = "0x0300401200000000CD38220A000000002190540221B000007638220A01003126")
+      },
+      # Newline behavior, continued (ammo)
+      {POS: 0x0010A260, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"), 
+                        PATCH: ConstBitStream(hex = "0x03004012000000009144220A000000002190540221B000003344220A01003126")
+      },
+      # Painting ellipsis, continued (both presents and ammo)
+      {POS: 0x0010A280, ORIG:  ConstBitStream(hex = "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), 
+                        PATCH: ConstBitStream(hex = "0xF8FFBD270400BFAF2130A0022A00C726214060022120A003212800002E00092421500000751B220E12000B240000A28F21B0C2020400BF8F0800E0030800BD27")
+      },
+    ]
+  },
+  {NAME: "Long Ammo File Fix", ENABLED: True, DATA:
+    [
+      {POS: 0x0008C84C, ORIG: ConstBitStream(hex = "0x0000A384"), PATCH: ConstBitStream(hex = "0x0000A394")}, # lhu $v1, 0($a1)    ; make the game handle pointers correctly
     ]
   },
   {NAME: "Fix Glyph Height", ENABLED: False, DATA:
