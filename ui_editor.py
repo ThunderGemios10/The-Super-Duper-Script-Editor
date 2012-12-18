@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\editor.ui'
 #
-# Created: Mon Dec 17 00:23:43 2012
+# Created: Mon Dec 17 22:25:42 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -728,14 +728,13 @@ class Ui_Editor(object):
         self.actionInsertLine.setText(QtGui.QApplication.translate("Editor", "&Insert line after selection", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsertLine.setIconText(QtGui.QApplication.translate("Editor", "Insert Line", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsertLine.setObjectName(_fromUtf8("actionInsertLine"))
-        self.actionSetFileLoc = QtGui.QAction(Editor)
+        self.actionShowPrefs = QtGui.QAction(Editor)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/wrench.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSetFileLoc.setIcon(icon6)
-        self.actionSetFileLoc.setText(QtGui.QApplication.translate("Editor", "Set File &Locations", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSetFileLoc.setIconText(QtGui.QApplication.translate("Editor", "File Locs", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSetFileLoc.setShortcut(QtGui.QApplication.translate("Editor", "Ctrl+L", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSetFileLoc.setObjectName(_fromUtf8("actionSetFileLoc"))
+        self.actionShowPrefs.setIcon(icon6)
+        self.actionShowPrefs.setText(QtGui.QApplication.translate("Editor", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionShowPrefs.setIconText(QtGui.QApplication.translate("Editor", "File Locs", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionShowPrefs.setObjectName(_fromUtf8("actionShowPrefs"))
         self.actionSearch = QtGui.QAction(Editor)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/magnifier.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -887,12 +886,7 @@ class Ui_Editor(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuHelp.addAction(self.actionAbout)
-        self.menuSettings.addAction(self.actionSetFileLoc)
-        self.menuSettings.addSeparator()
-        self.menuSettings.addAction(self.actionAutoExpand)
-        self.menuSettings.addAction(self.actionAutoPlayVoice)
-        self.menuSettings.addSeparator()
-        self.menuSettings.addAction(self.actionHighlightTerminology)
+        self.menuSettings.addAction(self.actionShowPrefs)
         self.menuEdit.addAction(self.actionSearch)
         self.menuEdit.addAction(self.actionCopyOrig)
         self.menuImport_Directory.addAction(self.actionImportUmdimage)

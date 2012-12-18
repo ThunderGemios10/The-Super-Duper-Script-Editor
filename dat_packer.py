@@ -147,17 +147,22 @@ class DatPacker():
         "toc":  common.editor_config.toc,
         "dir":  common.editor_config.umdimage_dir,
         "dat":  os.path.join(USRDIR, "umdimage.dat"),
-        "name": "umdimage.dat"
+        "name": "umdimage.dat",
+        "pack": common.editor_config.pack_umdimage,
       },
       {
         "toc":  common.editor_config.toc2,
         "dir":  common.editor_config.umdimage2_dir,
         "dat":  os.path.join(USRDIR, "umdimage2.dat"),
-        "name": "umdimage2.dat"
+        "name": "umdimage2.dat",
+        "pack": common.editor_config.pack_umdimage2,
       },
     ]
     
     for archive in ARCHIVE_INFO:
+      
+      if not archive["pack"]:
+        continue
       
       self.progress.setWindowTitle("Building " + archive["name"])
       

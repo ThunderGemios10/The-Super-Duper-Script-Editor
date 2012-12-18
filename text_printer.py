@@ -993,7 +993,7 @@ def print_text(image, text, scene_mode = common.SCENE_MODES.normal, mangle = Tru
     temp_text = '\n'.join(temp_text)
     if len(text_lines) > 2:
       temp_text += "..."
-    image = print_text(image, temp_text, common.SCENE_MODES.ammosummary, False)
+    image = print_text(image, temp_text, common.SCENE_MODES.ammosummary, mangle)
   
   #default_clt = 0
   format = TEXT_FORMAT[scene_mode]

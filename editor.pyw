@@ -178,7 +178,7 @@ class EditorForm(QtGui.QMainWindow):
     
     self.ui.actionBuild.triggered     .connect(self.buildArchives)
     self.ui.actionSearch.triggered    .connect(self.showSearchMenu)
-    self.ui.actionSetFileLoc.triggered.connect(self.showSettingsMenu)
+    self.ui.actionShowPrefs.triggered .connect(self.showSettingsMenu)
     self.ui.actionAbout.triggered     .connect(self.showAbout)
     
     self.ui.actionImportUmdimage.triggered .connect(self.importUmdimage)
@@ -257,7 +257,8 @@ class EditorForm(QtGui.QMainWindow):
     
     self.hide_original = False
     
-    self.loadConfig()
+    self.updateActions()
+    self.loadDirectory(common.editor_config.last_opened)
     
     self.search_menu = SearchMenu()
     self.search_menu.open_clicked.connect(self.searchMenuOpenClicked)
@@ -266,15 +267,13 @@ class EditorForm(QtGui.QMainWindow):
     self.terminology_editor = TerminologyEditor()
   
   ##############################################################################
-  ### @fn   loadConfig()
+  ### @fn   updateActions()
   ### @desc Takes values from the config file and updates UI elements to match.
   ##############################################################################
-  def loadConfig(self):
+  def updateActions(self):
     self.ui.actionHighlightTerminology.setChecked(common.editor_config.highlight_terms)
     self.ui.actionAutoExpand.setChecked(common.editor_config.auto_expand)
     self.ui.actionAutoPlayVoice.setChecked(common.editor_config.auto_play_voice)
-    
-    self.loadDirectory(common.editor_config.last_opened)
   
   ##############################################################################
   ### @fn   updateConfig()
@@ -599,14 +598,15 @@ class EditorForm(QtGui.QMainWindow):
     kill_blanks = True
     
     scene_info = self.script_pack[self.cur_script].scene_info
+    mangle     = common.editor_config.mangle_text
   
     if image_pos == None or image_pos == IMAGE_POS.original:
       if not self.hide_original:
         text = unicode(self.ui.txtOriginal.toPlainText().toUtf8(), "utf-8")
-        orig = text_printer.print_text(bg, text, scene_info.mode)
+        orig = text_printer.print_text(bg, text, scene_info.mode, mangle)
         
         if scene_info.special == common.SCENE_SPECIAL.option:
-          orig = text_printer.print_text(orig, text, common.SCENE_SPECIAL.option, False)
+          orig = text_printer.print_text(orig, text, common.SCENE_SPECIAL.option, mangle)
         
         qt_pixmap = QtGui.QPixmap.fromImage(orig)
         self.ui.lblOriginal.setPixmap(qt_pixmap)
@@ -619,10 +619,10 @@ class EditorForm(QtGui.QMainWindow):
     
     if image_pos == None or image_pos == IMAGE_POS.translated:
       text = unicode(self.ui.txtTranslated.toPlainText().toUtf8(), "utf-8")
-      trans = text_printer.print_text(bg, text, scene_info.mode)
+      trans = text_printer.print_text(bg, text, scene_info.mode, mangle)
       
       if scene_info.special == common.SCENE_SPECIAL.option:
-        trans = text_printer.print_text(trans, text, common.SCENE_SPECIAL.option, False)
+        trans = text_printer.print_text(trans, text, common.SCENE_SPECIAL.option, mangle)
         
       qt_pixmap = QtGui.QPixmap.fromImage(trans)
       self.ui.lblTranslated.setPixmap(qt_pixmap)
@@ -954,14 +954,22 @@ class EditorForm(QtGui.QMainWindow):
   ### @desc Three guesses.
   ##############################################################################
   def showSettingsMenu(self):
-    if self.askUnsavedChanges():
-      menu = SettingsMenu(self)
-      result = menu.exec_()
-      
-      # If they changed something, reload the directory, so the directory
-      # we're looking at is the one they're actually set to use.
-      if result == QtGui.QDialog.Accepted:
-        self.loadDirectory(self.directory, clear_similarity = False, selected_file = os.path.basename(self.script_pack[self.cur_script].filename))
+    # if self.askUnsavedChanges():
+    # Store this so we can see if they changed anything.
+    temp_umdimage = common.editor_config.umdimage_dir
+    
+    menu = SettingsMenu(self)
+    result = menu.exec_()
+    
+    self.showImage()
+    self.updateActions()
+    self.updateHighlight()
+    
+    # If they changed umdimage, reload the directory,
+    # so we're looking at the one they're actually set to use.
+    if temp_umdimage != common.editor_config.umdimage_dir:
+      self.askUnsavedChanges()
+      self.loadDirectory(self.directory, clear_similarity = False, selected_file = os.path.basename(self.script_pack[self.cur_script].filename))
     
   ##############################################################################
   ### @fn   showSearchMenu()
@@ -2253,20 +2261,22 @@ class EditorForm(QtGui.QMainWindow):
     QtGui.QMessageBox.information(
       self,
       u"About",
-      u"""<b>The Super Duper Script Editor</b> v1.0.0.0<br/>
+      u"""
+<b>The Super Duper Script Editor</b> v1.0.0.0<br/>
 Copyright © 2012 BlackDragonHunt, released under the GNU GPL (see file COPYING).<br/>
 <br/>
 Attributions:
 <ol>
-<li>Bitstring, Copyright (c) 2006-2012 Scott Griffiths, Licensed under the MIT License</li>
-<li>Diff Match and Patch, Copyright 2006 Google Inc., Licensed under the Apache License, Version 2.0</li>
-<li>enum, Copyright © 2007–2009 Ben Finney <ben+python@benfinney.id.au>, Licensed under the GNU GPL, Version 3</li>
-<li>GIM2PNG, Copyright (c) 2008, <a href="http://www.geocities.jp/junk2ool/">Website</a></li>
-<li>MeCab, Copyright (c) 2001-2008, Taku Kudo, Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation, Licensed under the GNU GPL, Version 3</li>
-<li>mkisofs, Copyright (C) 1993-1997 Eric Youngdale (C) 1997-2010 Joerg Schilling, Licensed under the GNU GPL</li>
-<li>squish, Copyright (c) 2006 Simon Brown</li>
-<li>Unique Postfix, Copyright (c) 2010 Denis Barmenkov, Licensed under the MIT License</li>
-<li>Silk Icon Set, Copyright Mark James, Licensed under the Creative Commons Attribution 2.5 License, <a href="http://www.famfamfam.com/lab/icons/silk/">Website</a></li>
+<li>Bitstring: Copyright (c) 2006-2012 Scott Griffiths; Licensed under the MIT License</li>
+<li>Diff Match and Patch: Copyright 2006 Google Inc.; Licensed under the Apache License, Version 2.0</li>
+<li>enum: Copyright © 2007–2009 Ben Finney &lt;ben+python@benfinney.id.au&gt;; Licensed under the GNU GPL, Version 3</li>
+<li>GIM2PNG: Copyright (c) 2008; <a href="http://www.geocities.jp/junk2ool/">Website</a></li>
+<li>MeCab: Copyright (c) 2001-2008, Taku Kudo; Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation; Licensed under the GNU GPL, Version 3</li>
+<li>mkisofs: Copyright (C) 1993-1997 Eric Youngdale (C); Copyright (C) 1997-2010 Joerg Schilling; Licensed under the GNU GPL</li>
+<li>pngquant: Copyright (C) 1989, 1991 by Jef Poskanzer; Copyright (C) 1997, 2000, 2002 by Greg Roelofs, based on an idea by Stefan Schneider; Copyright 2009-2012 by Kornel Lesinski</li>
+<li>squish: Copyright (c) 2006 Simon Brown</li>
+<li>Unique Postfix: Copyright (c) 2010 Denis Barmenkov; Licensed under the MIT License</li>
+<li>Silk Icon Set: Copyright Mark James; Licensed under the Creative Commons Attribution 2.5 License; <a href="http://www.famfamfam.com/lab/icons/silk/">Website</a></li>
 </ol>""",
       buttons = QtGui.QMessageBox.Ok,
       defaultButton = QtGui.QMessageBox.Ok

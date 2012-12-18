@@ -5,7 +5,7 @@
 */*/*/*.pyc
 
 # Or config.
-config.ini
+config*.ini
 
 # Or my silly license template.
 license_template.py

@@ -1684,12 +1684,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionSetFileLoc"/>
-    <addaction name="separator"/>
-    <addaction name="actionAutoExpand"/>
-    <addaction name="actionAutoPlayVoice"/>
-    <addaction name="separator"/>
-    <addaction name="actionHighlightTerminology"/>
+    <addaction name="actionShowPrefs"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -1840,19 +1835,16 @@ p, li { white-space: pre-wrap; }
     <string>Insert Line</string>
    </property>
   </action>
-  <action name="actionSetFileLoc">
+  <action name="actionShowPrefs">
    <property name="icon">
     <iconset resource="../res/icons.qrc">
      <normaloff>:/wrench.png</normaloff>:/wrench.png</iconset>
    </property>
    <property name="text">
-    <string>Set File &amp;Locations</string>
+    <string>Settings</string>
    </property>
    <property name="iconText">
     <string>File Locs</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionSearch">
@@ -2139,14 +2131,14 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SpellCheckEdit</class>
-   <extends>QTextEdit</extends>
-   <header>spellcheckedit</header>
-  </customwidget>
-  <customwidget>
    <class>KeywordEdit</class>
    <extends>QTextEdit</extends>
    <header>keywordedit</header>
+  </customwidget>
+  <customwidget>
+   <class>SpellCheckEdit</class>
+   <extends>QTextEdit</extends>
+   <header>spellcheckedit</header>
   </customwidget>
   <customwidget>
    <class>ReferenceEdit</class>

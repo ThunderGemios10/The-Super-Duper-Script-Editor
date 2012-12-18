@@ -19,21 +19,25 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from bitstring import ConstBitStream
-from enum import Enum
+from bitstring import ConstBitStream, BitStream
+# from enum import Enum
+
+import common
 
 NAME    = "name"
 ENABLED = "enabled"
+CFG_ID  = "cfg_id"
 DATA    = "data"
 POS     = "pos"
 ORIG    = "orig"
 PATCH   = "patch"
 
-LANGUAGES   = Enum("Japanese", "English", "French", "Spanish", "German", "Italian", "Dutch", "Portuguese", "Russian", "Korean", "Traditional Chinese", "Simplified Chinese")
-SYS_MENU_LANG = LANGUAGES.English
+LANGUAGES   = [u"Japanese", u"English", u"French", u"Spanish", u"German", u"Italian", u"Dutch", u"Portuguese", u"Russian", u"Korean", u"Traditional Chinese", u"Simplified Chinese"]
+# LANGUAGES   = [u"日本語", u"English", u"Français", u"Español", u"Deutsch", u"Italiano", u"Nederlands", u"Português", u"Русский", u"한국어", u"Traditional Chinese", u"Simplified Chinese"]
+LANG_CFG_ID = "sys_menu_lang"
 
 EBOOT_PATCHES = [
-  {NAME: "Swap O/X Buttons", ENABLED: True, DATA:
+  {NAME: "Swap O/X Buttons", ENABLED: True, CFG_ID: "swap_ox", DATA:
     [
       {POS: 0x0001B3E4, ORIG: ConstBitStream(hex = "0x21108000"), PATCH: ConstBitStream(hex = "0x01000224")}, # li $v0, 1             ; Home/Save screen button order
       {POS: 0x0000E284, ORIG: ConstBitStream(hex = "0x0400B18F"), PATCH: ConstBitStream(hex = "0x9038240A")}, # j 0x0890E240          ; jump to an arbitrary piece of code that we'll insert
@@ -50,7 +54,7 @@ EBOOT_PATCHES = [
       {POS: 0x0010A328, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x7B48200A")}, # j 0x088121EC          ; Jump back to function
     ]
   },
-  {NAME: "Map Name Centering", ENABLED: True, DATA:
+  {NAME: "Map Name Centering", ENABLED: True, CFG_ID: "map_centering", DATA:
     [
       {POS: 0x00083380, ORIG: ConstBitStream(hex = "0x02001446"), PATCH: ConstBitStream(hex = "0x8038240A")}, # j 0x0890E200          ; jump to a arbitrary piece of code
       {POS: 0x00083384, ORIG: ConstBitStream(hex = "0x02000146"), PATCH: ConstBitStream(hex = "0x02001446")}, # mul.s $f0, $f20
@@ -80,7 +84,7 @@ EBOOT_PATCHES = [
       {POS: 0x00090358, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
     ]
   },
-  {NAME: "Ammo/Present Menu (Names)", ENABLED: True, DATA:
+  {NAME: "Ammo/Present Menu (Names)", ENABLED: True, CFG_ID: "ammo_names", DATA:
     [
       {POS: 0x0000AAC4, ORIG: ConstBitStream(hex = "0x02180046"), PATCH: ConstBitStream(hex = "0x01000046")}, # sub.s $f0, $f0, $f0   ; stop placing the glyphs in weird manner
       {POS: 0x00083C2C, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")}, # mul.s $f31, $f2, $f20 ; stop doing strange things to the center coordinate
@@ -88,7 +92,7 @@ EBOOT_PATCHES = [
       {POS: 0x000DDEBC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")}, # 132.0                 ; fix the center coordinate
     ]
   },
-  {NAME: "Ammo/Present Menu (Line Length)", ENABLED: True, DATA:
+  {NAME: "Ammo/Present Menu (Line Length)", ENABLED: True, CFG_ID: "ammo_line_len", DATA:
     [
       {POS: 0x00088F38, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (presents)
       {POS: 0x0008C110, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (ammo)
@@ -96,7 +100,7 @@ EBOOT_PATCHES = [
       {POS: 0x0008C144, ORIG: ConstBitStream(hex = "0x11000D24"), PATCH: ConstBitStream(hex = "0x3D000D24")}, # li $t5, 0x3D     ; make the game copy more characters into the array (ammo)
     ]
   },
-  {NAME: "Ammo/Present Descriptions in Lists", ENABLED: True, DATA:
+  {NAME: "Ammo/Present Menu (Previews)", ENABLED: True, CFG_ID: "ammo_previews", DATA:
     [
       # Description length limit (presents)
       {POS: 0x0008A2D8, ORIG:  ConstBitStream(hex = "0x1D000224"), 
@@ -146,12 +150,21 @@ EBOOT_PATCHES = [
       },
     ]
   },
-  {NAME: "Long Ammo File Fix", ENABLED: True, DATA:
+  {NAME: "Long Ammo File Fix", ENABLED: True, CFG_ID: "ammo_file_size", DATA:
     [
-      {POS: 0x0008C84C, ORIG: ConstBitStream(hex = "0x0000A384"), PATCH: ConstBitStream(hex = "0x0000A394")}, # lhu $v1, 0($a1)    ; make the game handle pointers correctly
+      # For description preview
+      {POS: 0x0008C84C, ORIG: ConstBitStream(hex = "0x0000A384"), PATCH: ConstBitStream(hex = "0x0000A394")},
+      # For full descriptions
+      {POS: 0x0008C108, ORIG: ConstBitStream(hex = "0x0000658402006484"), PATCH: ConstBitStream(hex = "0x0000659402006494")},
+      {POS: 0x0008BB44, ORIG: ConstBitStream(hex = "0x0000648402006284"), PATCH: ConstBitStream(hex = "0x0000649402006294")},
     ]
   },
-  {NAME: "Fix Glyph Height", ENABLED: False, DATA:
+  {NAME: "Ammo/Present Description Total Line Limit", ENABLED: True, CFG_ID: "ammo_line_limit", DATA:
+    [
+      {POS: 0x0008BB74, ORIG: ConstBitStream(hex = "0x0B108300"), PATCH: ConstBitStream(hex = "0x21108000")},
+    ]
+  },
+  {NAME: "Fix Glyph Height", ENABLED: False, CFG_ID: "glyph_height", DATA:
     [
       {POS: 0x00082EFC, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x19001724")}, # li $s7, 25         ; change glyph height
       {POS: 0x00082F18, ORIG: ConstBitStream(hex = "0x2110E202"), PATCH: ConstBitStream(hex = "0x10004224")}, # addiu $v0, $v0, 16 ; fix the offset
@@ -161,8 +174,12 @@ EBOOT_PATCHES = [
 ]
 
 def apply_sys_lang(eboot):
+  sys_menu_lang = 1
+  if LANG_CFG_ID in common.editor_config.hacks:
+    sys_menu_lang = common.editor_config.hacks[LANG_CFG_ID]
+  
   patch_loc = 0x1B2E0
-  patch = ConstBitStream(uintle = SYS_MENU_LANG.index, length = 8) + ConstBitStream(hex = "0x000224")
+  patch = ConstBitStream(uintle = sys_menu_lang, length = 8) + ConstBitStream(hex = "0x000224")
   eboot.overwrite(patch, patch_loc * 8)
   return eboot
 
@@ -170,13 +187,25 @@ def apply_eboot_patches(eboot):
   
   for patch in EBOOT_PATCHES:
   
+    enabled = patch[ENABLED]
+    if patch[CFG_ID] in common.editor_config.hacks:
+      enabled = common.editor_config.hacks[patch[CFG_ID]]
+    
     # So we can undo patches if they've already been applied.
-    key = PATCH if patch[ENABLED] else ORIG
+    key = PATCH if enabled else ORIG
     
     for item in patch[DATA]:
       eboot.overwrite(item[key], item[POS] * 8)
   
   eboot = apply_sys_lang(eboot)
   return eboot
+
+if __name__ == "__main__":
+  src = "X:\\Danganronpa\\Danganronpa_BEST\\EBOOT-ORIG.BIN"
+  dst = "X:\\Danganronpa\\Danganronpa_BEST\\EBOOT-TEST.BIN"
+  test = BitStream(filename = src)
+  test = apply_eboot_patches(test)
+  with open(dst, "wb") as f:
+    test.tofile(f)
 
 ### EOF ###

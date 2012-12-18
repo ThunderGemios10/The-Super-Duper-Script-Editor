@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\openmenu.ui'
 #
-# Created: Mon Dec 17 00:23:43 2012
+# Created: Mon Dec 17 22:25:43 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
