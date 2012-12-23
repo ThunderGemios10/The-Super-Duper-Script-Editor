@@ -35,7 +35,7 @@ import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
 from extract import extract_umdimage, UMDIMAGE_TYPE, extract_pak
 from font_parser import font_bmp_to_alpha
-from gim_to_png import GimConverter
+from gim_converter import GimConverter
 from gmo_file import GmoFile
 
 UMDIMAGE_DAT    = os.path.join("PSP_GAME", "USRDIR", "umdimage.dat")

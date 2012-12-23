@@ -18,6 +18,8 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import os
+
 from bitstring import BitStream, ConstBitStream
 
 from extract import get_pak_files, parse_pak_toc
@@ -113,12 +115,33 @@ class ModelPak():
     
     return self.__gmo_files[index][_DATA]
   
+  def get_gmos(self):
+    return [gmo[_DATA] for gmo in self.__gmo_files]
+  
   def get_name(self, index):
     if index >= self.gmo_count():
       print "Invalid GMO ID."
       return None
     
     return self.__gmo_files[index][_NAME]
+  
+  def get_names(self):
+    return [gmo[_NAME] for gmo in self.__gmo_files]
+  
+  def id_from_name(self, name):
+    for i in range(self.gmo_count()):
+      if self.__gmo_files[i][_NAME] == name:
+        return i
+    
+    return None
+  
+  def gmo_from_name(self, name):
+    id = self.id_from_name(name)
+    
+    if id:
+      return self.get_gmo(id)
+    else:
+      return None
   
   def replace_gmo_file(self, index, filename):
     gmo = GmoFile(filename = filename)
@@ -141,22 +164,65 @@ class ModelPak():
     # to work with from the original GMO file that was there, and there's no
     # point in shrinking that down if someone happens to want to re-replace
     # this GMO file without reloading the whole thing.
+  
+  def extract(self, directory, to_png = False):
+    if not os.path.isdir(directory):
+      os.makedirs(directory)
+    
+    for id in range(self.gmo_count()):
+      gmo  = self.get_gmo(id)
+      name = self.get_name(id)
+      
+      out_dir = os.path.join(directory, name)
+      
+      gmo.extract(out_dir, to_png)
 
 if __name__ == "__main__":
-  # import glob
-  # for file in glob.iglob("X:/Danganronpa/Danganronpa_BEST/umdimage2-orig/bg_*.pak"):
-  # for file in glob.iglob("X:/Danganronpa/Danganronpa2/data01-ex/all/modelbg/bg_*.pak"):
-    # print file
+  import glob
+  # for file in glob.iglob("X:/Danganronpa/Danganronpa_BEST/umdimage2-nor/bg_*.pak"):
+    # basename = os.path.basename(file)
+    # out_dir = os.path.join("X:/Danganronpa/Danganronpa_BEST/umdimage2-imgediting2", basename)
+    
     # pak = ModelPak(filename = file)
-  pak = ModelPak(filename = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage2-orig\\bg_101.pak")
-  gmo = pak.get_gmo(4)
-  print pak.get_name(4)
-  gmo.replace_gim_file(1,  "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0004-2-fs8.gim")
-  gmo.replace_gim_file(19, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
-  gmo.replace_gim_file(20, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0025-2-fs8.gim")
-  gmo.replace_gim_file(21, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0026-2-fs8.gim")
-  gmo.replace_gim_file(22, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
-  pak.replace_gmo(4, gmo)
-  pak.save("debug/bg_101.pak")
+    # pak.extract(out_dir)
+  
+  for pak_dir in glob.iglob("X:/Danganronpa/Danganronpa_BEST/image-editing/umdimage2-vodka-png/bg_*.pak"):
+    basename = os.path.basename(pak_dir)
+    
+    pak = ModelPak(filename = os.path.join("X:/Danganronpa/Danganronpa_BEST/umdimage2-orig", basename))
+    
+    for gmo_name in os.listdir(pak_dir):
+      gmo_id = pak.id_from_name(gmo_name)
+      gmo    = pak.get_gmo(gmo_id)
+      
+      for gim in os.listdir(os.path.join(pak_dir, gmo_name)):
+        name, ext = os.path.splitext(gim)
+        
+        if not ext == ".gim":
+          continue
+        
+        print os.path.join(basename, gmo_name, gim)
+        gim_id = int(name)
+        
+        gmo.replace_gim_file(gim_id, os.path.join(pak_dir, gmo_name, gim))
+      
+      pak.replace_gmo(gmo_id, gmo)
+    
+    pak.save(os.path.join("X:/Danganronpa/Danganronpa_BEST/image-editing/umdimage2-vodka", basename))
+      
+      # print gmo_name, gmo_id
+    # pak = ModelPak(filename = "X:/Danganronpa/Danganronpa_BEST/umdimage2-orig/bg_101.pak")
+  # id  = pak.id_from_name("bg_001_p04")
+  # gmo = pak.get_gmo(id)
+  
+  # gmo.replace_gim_file(13,  "X:/Danganronpa/Danganronpa_BEST/image-editing/umdimage2-vodka-png/bg_018.pak/bg_001_p04/0013.gim")
+  # gmo.replace_gim_file(19, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
+  # gmo.replace_gim_file(20, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0025-2-fs8.gim")
+  # gmo.replace_gim_file(21, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0026-2-fs8.gim")
+  # gmo.replace_gim_file(22, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
+  # pak.replace_gmo(4, gmo)
+  # pak.save("debug/bg_101.pak")
+  
+  # pak.extract("debug/bg_101", to_png = False)
 
 ### EOF ###

@@ -1,16 +1,24 @@
 <RCC>
   <qresource prefix="/">
-    <file>database_refresh.png</file>
-    <file>book.png</file>
-    <file>folder_explore.png</file>
+    <file>add.png</file>
     <file>arrow_refresh.png</file>
-    <file>cross.png</file>
+    <file>book.png</file>
     <file>chart_bar.png</file>
     <file>cog_go.png</file>
+    <file>control_play.png</file>
+    <file>control_play_blue.png</file>
+    <file>control_stop.png</file>
+    <file>control_stop_blue.png</file>
+    <file>cross.png</file>
+    <file>database_refresh.png</file>
     <file>disk.png</file>
     <file>folder.png</file>
+    <file>folder_explore.png</file>
     <file>help.png</file>
     <file>magnifier.png</file>
+    <file>monokuma.png</file>
+    <file>monokuma-green.png</file>
+    <file>music.png</file>
     <file>new.png</file>
     <file>page_copy.png</file>
     <file>report.png</file>
@@ -19,9 +27,8 @@
     <file>resultset_next.png</file>
     <file>resultset_previous.png</file>
     <file>sound.png</file>
-    <file>wrench.png</file>
+    <file>sound_mute.png</file>
     <file>sound_none.png</file>
-    <file>monokuma.png</file>
-    <file>monokuma-green.png</file>
+    <file>wrench.png</file>
   </qresource>
 </RCC>

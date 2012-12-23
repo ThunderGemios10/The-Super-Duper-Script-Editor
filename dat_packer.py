@@ -139,6 +139,8 @@ class DatPacker():
     with open(os.path.join(common.editor_config.iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"), "rb") as f:
       eboot = BitStream(bytes = f.read())
     
+    eboot, eboot_offset = eboot_patch.apply_eboot_patches(eboot)
+    
     USRDIR = os.path.join(common.editor_config.iso_dir, "PSP_GAME", "USRDIR")
     
     # So we can loop. :)
@@ -180,7 +182,7 @@ class DatPacker():
           # Stores where the file info is located in the EBOOT, so it can be
           # changed when we get the TOC info later.
           # toc_info[file name] = [position of file pos, position of file size]
-          toc_info[entry[0]] = [BitStream(hex = entry[1]), BitStream(hex = entry[2])]
+          toc_info[entry[0]] = [int(entry[1], 16) + eboot_offset, int(entry[2], 16) + eboot_offset]
           file_list.append(entry[0])
       
       # Causes memory issues if I use the original order, for whatever reason.
@@ -204,8 +206,8 @@ class DatPacker():
         file_pos  = table_of_contents[entry]["pos"]
         file_size = table_of_contents[entry]["size"]
         
-        eboot.overwrite(BitStream(uintle = file_pos, length = 32),  toc_info[entry][0].uint * 8)
-        eboot.overwrite(BitStream(uintle = file_size, length = 32), toc_info[entry][1].uint * 8)
+        eboot.overwrite(BitStream(uintle = file_pos, length = 32),  toc_info[entry][0] * 8)
+        eboot.overwrite(BitStream(uintle = file_size, length = 32), toc_info[entry][1] * 8)
       
       del archive_data
       del table_of_contents
@@ -219,15 +221,15 @@ class DatPacker():
       orig = bytearray(replacement.orig, encoding = replacement.enc)
       data = bytearray(replacement.text, encoding = replacement.enc)
       
+      pos  = replacement.pos.int + eboot_offset
+      
       padding = len(orig) - len(data)
       if padding > 0:
         # Null bytes to fill the rest of the space the original took.
         data.extend(bytearray(padding))
       
       data = ConstBitStream(bytes = data)
-      eboot.overwrite(data, replacement.pos.int * 8)
-    
-    eboot = eboot_patch.apply_eboot_patches(eboot)
+      eboot.overwrite(data, pos * 8)
     
     eboot_out = os.path.join(common.editor_config.iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN")
     

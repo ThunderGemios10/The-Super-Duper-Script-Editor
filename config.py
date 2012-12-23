@@ -29,7 +29,7 @@ try:
 except:
   import pickle
 
-from eboot_patch import LANG_CFG_ID
+import eboot_patch
 
 DEFAULT_SETTINGS = {
   "auto_expand":        "True",
@@ -38,6 +38,7 @@ DEFAULT_SETTINGS = {
   "auto_play_voice":    "True",
   "backup_dir":         "./!backup",
   "bgm_dir":            "./bgm",
+  "build_iso":          "True",
   "changes_dir":        "./!changes",
   "eboot_orig":         "./EBOOT-ORIG.BIN",
   "gfx_dir":            "./data/gfx",
@@ -131,7 +132,7 @@ class EditorConfig:
     # Got a few boolean values
     to_bool = ["auto_expand", "auto_play_voice", "auto_play_bgm", "auto_play_sfx",
       "highlight_terms", "highlight_tags", "spell_check", "pack_umdimage",
-      "pack_umdimage2", "mangle_text", "smart_quotes", "text_repl",
+      "pack_umdimage2", "mangle_text", "smart_quotes", "text_repl", "build_iso",
     ]
     
     # for (name, val) in config.items(PREFS_SECTION):
@@ -144,14 +145,6 @@ class EditorConfig:
         val = config.get(PREFS_SECTION, option)
       
       self.add_pref(option, val)
-    
-    # for option in to_bool:
-      # if self.has_pref(option):
-        # self.set_pref(option, ast.literal_eval(self.get_pref(option)))
-    # self.highlight_terms  = ast.literal_eval(self.highlight_terms)
-    # self.auto_expand      = ast.literal_eval(self.auto_expand)
-    # self.auto_play_voice  = ast.literal_eval(self.auto_play_voice)
-    # self.auto_play_bgm    = ast.literal_eval(self.auto_play_bgm)
     
     # To migrate the old setting.
     if "auto_play" in vars(self):
@@ -167,7 +160,7 @@ class EditorConfig:
       options = [option for option in config.options(HACKS_SECTION) if option not in DEFAULT_SETTINGS]
       
       for option in options:
-        if option == LANG_CFG_ID:
+        if option == eboot_patch.LANG_CFG_ID:
           self.hacks[option] = config.getint(HACKS_SECTION, option)
         else:
           self.hacks[option] = config.getboolean(HACKS_SECTION, option)

@@ -72,6 +72,9 @@ class DiffsMenu(QtGui.QDialog):
     self.ui = Ui_Diffs()
     self.ui.setupUi(self)
     
+    self.ui.actionCopyPath = QtGui.QAction("Copy path", None, triggered = self.copyPath)
+    self.ui.treeResults.addAction(self.ui.actionCopyPath)
+    
     self.folder1        = None
     self.folder2        = None
     self.files          = None
@@ -89,6 +92,19 @@ class DiffsMenu(QtGui.QDialog):
     self.menu_name = "Diffs"
     
     self.format_plain = QTextCharFormat()
+  
+  ##############################################################################
+  ### @fn   copyPath()
+  ### @desc Copies the path of the selected node to the clipboard.
+  ##############################################################################
+  def copyPath(self):
+    node = self.ui.treeResults.currentItem()
+    
+    if not node == None:
+      text = "{%s}" % tree.tree_item_to_path(node)
+      
+      clipboard = QApplication.clipboard()
+      clipboard.setText(text)
   
   ##############################################################################
   ### @fn   set_folders()
@@ -271,8 +287,8 @@ if __name__ == "__main__":
 
   # folder1 = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage"
   # folder2 = "X:\\Danganronpa\\Danganronpa_BEST\\!changes"
-  folder1 = "X:\\My Dropbox\\Danganronpa\\Best\\bdh-umdimage_ch2"
-  folder2 = "X:\\My Dropbox\\Danganronpa\\Best\\rito-umdimage_ch2"
+  folder1 = "X:\\My Dropbox\\Danganronpa\\Best\\bdh-umdimage_ch4"
+  folder2 = "X:\\My Dropbox\\Danganronpa\\Best\\silent-umdimage_ch4"
   
   import sys
 

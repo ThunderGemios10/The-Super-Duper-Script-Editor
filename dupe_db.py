@@ -295,7 +295,7 @@ db = DupesDB()
   # import glob
   # pp = pprint.PrettyPrinter()
   
-  # gfx_db = DupesDB("data/dupes-gfx-pruned.csv")
+  # gfx_db = DupesDB("data/dupes-models-pruned.csv")
   
   # for i in xrange(1000):
     # files = gfx_db.files_in_group(i)

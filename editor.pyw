@@ -1776,8 +1776,9 @@ class EditorForm(QtGui.QMainWindow):
     packer = DatPacker(self)
     packer.create_archives()
     
-    self.iso_builder = IsoBuilder(self)
-    self.iso_builder.build_iso(common.editor_config.iso_dir, common.editor_config.iso_file)
+    if common.editor_config.build_iso:
+      self.iso_builder = IsoBuilder(self)
+      self.iso_builder.build_iso(common.editor_config.iso_dir, common.editor_config.iso_file)
   
   ##############################################################################
   ### @fn   importUmdimage()

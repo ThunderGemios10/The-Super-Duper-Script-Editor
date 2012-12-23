@@ -1971,8 +1971,8 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="icon">
     <iconset resource="../res/icons.qrc">
-     <normaloff>:/sound_none.png</normaloff>
-     <normalon>:/sound.png</normalon>:/sound_none.png</iconset>
+     <normaloff>:/sound_mute.png</normaloff>
+     <normalon>:/sound.png</normalon>:/sound_mute.png</iconset>
    </property>
    <property name="text">
     <string>Auto-Play Voice Files</string>

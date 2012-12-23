@@ -33,8 +33,6 @@ GAMES = Enum("dr", "sdr2")
 FONT_TO_GEN = FONTS.font01
 GAME_TO_GEN = GAMES.dr
 
-HEIGHT_ADJUST = 0
-WIDTH_ADJUST  = 0
 X_SHIFT       = 0
 Y_SHIFT       = 0
 X_MARGIN      = 2
@@ -67,16 +65,12 @@ if FONT_TO_GEN == FONTS.font01:
   }
   
   if GAME_TO_GEN == GAMES.dr:
-    HEIGHT_ADJUST = 2
-    WIDTH_ADJUST  = 0
     X_SHIFT       = 0
     Y_SHIFT       = 2
     #X_MARGIN      = 2
     #Y_MARGIN      = 1
   
   elif GAME_TO_GEN == GAMES.sdr2:
-    HEIGHT_ADJUST = -4
-    WIDTH_ADJUST  = 0
     X_SHIFT       = 0
     Y_SHIFT       = -1
     X_MARGIN      = 2
@@ -102,8 +96,6 @@ elif FONT_TO_GEN == FONTS.font02:
   }
   
   if GAME_TO_GEN == GAMES.dr:
-    HEIGHT_ADJUST = 2
-    WIDTH_ADJUST  = 0
     X_SHIFT       = 0
     Y_SHIFT       = 2
     #X_MARGIN      = 2
@@ -111,8 +103,6 @@ elif FONT_TO_GEN == FONTS.font02:
     UNKNOWN1      = BitStream(hex = '0x30000000')
     
   elif GAME_TO_GEN == GAMES.sdr2:
-    HEIGHT_ADJUST = 2
-    WIDTH_ADJUST  = 0
     X_SHIFT       = 0
     Y_SHIFT       = 0
     X_MARGIN      = 2
@@ -227,15 +217,12 @@ class GameFont:
 def gen_font(text):
   font = QFont(FONT_NAME, FONT_SIZE, FONT_WEIGHT)
   font.setKerning(False)
-  #font.setLetterSpacing(QFont.AbsoluteSpacing, WIDTH_ADJUST)
   
   font_alt = QFont(FONT_ALT, FONT_SIZE, FONT_WEIGHT)
   font_alt.setKerning(False)
   
   metric = QFontMetrics(font)
   metric_alt = QFontMetrics(font_alt)
-  
-  # LINE_HEIGHT = metric.height() + HEIGHT_ADJUST #abs(HEIGHT_ADJUST)
   
   game_font = GameFont()
   
@@ -255,7 +242,6 @@ def gen_font(text):
   painter.setBrush(brush)
   
   x_pos = 0
-  #y_pos = HEIGHT_ADJUST
   y_pos = 0
   
   using_alt = False
@@ -279,7 +265,7 @@ def gen_font(text):
     if char in CHAR_SUBS:
       char_to_print = CHAR_SUBS[char]
       
-    char_w = cur_metric.width(char_to_print) + WIDTH_ADJUST
+    char_w = cur_metric.width(char_to_print)
     
     if x_pos + char_w > IMG_WIDTH:
       x_pos = 0
@@ -293,7 +279,6 @@ def gen_font(text):
       break
     
     game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': LINE_HEIGHT})
-    #painter.drawText(QtCore.QRectF(x_pos, y_pos + HEIGHT_ADJUST, char_w, LINE_HEIGHT), Qt.Qt.AlignCenter, char)
     
     path = QPainterPath()
     path.addText(x_pos + X_SHIFT, y_pos + cur_metric.ascent() + Y_SHIFT, cur_font, char_to_print)

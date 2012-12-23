@@ -32,143 +32,107 @@ POS     = "pos"
 ORIG    = "orig"
 PATCH   = "patch"
 
-LANGUAGES   = [u"Japanese", u"English", u"French", u"Spanish", u"German", u"Italian", u"Dutch", u"Portuguese", u"Russian", u"Korean", u"Traditional Chinese", u"Simplified Chinese"]
-# LANGUAGES   = [u"日本語", u"English", u"Français", u"Español", u"Deutsch", u"Italiano", u"Nederlands", u"Português", u"Русский", u"한국어", u"Traditional Chinese", u"Simplified Chinese"]
+# LANGUAGES   = [u"Japanese", u"English", u"French", u"Spanish", u"German", u"Italian", u"Dutch", u"Portuguese", u"Russian", u"Korean", u"Traditional Chinese", u"Simplified Chinese"]
+LANGUAGES   = [u"日本語", u"English", u"Français", u"Español", u"Deutsch", u"Italiano", u"Nederlands", u"Português", u"Русский", u"한국어", u"繁體中文", u"简体中文"]
 LANG_CFG_ID = "sys_menu_lang"
 
 EBOOT_PATCHES = [
+  {NAME: "Extend EBOOT", ENABLED: True, CFG_ID: None, DATA:
+    [
+      {POS: 0x0000002C, ORIG:  ConstBitStream(hex = "0x0300"), PATCH: ConstBitStream(hex = "0x0400")},
+      {POS: 0x00000038, ORIG:  ConstBitStream(hex = "0xA0000000"), PATCH: ConstBitStream(hex = "0xC0000000")},
+      {POS: 0x00000040, ORIG:  ConstBitStream(hex = "0x84C70D00"), PATCH: ConstBitStream(hex = "0xA4C70D00")},
+      {POS: 0x00000054, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0x010000000097100000BE49000000000000100000001000000700000010000000")},
+      {POS: 0x00000078, ORIG:  ConstBitStream(hex = "0x00971000"), PATCH: ConstBitStream(hex = "0x00A71000")},
+      {POS: 0x00000098, ORIG:  ConstBitStream(hex = "0xE0331100"), PATCH: ConstBitStream(hex = "0xE0431100")},
+    ]
+  },
   {NAME: "Swap O/X Buttons", ENABLED: True, CFG_ID: "swap_ox", DATA:
     [
-      {POS: 0x0001B3E4, ORIG: ConstBitStream(hex = "0x21108000"), PATCH: ConstBitStream(hex = "0x01000224")}, # li $v0, 1             ; Home/Save screen button order
-      {POS: 0x0000E284, ORIG: ConstBitStream(hex = "0x0400B18F"), PATCH: ConstBitStream(hex = "0x9038240A")}, # j 0x0890E240          ; jump to an arbitrary piece of code that we'll insert
-      {POS: 0x0010A300, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0400B18F")}, # lw $s1, 4($sp)        ; Load the results of sceCtrlReadBufferPositive to $s1
-      {POS: 0x0010A304, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x21202002")}, # addu $a0, $s1, $zr    ; Save $s1 to $a0
-      {POS: 0x0010A308, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00202532")}, # andi $a1, $s1, 8192   ; Is the circle bit set in $s1?
-      {POS: 0x0010A30C, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0200A014")}, # bne $a1, $zr, 2       ; If so, jump 1 instruction
-      {POS: 0x0010A310, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00403136")}, # ori $s1, $s1, 16384   ; But not before setting the cross bit in $s1 (google "delay slot")
-      {POS: 0x0010A314, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0040313A")}, # xori $s1, $s1, 16384  ; Unset the cross bit (may be jumped over)
-      {POS: 0x0010A318, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00408430")}, # andi $a0, $a0, 16384  ; Is the cross bit set in $a0?
-      {POS: 0x0010A31C, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x02008014")}, # bne $a0, $zr, 2       ; If so, jump 1 instruction
-      {POS: 0x0010A320, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00203136")}, # ori $s1, $s1, 8192    ; But not before setting the circle bit in $s1
-      {POS: 0x0010A324, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0020313A")}, # xori $s1, $s1, 8192   ; Unset the circle bit (may be jumped over)
-      {POS: 0x0010A328, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x7B48200A")}, # j 0x088121EC          ; Jump back to function
+      {POS: 0x0001B404, ORIG:  ConstBitStream(hex = "0x21108000"), PATCH: ConstBitStream(hex = "0x01000224")},
+      {POS: 0x0000E2A4, ORIG:  ConstBitStream(hex = "0x0400B18F"), PATCH: ConstBitStream(hex = "0xB07F320A")},
+      {POS: 0x001097C0, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0x0400B18F21202002002025320200A014004031360040313A0040843002008014002031360020313A7B48200A")},
     ]
   },
-  {NAME: "Map Name Centering", ENABLED: True, CFG_ID: "map_centering", DATA:
+  {NAME: "Map Label Centering", ENABLED: True, CFG_ID: "map_centering", DATA:
     [
-      {POS: 0x00083380, ORIG: ConstBitStream(hex = "0x02001446"), PATCH: ConstBitStream(hex = "0x8038240A")}, # j 0x0890E200          ; jump to a arbitrary piece of code
-      {POS: 0x00083384, ORIG: ConstBitStream(hex = "0x02000146"), PATCH: ConstBitStream(hex = "0x02001446")}, # mul.s $f0, $f20
-      {POS: 0x0010A2C0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1400BF8F")}, # lw $ra, 20($sp)       ; round the widths of the glyphs down
-      {POS: 0x0010A2C4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1000B4AF")}, # sw $s4, 16($sp)
-      {POS: 0x0010A2C8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x8808143C")}, # lui $s4, 0x0888
-      {POS: 0x0010A2CC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xD4759426")}, # addiu $s4, $s4, 0x75D4
-      {POS: 0x0010A2D0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0600F413")}, # beq $ra, $s4, 0x0890E22C
-      {POS: 0x0010A2D4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x02000146")}, # mul.s $f0, $f1
-      {POS: 0x0010A2D8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xD4009426")}, # addiu $s4, $s4, 0xD4
-      {POS: 0x0010A2DC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0300F413")}, # beq $ra, $s4, 0x0890E22C
-      {POS: 0x0010A2E0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x00000000")}, # nop
-      {POS: 0x0010A2E4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0xBA1C220A")}, # j 0x088872E8
-      {POS: 0x0010A2E8, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x1000B48F")}, # lw $s4, 16($sp)
-      {POS: 0x0010A2EC, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x0D000046")}, # trunc.w.s $f0, $f0
-      {POS: 0x0010A2F0, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x8938240A")}, # j 0x0890E224
-      {POS: 0x0010A2F4, ORIG: ConstBitStream(hex = "0x00000000"), PATCH: ConstBitStream(hex = "0x20008046")}, # cvt.s.w $f0, $f0
-      {POS: 0x00083718, ORIG: ConstBitStream(hex = "0x42060246"), PATCH: ConstBitStream(hex = "0x42161446")}, # mul.s $f25, $f2, $f20 ; make the game stop doing weird shit
-      {POS: 0x0008EA14, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138           ; make the game use the right center coordinate
-      {POS: 0x0008EA7C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x0008EAB0, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x0008EB50, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x0008EBB8, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x0008EBEC, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x0009006C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x000902F8, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
-      {POS: 0x00090358, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")}, # li $a2, 138
+      {POS: 0x000833A0, ORIG:  ConstBitStream(hex = "0x0200144602000146"),
+                        PATCH: ConstBitStream(hex = "0x807F320A02001446")},
+      {POS: 0x00109700, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0x1400BF8F1000B4AF8808143CD47594260600F41302000146D40094260300F41300000000BA1C220A1000B48F0D000046897F320A20008046")},
+      {POS: 0x00083738, ORIG: ConstBitStream(hex = "0x42060246"), PATCH: ConstBitStream(hex = "0x42161446")},
+      {POS: 0x0008EA34, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0008EA9C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0008EAD0, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0008EB70, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0008EBD8, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0008EC0C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x0009008C, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x00090318, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
+      {POS: 0x00090378, ORIG: ConstBitStream(hex = "0x84000624"), PATCH: ConstBitStream(hex = "0x8A000624")},
     ]
   },
-  {NAME: "Ammo/Present Menu (Names)", ENABLED: True, CFG_ID: "ammo_names", DATA:
+  {NAME: "Ammo/Present Menu (Name Positioning)", ENABLED: True, CFG_ID: "ammo_names", DATA:
     [
-      {POS: 0x0000AAC4, ORIG: ConstBitStream(hex = "0x02180046"), PATCH: ConstBitStream(hex = "0x01000046")}, # sub.s $f0, $f0, $f0   ; stop placing the glyphs in weird manner
-      {POS: 0x00083C2C, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")}, # mul.s $f31, $f2, $f20 ; stop doing strange things to the center coordinate
-      {POS: 0x00083E34, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")}, # mul.s $f31, $f2, $f20 ; stop doing strange things to the center coordinate
-      {POS: 0x000DDEBC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")}, # 132.0                 ; fix the center coordinate
+      {POS: 0x0000AAE4, ORIG: ConstBitStream(hex = "0x02180046"), PATCH: ConstBitStream(hex = "0x01000046")},
+      {POS: 0x000DDEDC, ORIG: ConstBitStream(hex = "0x00000343"), PATCH: ConstBitStream(hex = "0x00000443")},
+      {POS: 0x00083E54, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")},
+      {POS: 0x00083C4C, ORIG: ConstBitStream(hex = "0xC2070246"), PATCH: ConstBitStream(hex = "0xC2171446")},
     ]
   },
   {NAME: "Ammo/Present Menu (Line Length)", ENABLED: True, CFG_ID: "ammo_line_len", DATA:
     [
-      {POS: 0x00088F38, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (presents)
-      {POS: 0x0008C110, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")}, # addiu $sp, -0xA0 ; make the game allocate a larger array (ammo)
-      {POS: 0x00088F6C, ORIG: ConstBitStream(hex = "0x11000B24"), PATCH: ConstBitStream(hex = "0x3D000B24")}, # li $t3, 0x3D     ; make the game copy more characters into the array (presents)
-      {POS: 0x0008C144, ORIG: ConstBitStream(hex = "0x11000D24"), PATCH: ConstBitStream(hex = "0x3D000D24")}, # li $t5, 0x3D     ; make the game copy more characters into the array (ammo)
+      {POS: 0x00088F58, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")},
+      {POS: 0x0008C130, ORIG: ConstBitStream(hex = "0xC0FFBD27"), PATCH: ConstBitStream(hex = "0x60FFBD27")},
+      {POS: 0x00088F8C, ORIG: ConstBitStream(hex = "0x11000B24"), PATCH: ConstBitStream(hex = "0x3D000B24")},
+      {POS: 0x0008C164, ORIG: ConstBitStream(hex = "0x11000D24"), PATCH: ConstBitStream(hex = "0x3D000D24")},
     ]
   },
   {NAME: "Ammo/Present Menu (Previews)", ENABLED: True, CFG_ID: "ammo_previews", DATA:
     [
-      # Description length limit (presents)
-      {POS: 0x0008A2D8, ORIG:  ConstBitStream(hex = "0x1D000224"), 
-                        PATCH: ConstBitStream(hex = "0xFF000224")
-      },
-      # Line length limit (presents)
-      {POS: 0x0008A2E4, ORIG:  ConstBitStream(hex = "0x0F000224"), 
-                        PATCH: ConstBitStream(hex = "0xFF000224")
-      },
-      # Newline behavior (presents)
-      {POS: 0x0008A2FC, ORIG:  ConstBitStream(hex = "0x8128020800300924"), 
-                        PATCH: ConstBitStream(hex = "0x6028040800000000")
-      },
-      # Painting ellipsis (presents)
-      {POS: 0x0008A3D4, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B245B27020800000000"), 
-                        PATCH: ConstBitStream(hex = "0x7038240EDA0053267038240E000000007038240E00000000000000005B270208000000000000000000000000")
-      },
-
-      # Description length limit (ammo)
-      {POS: 0x0008D1D0, ORIG:  ConstBitStream(hex = "0x1D000224"), 
-                        PATCH: ConstBitStream(hex = "0xFF000224")
-      },
-      # Line length limit (ammo)
-      {POS: 0x0008D1DC, ORIG:  ConstBitStream(hex = "0x0F000224"), 
-                        PATCH: ConstBitStream(hex = "0xFF000224")
-      },
-      # Newline behavior (ammo)
-      {POS: 0x0008D1FC, ORIG:  ConstBitStream(hex = "0x3F34020800300924"), 
-                        PATCH: ConstBitStream(hex = "0x6828040800000000")
-      },
-      # Painting ellipsis (ammo)
-      {POS: 0x0008D2E4, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B24FB31020800000000"), 
-                        PATCH: ConstBitStream(hex = "0x7038240EDA0053267038240E000000007038240E0000000000000000FB310208000000000000000000000000")
-      },
-      
-      # Newline behavior, continued (presents)
-      {POS: 0x0010A240, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"), 
-                        PATCH: ConstBitStream(hex = "0x0300401200000000CD38220A000000002190540221B000007638220A01003126")
-      },
-      # Newline behavior, continued (ammo)
-      {POS: 0x0010A260, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"), 
-                        PATCH: ConstBitStream(hex = "0x03004012000000009144220A000000002190540221B000003344220A01003126")
-      },
-      # Painting ellipsis, continued (both presents and ammo)
-      {POS: 0x0010A280, ORIG:  ConstBitStream(hex = "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"), 
-                        PATCH: ConstBitStream(hex = "0xF8FFBD270400BFAF2130A0022A00C726214060022120A003212800002E00092421500000751B220E12000B240000A28F21B0C2020400BF8F0800E0030800BD27")
-      },
+      {POS: 0x0008A2F8, ORIG:  ConstBitStream(hex = "0x1D000224"),
+                        PATCH: ConstBitStream(hex = "0xFF000224")},
+      {POS: 0x0008A304, ORIG:  ConstBitStream(hex = "0x0F000224"),
+                        PATCH: ConstBitStream(hex = "0xFF000224")},
+      {POS: 0x0008A31C, ORIG:  ConstBitStream(hex = "0x8128020800300924"),
+                        PATCH: ConstBitStream(hex = "0x906F120800000000")},
+      {POS: 0x0008A3F4, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B245B27020800000000"),
+                        PATCH: ConstBitStream(hex = "0xA07F320EDA005326A07F320E00000000A07F320E00000000000000005B270208000000000000000000000000")},
+      {POS: 0x0008D1F0, ORIG:  ConstBitStream(hex = "0x1D000224"),
+                        PATCH: ConstBitStream(hex = "0xFF000224")},
+      {POS: 0x0008D1FC, ORIG:  ConstBitStream(hex = "0x0F000224"),
+                        PATCH: ConstBitStream(hex = "0xFF000224")},
+      {POS: 0x0008D21C, ORIG:  ConstBitStream(hex = "0x3F34020800300924"),
+                        PATCH: ConstBitStream(hex = "0x986F120800000000")},
+      {POS: 0x0008D304, ORIG:  ConstBitStream(hex = "0x2130A0022A00C7262140600221200000212800002620092421500000750B020C12000B24FB31020800000000"),
+                        PATCH: ConstBitStream(hex = "0xA07F320EDA005326A07F320E00000000A07F320E0000000000000000FB310208000000000000000000000000")},
+      {POS: 0x00109740, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0x0300401200000000CD38220A000000002190540221B000007638220A01003126")},
+      {POS: 0x00109760, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0x03004012000000009144220A000000002190540221B000003344220A01003126")},
+      {POS: 0x00109780, ORIG:  ConstBitStream(hex = "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0xF8FFBD270400BFAF2130A0022A00C726214060022120A003212800002E00092421500000751B220E12000B240000A28F21B0C2020400BF8F0800E0030800BD27")},
     ]
   },
-  {NAME: "Long Ammo File Fix", ENABLED: True, CFG_ID: "ammo_file_size", DATA:
+  {NAME: "Ammo/Present Menu (Long File Fix)", ENABLED: True, CFG_ID: "ammo_file_size", DATA:
     [
-      # For description preview
-      {POS: 0x0008C84C, ORIG: ConstBitStream(hex = "0x0000A384"), PATCH: ConstBitStream(hex = "0x0000A394")},
-      # For full descriptions
-      {POS: 0x0008C108, ORIG: ConstBitStream(hex = "0x0000658402006484"), PATCH: ConstBitStream(hex = "0x0000659402006494")},
-      {POS: 0x0008BB44, ORIG: ConstBitStream(hex = "0x0000648402006284"), PATCH: ConstBitStream(hex = "0x0000649402006294")},
+      {POS: 0x0008C86C, ORIG: ConstBitStream(hex = "0x0000A384"), PATCH: ConstBitStream(hex = "0x0000A394")},
+      {POS: 0x0008C128, ORIG: ConstBitStream(hex = "0x0000658402006484"), PATCH: ConstBitStream(hex = "0x0000659402006494")},
+      {POS: 0x0008BB64, ORIG: ConstBitStream(hex = "0x0000648402006284"), PATCH: ConstBitStream(hex = "0x0000649402006294")},
     ]
   },
-  {NAME: "Ammo/Present Description Total Line Limit", ENABLED: True, CFG_ID: "ammo_line_limit", DATA:
+  {NAME: "Ammo/Present Menu (Total Line Limit)", ENABLED: True, CFG_ID: "ammo_line_limit", DATA:
     [
-      {POS: 0x0008BB74, ORIG: ConstBitStream(hex = "0x0B108300"), PATCH: ConstBitStream(hex = "0x21108000")},
+      {POS: 0x0008BB94, ORIG: ConstBitStream(hex = "0x0B108300"), PATCH: ConstBitStream(hex = "0x21108000")},
     ]
   },
   {NAME: "Fix Glyph Height", ENABLED: False, CFG_ID: "glyph_height", DATA:
     [
-      {POS: 0x00082EFC, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x19001724")}, # li $s7, 25         ; change glyph height
-      {POS: 0x00082F18, ORIG: ConstBitStream(hex = "0x2110E202"), PATCH: ConstBitStream(hex = "0x10004224")}, # addiu $v0, $v0, 16 ; fix the offset
-      {POS: 0x00082FF0, ORIG: ConstBitStream(hex = "0x10180000"), PATCH: ConstBitStream(hex = "0x00020324")}, # li $v1, 512        ; fix line spacing
+      {POS: 0x00082F1C, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x18001724")},
+      {POS: 0x00082F38, ORIG: ConstBitStream(hex = "0x2110E202"), PATCH: ConstBitStream(hex = "0x10004224")},
+      {POS: 0x00083010, ORIG: ConstBitStream(hex = "0x10180000"), PATCH: ConstBitStream(hex = "0x00020324")},
     ]
   },
 ]
@@ -178,17 +142,77 @@ def apply_sys_lang(eboot):
   if LANG_CFG_ID in common.editor_config.hacks:
     sys_menu_lang = common.editor_config.hacks[LANG_CFG_ID]
   
-  patch_loc = 0x1B2E0
+  patch_loc = 0x1B300
   patch = ConstBitStream(uintle = sys_menu_lang, length = 8) + ConstBitStream(hex = "0x000224")
   eboot.overwrite(patch, patch_loc * 8)
   return eboot
 
+def extend_eboot(eboot):
+
+  HEADER_EXTEND_POS   = 0x54
+  HEADER_EXTEND_SIZE  = 0x20
+  
+  NEW_SECTION_POS     = 0x109700
+  NEW_SECTION_SIZE    = 4064
+  
+  ORIG_SIZE           = 1566304
+  EXTENDED_SIZE       = ORIG_SIZE + HEADER_EXTEND_SIZE + NEW_SECTION_SIZE
+  
+  # Already extended, don't need to do it again.
+  if eboot.len / 8 == EXTENDED_SIZE:
+    return eboot, HEADER_EXTEND_SIZE
+  elif eboot.len / 8 != ORIG_SIZE:
+    raise ValueError("EBOOT neither matches original size nor extended size. No idea what to do with this.")
+  
+  eboot.insert(BitStream(length = HEADER_EXTEND_SIZE * 8), HEADER_EXTEND_POS * 8)
+  eboot.insert(BitStream(length = NEW_SECTION_SIZE * 8),   NEW_SECTION_POS * 8)
+  
+  # Since we're adding another program segment between program segments 0 and 1,
+  # we need to update references to program segment 1 on the relocation table
+  # so that they point to program segment 2.
+  #
+  # The pseudocode for this step is:
+  # 
+  # For b = every 8 bytes from 0x1143E0 to the end of the file:
+  #   If b[5] == 1, replace it with 2.
+  #   If b[6] == 1, replace it with 2.
+  TABLE_START = 0x1143E0
+  eboot.bytepos = TABLE_START
+  
+  overwritten = 0
+  
+  while True:
+    
+    eboot.bytepos += 5
+    
+    if eboot.peek(8) == "0x01":
+      eboot.overwrite("0x02")
+      overwritten += 1
+    else:
+      eboot.bytepos += 1
+    
+    if eboot.peek(8) == "0x01":
+      eboot.overwrite("0x02")
+      overwritten += 1
+    else:
+      eboot.bytepos += 1
+    
+    eboot.bytepos += 1
+    
+    if eboot.bytepos >= eboot.len / 8:
+      break
+  
+  print overwritten, "bytes overwritten"
+  return eboot, HEADER_EXTEND_SIZE
+
 def apply_eboot_patches(eboot):
+  
+  eboot, offset = extend_eboot(eboot)
   
   for patch in EBOOT_PATCHES:
   
     enabled = patch[ENABLED]
-    if patch[CFG_ID] in common.editor_config.hacks:
+    if patch[CFG_ID] and patch[CFG_ID] in common.editor_config.hacks:
       enabled = common.editor_config.hacks[patch[CFG_ID]]
     
     # So we can undo patches if they've already been applied.
@@ -198,13 +222,13 @@ def apply_eboot_patches(eboot):
       eboot.overwrite(item[key], item[POS] * 8)
   
   eboot = apply_sys_lang(eboot)
-  return eboot
+  return eboot, offset
 
 if __name__ == "__main__":
   src = "X:\\Danganronpa\\Danganronpa_BEST\\EBOOT-ORIG.BIN"
   dst = "X:\\Danganronpa\\Danganronpa_BEST\\EBOOT-TEST.BIN"
   test = BitStream(filename = src)
-  test = apply_eboot_patches(test)
+  test, offset = apply_eboot_patches(test)
   with open(dst, "wb") as f:
     test.tofile(f)
 

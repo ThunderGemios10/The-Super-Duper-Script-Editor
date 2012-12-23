@@ -60,6 +60,7 @@ class SettingsMenu(QtGui.QDialog):
     
     self.ui.chkPackUmdimage .setChecked(common.editor_config.get_pref("pack_umdimage", default = True))
     self.ui.chkPackUmdimage2.setChecked(common.editor_config.get_pref("pack_umdimage2", default = True))
+    self.ui.chkBuildISO     .setChecked(common.editor_config.get_pref("build_iso", default = True))
     
     self.ui.chkExpandTrees  .setChecked(common.editor_config.get_pref("auto_expand", default = True))
   
@@ -77,6 +78,7 @@ class SettingsMenu(QtGui.QDialog):
 
     common.editor_config.set_pref("pack_umdimage",    self.ui.chkPackUmdimage.isChecked())
     common.editor_config.set_pref("pack_umdimage2",   self.ui.chkPackUmdimage2.isChecked())
+    common.editor_config.set_pref("build_iso",        self.ui.chkBuildISO.isChecked())
 
     common.editor_config.set_pref("auto_expand",      self.ui.chkExpandTrees.isChecked())
     
@@ -236,23 +238,27 @@ class SettingsMenu(QtGui.QDialog):
       name   = hack[eboot_patch.NAME]
       cfg_id = hack[eboot_patch.CFG_ID]
       
-      if cfg_id in common.editor_config.hacks:
+      if cfg_id and cfg_id in common.editor_config.hacks:
         enabled = common.editor_config.hacks[cfg_id]
       else:
         enabled = hack[eboot_patch.ENABLED]
       
       self.ui.lstHacks.addItem(name)
       self.ui.lstHacks.item(i).setCheckState(Qt.Qt.Checked if enabled else Qt.Qt.Unchecked)
-      self.ui.lstHacks.item(i).setData(Qt.Qt.UserRole, cfg_id)
-    
-    languages = eboot_patch.LANGUAGES
-    sys_lang = common.editor_config.hacks[eboot_patch.LANG_CFG_ID]
+      
+      if cfg_id:
+        self.ui.lstHacks.item(i).setData(Qt.Qt.UserRole, cfg_id)
+        self.ui.lstHacks.item(i).setFlags(self.ui.lstHacks.item(i).flags() | Qt.Qt.ItemIsEnabled)
+      else:
+        self.ui.lstHacks.item(i).setData(Qt.Qt.UserRole, "")
+        self.ui.lstHacks.item(i).setFlags(self.ui.lstHacks.item(i).flags() & ~Qt.Qt.ItemIsEnabled)
     
     self.ui.cboHackLang.clear()
     
-    for lang in languages:
+    for lang in eboot_patch.LANGUAGES:
       self.ui.cboHackLang.addItem(lang)
     
+    sys_lang = common.editor_config.hacks[eboot_patch.LANG_CFG_ID]
     self.ui.cboHackLang.setCurrentIndex(sys_lang)
   
   def apply_hacks(self):
@@ -260,7 +266,8 @@ class SettingsMenu(QtGui.QDialog):
       cfg_id  = unicode(self.ui.lstHacks.item(i).data(Qt.Qt.UserRole).toString().toUtf8(), "utf-8")
       enabled = self.ui.lstHacks.item(i).checkState() == Qt.Qt.Checked
       
-      common.editor_config.hacks[cfg_id] = enabled
+      if cfg_id:
+        common.editor_config.hacks[cfg_id] = enabled
     
     common.editor_config.hacks[eboot_patch.LANG_CFG_ID] = self.ui.cboHackLang.currentIndex()
       

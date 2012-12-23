@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\editor.ui'
 #
-# Created: Mon Dec 17 22:25:42 2012
+# Created: Fri Dec 21 21:50:28 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -798,7 +798,7 @@ class Ui_Editor(object):
         self.actionAutoPlayVoice.setCheckable(True)
         self.actionAutoPlayVoice.setChecked(True)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/sound_none.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/sound_mute.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/sound.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.actionAutoPlayVoice.setIcon(icon13)
         self.actionAutoPlayVoice.setText(QtGui.QApplication.translate("Editor", "Auto-Play Voice Files", None, QtGui.QApplication.UnicodeUTF8))
@@ -873,7 +873,10 @@ class Ui_Editor(object):
         self.actionAutoPlayBGM = QtGui.QAction(Editor)
         self.actionAutoPlayBGM.setCheckable(True)
         self.actionAutoPlayBGM.setChecked(True)
-        self.actionAutoPlayBGM.setIcon(icon13)
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(_fromUtf8(":/sound_none.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon21.addPixmap(QtGui.QPixmap(_fromUtf8(":/sound.png")), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.actionAutoPlayBGM.setIcon(icon21)
         self.actionAutoPlayBGM.setText(QtGui.QApplication.translate("Editor", "Auto-Play BGM Files", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAutoPlayBGM.setIconText(QtGui.QApplication.translate("Editor", "BGM", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAutoPlayBGM.setToolTip(QtGui.QApplication.translate("Editor", "Auto-Play BGM Files", None, QtGui.QApplication.UnicodeUTF8))

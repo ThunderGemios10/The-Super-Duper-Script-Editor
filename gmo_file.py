@@ -18,7 +18,10 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import os
+
 from bitstring import BitStream, ConstBitStream
+from gim_converter import GimConverter
 
 GIM_MAGIC       = ConstBitStream(hex='0x4D49472E') # MIG.
 GIM_SIZE_OFFSET = 0x14
@@ -114,25 +117,45 @@ class GmoFile():
     # to work with from the original GIM file that was there, and there's no
     # point in shrinking that down if someone happens to want to re-replace
     # this GIM file without reloading the whole thing.
+  
+  def extract(self, directory, to_png = False):
+    if not os.path.isdir(directory):
+      os.makedirs(directory)
+    
+    gimconv = GimConverter()
+    
+    for id in range(self.gim_count()):
+      gim = self.get_gim(id)
+      
+      out_gim = os.path.join(directory, "%04d.gim" % id)
+      out_png = os.path.join(directory, "%04d.png" % id)
+      
+      with open(out_gim, "wb") as f:
+        gim.tofile(f)
+      
+      if to_png:
+        gimconv.convert(out_gim, out_png)
+        os.remove(out_gim)
 
 if __name__ == "__main__":
   gmo = GmoFile(filename = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage2-sfx-tex\\bg_160.pak\\0007.gmo")
-  gim = gmo.get_gim(4)
-  gmo.replace_gim_file(4,  "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0004-2-fs8.gim")
-  gmo.replace_gim_file(24, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
-  gmo.replace_gim_file(25, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0025-2-fs8.gim")
-  gmo.replace_gim_file(26, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0026-2-fs8.gim")
-  gmo.replace_gim_file(27, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
-  gmo.replace_gim_file(28, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0028-2-fs8.gim")
+  # gim = gmo.get_gim(4)
+  # gmo.replace_gim_file(4,  "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0004-2-fs8.gim")
+  # gmo.replace_gim_file(24, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
+  # gmo.replace_gim_file(25, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0025-2-fs8.gim")
+  # gmo.replace_gim_file(26, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0026-2-fs8.gim")
+  # gmo.replace_gim_file(27, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
+  # gmo.replace_gim_file(28, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0028-2-fs8.gim")
   
-  gmo.save("debug/test.gmo")
-  with open("debug/test.gim", "wb") as f:
-    gim.tofile(f)
+  # gmo.save("debug/test.gmo")
+  # with open("debug/test.gim", "wb") as f:
+    # gim.tofile(f)
   
-  from gim_to_png import GimConverter
-  gimconv = GimConverter()
-  gimconv.convert("debug/test.gim", "debug/test.png")
+  # gimconv = GimConverter()
+  # gimconv.convert("debug/test.gim", "debug/test.png")
   
-  print gmo.gim_count()
+  # print gmo.gim_count()
+  
+  gmo.extract("debug/bg_160.pak", to_png = True)
 
 ### EOF ###

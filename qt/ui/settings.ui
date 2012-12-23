@@ -254,6 +254,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="chkBuildISO">
+            <property name="text">
+             <string>Build ISO</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_6">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -664,7 +674,7 @@
            </property>
            <property name="icon">
             <iconset resource="../res/icons.qrc">
-             <normaloff>:/new.png</normaloff>:/new.png</iconset>
+             <normaloff>:/add.png</normaloff>:/add.png</iconset>
            </property>
           </widget>
          </item>
@@ -841,7 +851,7 @@
            </property>
            <property name="icon">
             <iconset resource="../res/icons.qrc">
-             <normaloff>:/new.png</normaloff>:/new.png</iconset>
+             <normaloff>:/add.png</normaloff>:/add.png</iconset>
            </property>
           </widget>
          </item>
@@ -970,9 +980,19 @@
          </item>
          <item>
           <widget class="QComboBox" name="cboHackLang">
+           <property name="font">
+            <font>
+             <family>MS Shell Dlg 2</family>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
+             <stylestrategy>PreferDefault</stylestrategy>
+             <kerning>true</kerning>
+            </font>
+           </property>
            <item>
             <property name="text">
-             <string>Japanese</string>
+             <string>日本語</string>
             </property>
            </item>
            <item>
@@ -982,52 +1002,52 @@
            </item>
            <item>
             <property name="text">
-             <string>French</string>
+             <string>Français</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Spanish</string>
+             <string>Español</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>German</string>
+             <string>Deutsch</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Italian</string>
+             <string>Italiano</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Dutch</string>
+             <string>Nederlands</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Portuguese</string>
+             <string>Português</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Russian</string>
+             <string>Русский</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Korean</string>
+             <string>한국어</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Traditional Chinese</string>
+             <string>繁體中文</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Simplified Chinese</string>
+             <string>简体中文</string>
             </property>
            </item>
           </widget>
