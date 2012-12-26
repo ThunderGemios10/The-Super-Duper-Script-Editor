@@ -489,7 +489,7 @@ class SetupWizard(QtGui.QDialog):
         if progress.wasCanceled():
           return
         
-        converter.convert(gim_file)
+        converter.gim_to_png(gim_file)
         os.remove(gim_file)
     
     progress.close()

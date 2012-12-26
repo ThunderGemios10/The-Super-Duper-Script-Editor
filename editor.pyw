@@ -2272,6 +2272,7 @@ Attributions:
 <li>Diff Match and Patch: Copyright 2006 Google Inc.; Licensed under the Apache License, Version 2.0</li>
 <li>enum: Copyright © 2007–2009 Ben Finney &lt;ben+python@benfinney.id.au&gt;; Licensed under the GNU GPL, Version 3</li>
 <li>GIM2PNG: Copyright (c) 2008; <a href="http://www.geocities.jp/junk2ool/">Website</a></li>
+<li>GIMExport: Copyright © 2012 /a/nonymous scanlations; Used with permission.</li>
 <li>MeCab: Copyright (c) 2001-2008, Taku Kudo; Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation; Licensed under the GNU GPL, Version 3</li>
 <li>mkisofs: Copyright (C) 1993-1997 Eric Youngdale (C); Copyright (C) 1997-2010 Joerg Schilling; Licensed under the GNU GPL</li>
 <li>pngquant: Copyright (C) 1989, 1991 by Jef Poskanzer; Copyright (C) 1997, 2000, 2002 by Greg Roelofs, based on an idea by Stefan Schneider; Copyright 2009-2012 by Kornel Lesinski</li>

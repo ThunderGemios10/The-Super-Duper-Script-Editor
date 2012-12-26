@@ -24,6 +24,12 @@ from PyQt4.QtCore import QProcess, QString
 import os
 import re
 import shutil
+import tempfile
+
+from bitstring import ConstBitStream
+from enum import Enum
+
+QuantizeType = Enum("none", "auto", "index4", "index8")
 
 OUTPUT_RE = re.compile(ur"save : ([^\n\r]*)")
 
@@ -31,8 +37,63 @@ class GimConverter():
   def __init__(self, parent = None):
     self.parent = parent
     self.process = QProcess()
+    self.temp_dir = tempfile.mkdtemp(prefix = "sdse-")
   
-  def convert(self, gim_file, png_file = None):
+  def __del__(self):
+    shutil.rmtree(self.temp_dir)
+  
+  def quantize_png(self, png_file, quant_type = QuantizeType.auto):
+    
+    if quant_type == QuantizeType.none:
+      return png_file
+    
+    basename = os.path.basename(png_file)
+    temp_png = os.path.join(self.temp_dir, basename)
+    
+    shutil.copy(png_file, temp_png)
+    
+    options = ["--force", "--ext", ".png", "--speed", "1"]
+    
+    if quant_type == QuantizeType.auto:
+      options.extend(["--quality", "100"])
+    elif quant_type == QuantizeType.index4:
+      options.append("16")
+    elif quant_type == QuantizeType.index8:
+      options.append("256")
+    
+    options.append(temp_png)
+      
+    self.process.start("tools/pngquant", options)
+    self.process.waitForFinished(-1)
+    
+    return temp_png
+  
+  def png_to_gim(self, png_file, gim_file = None, quant_type = QuantizeType.auto):
+    # So there's no confusion.
+    png_file = os.path.abspath(png_file)
+    
+    if gim_file == None:
+      gim_file = os.path.splitext(png_file)[0] + ".gim"
+    
+    png_file = self.quantize_png(png_file, quant_type)
+    
+    data = ConstBitStream(filename = png_file)
+    data.bytepos = 0x18
+    
+    options = ["-jar", "tools/gimexport.jar", png_file, gim_file, "3"]
+    
+    depth      = data.read("int:8")
+    color_type = data.read("int:8")
+    
+    if color_type == 3: # Indexed
+      options.append("true")
+    else:
+      options.append("false")
+    
+    self.process.start("java", options)
+    self.process.waitForFinished(-1)
+  
+  def gim_to_png(self, gim_file, png_file = None, quant_type = QuantizeType.none):
     # So there's no confusion.
     gim_file = os.path.abspath(gim_file)
     if png_file:
@@ -64,18 +125,32 @@ class GimConverter():
       print "Error generating PNG file."
       return
     
+    quant = self.quantize_png(saved_file, quant_type)
+    
+    if not quant == saved_file and not quant == png_file:
+      os.remove(saved_file)
+    
     # And move it to the requested location, if one exists.
     if png_file:
-      shutil.move(saved_file, png_file)
+      shutil.move(quant, png_file)
+    else:
+      shutil.move(quant, saved_file)
 
 if __name__ == "__main__":
   import sys
   app = QtGui.QApplication(sys.argv)
   
   conv = GimConverter()
-  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay.png")
-  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay2.png")
-  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay3.png")
-  conv.convert("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay4.png")
+  conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay.png")
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay2.png", QuantizeType.auto)
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay3.png", QuantizeType.index8)
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay4.png", QuantizeType.index4)
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay2.png")
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay3.png")
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage\\adv_map_l_001.gim", "debug/yay4.png")
+  
+  # conv.png_to_gim("debug/yay.png", "debug/yay.gim")
+  # conv.png_to_gim("debug/yay.png", "debug/yay2.gim", QuantizeType.index8)
+  # conv.png_to_gim("debug/yay.png", "debug/yay3.gim", QuantizeType.index4)
 
 ### EOF ###

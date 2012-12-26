@@ -134,7 +134,7 @@ class GmoFile():
         gim.tofile(f)
       
       if to_png:
-        gimconv.convert(out_gim, out_png)
+        gimconv.gim_to_png(out_gim, out_png)
         os.remove(out_gim)
 
 if __name__ == "__main__":
@@ -152,7 +152,7 @@ if __name__ == "__main__":
     # gim.tofile(f)
   
   # gimconv = GimConverter()
-  # gimconv.convert("debug/test.gim", "debug/test.png")
+  # gimconv.gim_to_png("debug/test.gim", "debug/test.png")
   
   # print gmo.gim_count()
   
