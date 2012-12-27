@@ -24,6 +24,7 @@ from PyQt4.QtGui import QFont, QFontMetrics, QImage, QPainter, QPainterPath, QCo
 from bitstring import BitStream
 from enum import Enum
 
+import math
 import sys
 from text_files import load_text
 from make_unique import make_unique
@@ -38,6 +39,7 @@ Y_SHIFT       = 0
 X_MARGIN      = 2
 Y_MARGIN      = 1
 LINE_HEIGHT   = 25
+MAX_HEIGHT    = 4096
 
 UNKNOWN1      = BitStream(hex = '0x2D000000')
 UNKNOWN2      = BitStream(hex = '0x01000000')
@@ -181,11 +183,11 @@ class FontData:
     return font_table
 
 class GameFont:
-  def __init__(self):
-    self.trans  = QImage(IMG_WIDTH, IMG_HEIGHT, QImage.Format_ARGB32_Premultiplied)
+  def __init__(self, width = 512):
+    self.trans  = QImage(width, MAX_HEIGHT, QImage.Format_ARGB32_Premultiplied)
     self.trans.fill(QColor(0, 0, 0, 0).rgba())
     
-    self.opaque = QImage(IMG_WIDTH, IMG_HEIGHT, QImage.Format_ARGB32_Premultiplied)
+    self.opaque = QImage(width, MAX_HEIGHT, QImage.Format_ARGB32_Premultiplied)
     self.opaque.fill(QColor(0, 0, 0, 255).rgba())
     
     self.font_data = FontData()
@@ -193,117 +195,147 @@ class GameFont:
   def save(self, basename):
     self.trans.save(basename + ".png")
     
-    opaque_gray = self.to_gray(self.opaque)
+    opaque_gray = to_gray(self.opaque)
     opaque_gray.save(basename + ".bmp")
     
     self.font_data.save(basename + ".font")
-  
-  def to_gray(self, image):
-    out = QImage(image.width(), image.height(), QImage.Format_Indexed8)
-    color_table = []
-    
-    for i in range(256):
-      color_table.append(QtGui.qRgb(i, i, i))
-    
-    out.setColorTable(color_table)
-    
-    for i in range(image.width()):
-      for j in range(image.height()):
-        color = image.pixel(i, j)
-        out.setPixel(i, j, QtGui.qGray(color))
-    
-    return out
 
-def gen_font(text):
-  font = QFont(FONT_NAME, FONT_SIZE, FONT_WEIGHT)
-  font.setKerning(False)
+class FontConfig:
+  def __init__(self, family = "Meiryo", size = 11, weight = 50,
+      x_offset = 0, y_offset = 2, x_margin = 2, y_margin = 2,
+      y_shift = -1, chars = "", subs = {u"\t": u'  '}):
+    
+    self.family   = family
+    self.size     = size
+    self.weight   = weight
+    self.x_offset = x_offset
+    self.y_offset = y_offset
+    self.x_margin = x_margin
+    self.y_margin = y_margin
+    self.y_shift  = y_shift
+    
+    self.chars    = chars
+    self.subs     = subs
   
-  font_alt = QFont(FONT_ALT, FONT_SIZE, FONT_WEIGHT)
-  font_alt.setKerning(False)
+def to_gray(image):
+  out = QImage(image.width(), image.height(), QImage.Format_Indexed8)
+  color_table = []
   
-  metric = QFontMetrics(font)
-  metric_alt = QFontMetrics(font_alt)
+  for i in range(256):
+    color_table.append(QtGui.qRgb(i, i, i))
+  
+  out.setColorTable(color_table)
+  
+  for i in range(image.width()):
+    for j in range(image.height()):
+      color = image.pixel(i, j)
+      out.setPixel(i, j, QtGui.qGray(color))
+  
+  return out
+
+def gen_font(font_configs, img_width = 1024, draw_outlines = False):
+  height_factor = 512
+  img_height    = height_factor
+  
+  seen_chars = []
   
   game_font = GameFont()
-  
   painter = QPainter(game_font.trans)
-  painter.setFont(font)
-  painter.setRenderHint(QPainter.TextAntialiasing, True)
-  painter.setRenderHint(QPainter.Antialiasing, True)
   
-  pen = painter.pen()
-  pen.setColor(QColor(255, 255, 255, 255))
-  pen.setWidthF(PEN_WIDTH)
-  pen.setCapStyle(Qt.Qt.RoundCap)
-  pen.setJoinStyle(Qt.Qt.RoundJoin)
-  painter.setPen(pen)
+  text_brush = QtGui.QBrush(QColor(255, 255, 255, 255))
+  painter.setBrush(text_brush)
   
-  brush = QtGui.QBrush(QColor(255, 255, 255, 255))
-  painter.setBrush(brush)
+  outline_brush = QtGui.QBrush()
+  outline_pen   = QtGui.QPen(QColor(255, 0, 0, 255), 1, style = Qt.Qt.DotLine, join = Qt.Qt.MiterJoin)
   
   x_pos = 0
   y_pos = 0
   
-  using_alt = False
-  
-  for char in text:
+  for config in font_configs:
+    font = QFont(config.family, config.size, config.weight, italic = False)
+    font.setKerning(False)
+    metric = QFontMetrics(font)
     
-    if char in ALT_CHARS:
-      using_alt = True
+    painter.setFont(font)
+    painter.setRenderHint(QPainter.TextAntialiasing, True)
+    painter.setRenderHint(QPainter.Antialiasing, True)
     
-    if using_alt:
-      cur_font = font_alt
-      cur_metric = metric_alt
-    else:
-      cur_font = font
-      cur_metric = metric
+    text_pen = painter.pen()
+    text_pen.setBrush(QColor(255, 255, 255, 255))
+    text_pen.setWidthF(0)
+    text_pen.setCapStyle(Qt.Qt.RoundCap)
+    text_pen.setJoinStyle(Qt.Qt.RoundJoin)
+    text_pen.setStyle(Qt.Qt.NoPen)
+    painter.setPen(text_pen)
     
-    # If we want a character to represent something it's not.
-    # Basically just for … = ... because in Meiryo, … is mid-aligned.
-    char_to_print = char
-    
-    if char in CHAR_SUBS:
-      char_to_print = CHAR_SUBS[char]
+    for char in config.chars:
       
-    char_w = cur_metric.width(char_to_print)
+      if char in seen_chars:
+        continue
+      else:
+        seen_chars.append(char)
+      
+      # If we want a character to represent something it's not.
+      # Basically just for … = ... because in Meiryo, … is mid-aligned.
+      char_to_print = char
+      
+      if char in config.subs:
+        char_to_print = config.subs[char]
+      
+      char_w = metric.width(char_to_print)
+      
+      if x_pos + char_w > img_width:
+        x_pos = 0
+        y_pos += LINE_HEIGHT + config.y_margin
+      
+      if y_pos < 0:
+        y_pos = 0
     
-    if x_pos + char_w > IMG_WIDTH:
-      x_pos = 0
-      y_pos += LINE_HEIGHT + Y_MARGIN
+      if y_pos + LINE_HEIGHT > MAX_HEIGHT:
+        print "Ran out of vertical space. Generated font does not include all characters."
+        break
     
-    if y_pos < 0:
-      y_pos = 0
-    
-    if y_pos + LINE_HEIGHT > IMG_HEIGHT:
-      print "Ran out of vertical space. Generated font does not include all characters."
-      break
-    
-    game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': LINE_HEIGHT})
-    
-    path = QPainterPath()
-    path.addText(x_pos + X_SHIFT, y_pos + cur_metric.ascent() + Y_SHIFT, cur_font, char_to_print)
-    painter.drawPath(path)
-    
-    x_pos += char_w + X_MARGIN
-    
-    using_alt = False
+      game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': LINE_HEIGHT, 'y_shift': config.y_shift})
+      
+      path = QPainterPath()
+      path.addText(x_pos + config.x_offset, y_pos + metric.ascent() + config.y_offset, font, char_to_print)
+      painter.drawPath(path)
+      
+      if draw_outlines:
+        painter.setBrush(outline_brush)
+        painter.setPen(outline_pen)
+        painter.setRenderHint(QPainter.Antialiasing, False)
+        
+        painter.drawRect(x_pos, y_pos, char_w, LINE_HEIGHT)
+        
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setBrush(text_brush)
+        painter.setPen(text_pen)
+      
+      x_pos += char_w + config.x_margin
   
   painter.end()
   
   painter = QPainter(game_font.opaque)
   painter.drawImage(game_font.opaque.rect(), game_font.trans, game_font.trans.rect())
+  painter.end()
+  
+  # Crop our images so they only take up as much space as they need.
+  final_height = int(math.ceil(float(y_pos + LINE_HEIGHT) / float(height_factor)) * height_factor)
+  game_font.trans   = game_font.trans.copy(0, 0, img_width, final_height)
+  game_font.opaque  = game_font.opaque.copy(0, 0, img_width, final_height)
   
   return game_font
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
   
-  app = QtGui.QApplication(sys.argv)
+  # app = QtGui.QApplication(sys.argv)
   
-  chars = load_text(CHAR_LIST)
+  # chars = load_text(CHAR_LIST)
   # We can't have dupes, and why not put them in order while we're at it?
-  chars = sorted(make_unique(chars))
+  # chars = sorted(make_unique(chars))
   
-  game_font = gen_font(chars)
-  game_font.save(SAVE_AS)
+  # game_font = gen_font(chars)
+  # game_font.save(SAVE_AS)
 
 ### EOF ###

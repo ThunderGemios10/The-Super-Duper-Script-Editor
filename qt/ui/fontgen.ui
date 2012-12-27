@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>FontGenerator</class>
+ <widget class="QDialog" name="FontGenerator">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>137</height>
+    <width>442</width>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,90 +19,113 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string/>
+        <string>New Tab</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="icon">
+        <iconset resource="../res/icons.qrc">
+         <normaloff>:/add.png</normaloff>:/add.png</iconset>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QRadioButton" name="radioButton">
+     <item>
+      <widget class="QPushButton" name="pushButton_2">
        <property name="text">
-        <string>Font 1</string>
+        <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/icons.qrc">
+         <normaloff>:/cross.png</normaloff>:/cross.png</iconset>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
-      <widget class="QRadioButton" name="radioButton_2">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabFonts">
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+     <property name="tabsClosable">
+      <bool>false</bool>
+     </property>
+     <property name="movable">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="comboBox">
+     <property name="sizeAdjustPolicy">
+      <enum>QComboBox::AdjustToContents</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>Font 01 (Normal Text)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Font 02 (Class Trial Minigame Text)</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="chkGenForGame">
        <property name="text">
-        <string>Font 2</string>
+        <string>Export to umdimage2</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
+     <item>
+      <widget class="QCheckBox" name="chkGenForEditor">
        <property name="text">
-        <string>Shift</string>
+        <string>Export to editor GFX dir</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_3">
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton_3">
        <property name="text">
-        <string>Margin</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QSpinBox" name="spinBox"/>
-     </item>
-     <item row="2" column="2">
-      <widget class="QSpinBox" name="spinBox_2"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="QSpinBox" name="spinBox"/>
-     </item>
-     <item row="3" column="2">
-      <widget class="QSpinBox" name="spinBox_3"/>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>X</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Y</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <string>Generate</string>
        </property>
       </widget>
      </item>
@@ -114,7 +137,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>
@@ -127,12 +150,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>FontGenerator</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>266</x>
+     <y>406</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -143,12 +166,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>FontGenerator</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>334</x>
+     <y>406</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -156,5 +179,58 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>FontGenerator</receiver>
+   <slot>add_tab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>42</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>FontGenerator</receiver>
+   <slot>remove_tab()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>312</x>
+     <y>8</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>FontGenerator</receiver>
+   <slot>generate_font()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>304</x>
+     <y>358</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>add_tab()</slot>
+  <slot>remove_tab()</slot>
+  <slot>generate_font()</slot>
+ </slots>
 </ui>
