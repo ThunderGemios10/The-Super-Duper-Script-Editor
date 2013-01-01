@@ -21,102 +21,41 @@
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import QFont, QFontMetrics, QImage, QPainter, QPainterPath, QColor
 
+import math
+import os
+import sys
+
 from bitstring import BitStream
 from enum import Enum
+from font_parser import SPFT_MAGIC
 
-import math
-import sys
-from text_files import load_text
-from make_unique import make_unique
-
-FONTS = Enum("font01", "font02")
+FONT_TYPES = Enum("font01", "font02")
 GAMES = Enum("dr", "sdr2")
-FONT_TO_GEN = FONTS.font01
-GAME_TO_GEN = GAMES.dr
 
-X_SHIFT       = 0
-Y_SHIFT       = 0
-X_MARGIN      = 2
-Y_MARGIN      = 1
-LINE_HEIGHT   = 25
+LINE_HEIGHT   = {FONT_TYPES.font01: 25, FONT_TYPES.font02: 26}
 MAX_HEIGHT    = 4096
+HEIGHT_FACTOR = 128
 
-UNKNOWN1      = BitStream(hex = '0x2D000000')
-UNKNOWN2      = BitStream(hex = '0x01000000')
-
-# The 0xFA has to do with vertical alignment.
-# 0xFA = -6 = shift down six pixels when rendering.
-# Not sure about the 0x08 though.
-UNKNOWN3      = BitStream(hex = '0x00000000FA08')
-
-if FONT_TO_GEN == FONTS.font01:
-  CHAR_LIST = "data/font1-dr1.txt"
-  SAVE_AS   = "font_gen/Font01"
-  FONT_NAME = "Meiryo"
-  FONT_ALT  = "Meiryo UI"
-  ALT_CHARS = u'【】「」『』'
-  FONT_SIZE = 11
-  FONT_WEIGHT = 50
-  PEN_WIDTH = 0.25
-  IMG_WIDTH = 512
-  IMG_HEIGHT = 2048
-  
-  CHAR_SUBS = {
-    u"…":  u"...",
-    u"\t": u'  ',
+# UNKNOWN1 is different for every font I've seen.
+UNKNOWN1 = {
+  GAMES.dr: {
+    FONT_TYPES.font01: BitStream(hex = '0x2D000000'),
+    FONT_TYPES.font02: BitStream(hex = '0x30000000'),
+  },
+  GAMES.sdr2: {
+    FONT_TYPES.font01: BitStream(hex = '0x24000000'),
+    FONT_TYPES.font02: BitStream(hex = '0x2D000000'),
   }
-  
-  if GAME_TO_GEN == GAMES.dr:
-    X_SHIFT       = 0
-    Y_SHIFT       = 2
-    #X_MARGIN      = 2
-    #Y_MARGIN      = 1
-  
-  elif GAME_TO_GEN == GAMES.sdr2:
-    X_SHIFT       = 0
-    Y_SHIFT       = -1
-    X_MARGIN      = 2
-    Y_MARGIN      = 3
-    UNKNOWN1      = BitStream(hex = '0x24000000')
-    # Render two pixels higher.
-    UNKNOWN3      = BitStream(hex = '0x000000000200')
+}
 
-elif FONT_TO_GEN == FONTS.font02:
-  CHAR_LIST = "data/font2.txt"
-  SAVE_AS   = "font_gen/Font02"
-  FONT_NAME = "DFSoGei-W7"
-  FONT_ALT  = "DFGSoGei-W7"
-  ALT_CHARS = u' ",.\'!:;()-―-‒–—|“”‘’【】「」『』Ifijl'
-  FONT_SIZE = 18
-  FONT_WEIGHT = 50
-  PEN_WIDTH = 0.001
-  IMG_WIDTH = 1024
-  IMG_HEIGHT = 1024
-  
-  CHAR_SUBS = {
-    u"\t": u'  ',
-  }
-  
-  if GAME_TO_GEN == GAMES.dr:
-    X_SHIFT       = 0
-    Y_SHIFT       = 2
-    #X_MARGIN      = 2
-    #Y_MARGIN      = 1
-    UNKNOWN1      = BitStream(hex = '0x30000000')
-    
-  elif GAME_TO_GEN == GAMES.sdr2:
-    X_SHIFT       = 0
-    Y_SHIFT       = 0
-    X_MARGIN      = 2
-    #Y_MARGIN      = 1
-    UNKNOWN3      = BitStream(hex = '0x00000000FD00')
+UNKNOWN2 = BitStream(hex = '0x01000000')
 
 class FontData:
   def __init__(self):
     self.data = []
   
-  def save(self, filename):
-    data = BitStream(hex = '0x7446705304000000') # Magic
+  def save(self, filename, font_type = FONT_TYPES.font01, game = GAMES.dr):
+    data = BitStream(SPFT_MAGIC)
     
     data += BitStream(uintle = len(self.data), length = 32)
     
@@ -127,7 +66,7 @@ class FontData:
     data += BitStream(uintle = font_table_start, length = 32)
     data += BitStream(uintle = mapping_table_len, length = 32)
     data += BitStream(uintle = mapping_table_start, length = 32)
-    data += UNKNOWN1 + UNKNOWN2
+    data += UNKNOWN1[game][font_type] + UNKNOWN2
     
     data += self.gen_mapping_table(mapping_table_len)
     
@@ -169,7 +108,7 @@ class FontData:
   def gen_font_table(self):
     font_table = BitStream()
     
-    padding = UNKNOWN3
+    padding = BitStream(hex = "0x00000000")
     
     for entry in self.data:
       char    = BitStream(bytes = bytearray(entry['char'], encoding = 'utf-16le'))
@@ -177,8 +116,10 @@ class FontData:
       y_pos   = BitStream(uintle = entry['y'], length = 16)
       width   = BitStream(uintle = entry['w'], length = 16)
       height  = BitStream(uintle = entry['h'], length = 16)
+      y_shift = BitStream(intle  = entry['y_shift'], length = 8)
+      unknown = BitStream(hex = "0x08")
       
-      font_table += char + x_pos + y_pos + width + height + padding
+      font_table += char + x_pos + y_pos + width + height + padding + y_shift + unknown
     
     return font_table
 
@@ -192,18 +133,23 @@ class GameFont:
     
     self.font_data = FontData()
   
-  def save(self, basename):
-    self.trans.save(basename + ".png")
+  def save(self, directory, name, for_game = True, for_editor = True, font_type = FONT_TYPES.font01, game = GAMES.dr):
+    # name = str(font_type)
     
-    opaque_gray = to_gray(self.opaque)
-    opaque_gray.save(basename + ".bmp")
+    if for_editor:
+      self.trans.save(os.path.join(directory, name + ".png"))
     
-    self.font_data.save(basename + ".font")
+    if for_game:
+      opaque_gray = to_gray(self.opaque)
+      opaque_gray.save(os.path.join(directory, name + ".bmp"))
+    
+    self.font_data.save(os.path.join(directory, name + ".font"), font_type, game)
 
 class FontConfig:
   def __init__(self, family = "Meiryo", size = 11, weight = 50,
       x_offset = 0, y_offset = 2, x_margin = 2, y_margin = 2,
-      y_shift = -1, chars = "", subs = {u"\t": u'  '}):
+      y_shift = -1, pen_size = 0, use_pen = False,
+      chars = "", subs = {u"\t": u'  '}):
     
     self.family   = family
     self.size     = size
@@ -213,6 +159,8 @@ class FontConfig:
     self.x_margin = x_margin
     self.y_margin = y_margin
     self.y_shift  = y_shift
+    self.pen_size = pen_size
+    self.use_pen  = use_pen
     
     self.chars    = chars
     self.subs     = subs
@@ -233,13 +181,12 @@ def to_gray(image):
   
   return out
 
-def gen_font(font_configs, img_width = 1024, draw_outlines = False):
-  height_factor = 512
-  img_height    = height_factor
+def gen_font(font_configs, font_type = FONT_TYPES.font01, img_width = 1024, draw_outlines = False):
+  img_height = HEIGHT_FACTOR
   
   seen_chars = []
   
-  game_font = GameFont()
+  game_font = GameFont(width = img_width)
   painter = QPainter(game_font.trans)
   
   text_brush = QtGui.QBrush(QColor(255, 255, 255, 255))
@@ -250,6 +197,8 @@ def gen_font(font_configs, img_width = 1024, draw_outlines = False):
   
   x_pos = 0
   y_pos = 0
+  
+  line_height = LINE_HEIGHT[font_type]
   
   for config in font_configs:
     font = QFont(config.family, config.size, config.weight, italic = False)
@@ -262,13 +211,13 @@ def gen_font(font_configs, img_width = 1024, draw_outlines = False):
     
     text_pen = painter.pen()
     text_pen.setBrush(QColor(255, 255, 255, 255))
-    text_pen.setWidthF(0)
+    text_pen.setWidthF(config.pen_size)
     text_pen.setCapStyle(Qt.Qt.RoundCap)
     text_pen.setJoinStyle(Qt.Qt.RoundJoin)
-    text_pen.setStyle(Qt.Qt.NoPen)
+    text_pen.setStyle(Qt.Qt.SolidLine if config.use_pen else Qt.Qt.NoPen)
     painter.setPen(text_pen)
     
-    for char in config.chars:
+    for char in sorted(config.chars):
       
       if char in seen_chars:
         continue
@@ -286,16 +235,16 @@ def gen_font(font_configs, img_width = 1024, draw_outlines = False):
       
       if x_pos + char_w > img_width:
         x_pos = 0
-        y_pos += LINE_HEIGHT + config.y_margin
+        y_pos += line_height + config.y_margin
       
       if y_pos < 0:
         y_pos = 0
     
-      if y_pos + LINE_HEIGHT > MAX_HEIGHT:
+      if y_pos + line_height > MAX_HEIGHT:
         print "Ran out of vertical space. Generated font does not include all characters."
         break
     
-      game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': LINE_HEIGHT, 'y_shift': config.y_shift})
+      game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': line_height, 'y_shift': config.y_shift})
       
       path = QPainterPath()
       path.addText(x_pos + config.x_offset, y_pos + metric.ascent() + config.y_offset, font, char_to_print)
@@ -306,7 +255,7 @@ def gen_font(font_configs, img_width = 1024, draw_outlines = False):
         painter.setPen(outline_pen)
         painter.setRenderHint(QPainter.Antialiasing, False)
         
-        painter.drawRect(x_pos, y_pos, char_w, LINE_HEIGHT)
+        painter.drawRect(x_pos, y_pos, char_w, line_height)
         
         painter.setRenderHint(QPainter.Antialiasing, True)
         painter.setBrush(text_brush)
@@ -321,7 +270,7 @@ def gen_font(font_configs, img_width = 1024, draw_outlines = False):
   painter.end()
   
   # Crop our images so they only take up as much space as they need.
-  final_height = int(math.ceil(float(y_pos + LINE_HEIGHT) / float(height_factor)) * height_factor)
+  final_height = int(math.ceil(float(y_pos + line_height) / float(HEIGHT_FACTOR)) * HEIGHT_FACTOR)
   game_font.trans   = game_font.trans.copy(0, 0, img_width, final_height)
   game_font.opaque  = game_font.opaque.copy(0, 0, img_width, final_height)
   

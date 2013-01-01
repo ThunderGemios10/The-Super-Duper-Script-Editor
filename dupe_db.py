@@ -26,11 +26,12 @@ import os.path
 import sys
 import shutil
 
+import common
+
 file_list = []
 GROUP_SIZES = {}
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_FILE = os.path.join(BASE_DIR, 'data/dupes.csv')
+CSV_FILE = common.editor_config.dupes_csv
 
 ################################################################################
 ### SOME FUNCTIONS

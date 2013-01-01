@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>511</width>
-    <height>405</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,18 @@
    <iconset resource="../res/icons.qrc">
     <normaloff>:/monokuma-green.png</normaloff>:/monokuma-green.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -323,225 +332,338 @@
       <attribute name="title">
        <string>File Locations</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>ISO directory</string>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QScrollArea" name="scrFileLocs">
+         <property name="autoFillBackground">
+          <bool>false</bool>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="txtIsoDir"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="btnIsoDir">
-         <property name="text">
-          <string>Browse</string>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>ISO file</string>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="lineWidth">
+          <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="txtIsoFile"/>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="btnIsoFile">
-         <property name="text">
-          <string>Browse</string>
+         <property name="widgetResizable">
+          <bool>true</bool>
          </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>umdimage directory</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="txtUmdDir"/>
-       </item>
-       <item row="3" column="2">
-        <widget class="QPushButton" name="btnUmdDir">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>umdimage2 directory</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="txtUmd2Dir"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QPushButton" name="btnUmd2Dir">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>!toc.txt</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="txtToc"/>
-       </item>
-       <item row="6" column="2">
-        <widget class="QPushButton" name="btnToc">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>!toc2.txt</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QLineEdit" name="txtToc2"/>
-       </item>
-       <item row="7" column="2">
-        <widget class="QPushButton" name="btnToc2">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Voice directory</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QLineEdit" name="txtVoice"/>
-       </item>
-       <item row="10" column="2">
-        <widget class="QPushButton" name="btnVoice">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Copy changes to...</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="12" column="1">
-        <widget class="QLineEdit" name="txtCopy"/>
-       </item>
-       <item row="12" column="2">
-        <widget class="QPushButton" name="btnCopy">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Make backup to...</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="13" column="1">
-        <widget class="QLineEdit" name="txtBackup"/>
-       </item>
-       <item row="13" column="2">
-        <widget class="QPushButton" name="btnBackup">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Editor GFX directory</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLineEdit" name="txtGFXDir"/>
-       </item>
-       <item row="9" column="2">
-        <widget class="QPushButton" name="btnGFXDir">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Terminology csv</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="11" column="1">
-        <widget class="QLineEdit" name="txtTerminology"/>
-       </item>
-       <item row="11" column="2">
-        <widget class="QPushButton" name="btnTerminology">
-         <property name="text">
-          <string>Browse</string>
-         </property>
+         <widget class="QWidget" name="scrFileLocsContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>452</width>
+            <height>424</height>
+           </rect>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>ISO file</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="txtIsoFile"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="btnIsoFile">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>umdimage directory</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="txtUmdDir"/>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="btnUmdDir">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>umdimage2 directory</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="txtUmd2Dir"/>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="btnUmd2Dir">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Editor GFX directory</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QLineEdit" name="txtGFXDir"/>
+           </item>
+           <item row="9" column="2">
+            <widget class="QPushButton" name="btnGFXDir">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="text">
+              <string>Voice directory</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QLineEdit" name="txtVoice"/>
+           </item>
+           <item row="10" column="2">
+            <widget class="QPushButton" name="btnVoice">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Terminology csv</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <widget class="QLineEdit" name="txtTerminology"/>
+           </item>
+           <item row="11" column="2">
+            <widget class="QPushButton" name="btnTerminology">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="17" column="0">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Copy changes to...</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="17" column="1">
+            <widget class="QLineEdit" name="txtCopy"/>
+           </item>
+           <item row="17" column="2">
+            <widget class="QPushButton" name="btnCopy">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="18" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>Make backup to...</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="18" column="1">
+            <widget class="QLineEdit" name="txtBackup"/>
+           </item>
+           <item row="18" column="2">
+            <widget class="QPushButton" name="btnBackup">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="19" column="1">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="btnIsoDir">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="txtIsoDir"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>ISO directory</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="0">
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>Dupes csv</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="0">
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>EBOOT text csv</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Similarity database</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="1">
+            <widget class="QLineEdit" name="txtDupes"/>
+           </item>
+           <item row="13" column="1">
+            <widget class="QLineEdit" name="txtEbootText"/>
+           </item>
+           <item row="12" column="2">
+            <widget class="QPushButton" name="btnDupes">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="2">
+            <widget class="QPushButton" name="btnEbootText">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="1">
+            <widget class="QLineEdit" name="txtSimilarity"/>
+           </item>
+           <item row="14" column="2">
+            <widget class="QPushButton" name="btnSimilarity">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="0">
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>!toc.txt</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="1">
+            <widget class="QLineEdit" name="txtToc"/>
+           </item>
+           <item row="15" column="2">
+            <widget class="QPushButton" name="btnToc">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item row="16" column="0">
+            <widget class="QLabel" name="label_11">
+             <property name="text">
+              <string>!toc2.txt</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="16" column="1">
+            <widget class="QLineEdit" name="txtToc2"/>
+           </item>
+           <item row="16" column="2">
+            <widget class="QPushButton" name="btnToc2">
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -685,7 +807,7 @@
            </property>
            <property name="icon">
             <iconset resource="../res/icons.qrc">
-             <normaloff>:/cross.png</normaloff>:/cross.png</iconset>
+             <normaloff>:/delete.png</normaloff>:/delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -862,7 +984,7 @@
            </property>
            <property name="icon">
             <iconset resource="../res/icons.qrc">
-             <normaloff>:/cross.png</normaloff>:/cross.png</iconset>
+             <normaloff>:/delete.png</normaloff>:/delete.png</iconset>
            </property>
           </widget>
          </item>
@@ -1095,24 +1217,51 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>txtIsoDir</tabstop>
-  <tabstop>btnIsoDir</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>chkPlayVoices</tabstop>
+  <tabstop>chkPlayBGM</tabstop>
+  <tabstop>chkPlaySFX</tabstop>
+  <tabstop>chkSpellCheck</tabstop>
+  <tabstop>cboSpellCheckLang</tabstop>
+  <tabstop>chkTextRepl</tabstop>
+  <tabstop>chkSmartQuotes</tabstop>
+  <tabstop>chkTagHighlight</tabstop>
+  <tabstop>chkTermHighlight</tabstop>
+  <tabstop>chkMangle</tabstop>
+  <tabstop>chkPackUmdimage</tabstop>
+  <tabstop>chkPackUmdimage2</tabstop>
+  <tabstop>chkBuildISO</tabstop>
+  <tabstop>chkExpandTrees</tabstop>
   <tabstop>txtIsoFile</tabstop>
   <tabstop>btnIsoFile</tabstop>
   <tabstop>txtUmdDir</tabstop>
   <tabstop>btnUmdDir</tabstop>
   <tabstop>txtUmd2Dir</tabstop>
   <tabstop>btnUmd2Dir</tabstop>
-  <tabstop>txtToc</tabstop>
-  <tabstop>btnToc</tabstop>
-  <tabstop>txtToc2</tabstop>
-  <tabstop>btnToc2</tabstop>
+  <tabstop>txtGFXDir</tabstop>
+  <tabstop>btnGFXDir</tabstop>
   <tabstop>txtVoice</tabstop>
   <tabstop>btnVoice</tabstop>
+  <tabstop>txtTerminology</tabstop>
+  <tabstop>btnTerminology</tabstop>
   <tabstop>txtCopy</tabstop>
   <tabstop>btnCopy</tabstop>
   <tabstop>txtBackup</tabstop>
   <tabstop>btnBackup</tabstop>
+  <tabstop>treeTags</tabstop>
+  <tabstop>btnNewTag</tabstop>
+  <tabstop>btnDelTag</tabstop>
+  <tabstop>btnTagToTop</tabstop>
+  <tabstop>btnTagUp</tabstop>
+  <tabstop>btnTagDown</tabstop>
+  <tabstop>btnTagToBottom</tabstop>
+  <tabstop>treeTextRepl</tabstop>
+  <tabstop>btnNewRepl</tabstop>
+  <tabstop>btnDelRepl</tabstop>
+  <tabstop>lstHacks</tabstop>
+  <tabstop>cboHackLang</tabstop>
+  <tabstop>btnReloadHacks</tabstop>
+  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources>
   <include location="../res/icons.qrc"/>

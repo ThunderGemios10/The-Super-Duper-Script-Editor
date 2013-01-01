@@ -29,7 +29,8 @@ try:
 except:
   import pickle
 
-import eboot_patch
+# import eboot_patch
+from eboot_patch import LANG_CFG_ID
 
 DEFAULT_SETTINGS = {
   "auto_expand":        "True",
@@ -40,19 +41,23 @@ DEFAULT_SETTINGS = {
   "bgm_dir":            "./bgm",
   "build_iso":          "True",
   "changes_dir":        "./!changes",
+  "dupes_csv":          "./data/dupes.csv",
   "eboot_orig":         "./EBOOT-ORIG.BIN",
+  "eboot_text":         "./data/eboot_text.csv",
   "gfx_dir":            "./data/gfx",
   "highlight_tags":     "True",
   "highlight_terms":    "True",
   "iso_dir":            "./!ISO_EDITED",
   "iso_file":           "./DANGANRONPA_EDITED.iso",
   "last_checked_with":  "./umdimage-orig",
+  "last_font":          "./debug/test.sdse-font",
   "last_import_target": "./!imported",
   "last_imported":      "./!changes",
   "last_opened":        "e00_001_000.lin",
   "mangle_text":        "True",
   "pack_umdimage":      "True",
   "pack_umdimage2":     "True",
+  "similarity_db":      "./data/similarity-db.sql",
   "smart_quotes":       "False",
   "spell_check":        "True",
   "terminology":        "X:/My Dropbox/Danganronpa/Terminology.csv",
@@ -65,7 +70,7 @@ DEFAULT_SETTINGS = {
 }
 
 CONFIG_DIR      = os.path.dirname(os.path.abspath(__file__))
-CONFIG_FILENAME = os.path.join(CONFIG_DIR, "config.ini")
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, "data/config.ini")
 PREFS_SECTION   = "PREFS"
 HACKS_SECTION   = "HACKS"
 TAGS_SECTION    = "TAGS"
@@ -160,7 +165,7 @@ class EditorConfig:
       options = [option for option in config.options(HACKS_SECTION) if option not in DEFAULT_SETTINGS]
       
       for option in options:
-        if option == eboot_patch.LANG_CFG_ID:
+        if option == LANG_CFG_ID:
           self.hacks[option] = config.getint(HACKS_SECTION, option)
         else:
           self.hacks[option] = config.getboolean(HACKS_SECTION, option)

@@ -24,6 +24,8 @@ import threading
 import time
 from collections import deque
 
+import common
+
 class SimilarityDB():
   def __init__(self):
     self.similarities = {}
@@ -39,7 +41,7 @@ class SimilarityDB():
     # kill the thread when the main window is closed.
     self.thread.daemon = True
     
-    self.conn = sqlite3.connect('data/similarity-db.sql', check_same_thread = False)
+    self.conn = sqlite3.connect(common.editor_config.similarity_db, check_same_thread = False)
     self.conn.row_factory = sqlite3.Row
     self.c = self.conn.cursor()
     

@@ -139,8 +139,8 @@ def parse_font(font_num, spft_filename):
   #   XXXX -- Y Pos
   #   XXXX -- Width
   #   XXXX -- Height
-  #   0000 -- Dummy
-  #   0000 -- Dummy
+  #   0000 -- Padding
+  #   0000 -- Padding
   #   FA08 -- Something to do with rendering offset. FA -> -6 -> renders six pixels down
   
   #print "    XXXX YYYY WWW HHH"

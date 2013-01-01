@@ -22,7 +22,9 @@ from bitstring import ConstBitStream
 import codecs
 from csv import DictReader, DictWriter
 
-CSV_FILE = "data/eboot_text.csv"
+import common
+
+CSV_FILE = common.editor_config.eboot_text
 
 class EbootText():
   def __init__(

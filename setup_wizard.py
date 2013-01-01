@@ -29,10 +29,11 @@ import shutil
 import sys
 import threading
 import zipfile
-from bitstring import ConstBitStream
+from bitstring import ConstBitStream, BitStream
 
 import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
+from eboot_patch import apply_eboot_patches
 from extract import extract_umdimage, UMDIMAGE_TYPE, extract_pak
 from font_parser import font_bmp_to_alpha
 from gim_converter import GimConverter
@@ -45,11 +46,19 @@ VOICE_PAK       = os.path.join("PSP_GAME", "USRDIR", "voice.pak")
 UMDIMAGE_DIR    = "umdimage"
 UMDIMAGE2_DIR   = "umdimage2"
 VOICE_DIR       = "voice"
-TOC_FILE        = "!toc.txt"
-TOC2_FILE       = "!toc2.txt"
 CHANGES_DIR     = "!changes"
 BACKUP_DIR      = "!backup"
 EDITED_ISO_DIR  = "!ISO_EDITED"
+EDITED_ISO_FILE = "[PSP] DRBest [Edited].iso"
+
+EDITOR_DATA_DIR = "!editor"
+TOC_FILE        = "!toc.txt"
+TOC2_FILE       = "!toc2.txt"
+DUPES_CSV       = "dupes.csv"
+EBOOT_TEXT      = "eboot_text.csv"
+SIMILARITY_DB   = "similarity-db.sql"
+
+THREAD_TIMEOUT = 0.1
 
 class SetupWizard(QtGui.QDialog):
   def __init__(self, parent=None):
@@ -172,11 +181,13 @@ class SetupWizard(QtGui.QDialog):
     self.umdimage_dir    = os.path.join(self.workspace_dir, UMDIMAGE_DIR)
     self.umdimage2_dir   = os.path.join(self.workspace_dir, UMDIMAGE2_DIR)
     self.voice_dir       = os.path.join(self.workspace_dir, VOICE_DIR)
-    self.toc_file        = os.path.join(self.workspace_dir, TOC_FILE)
-    self.toc2_file       = os.path.join(self.workspace_dir, TOC2_FILE)
     self.changes_dir     = os.path.join(self.workspace_dir, CHANGES_DIR)
     self.backup_dir      = os.path.join(self.workspace_dir, BACKUP_DIR)
     self.edited_iso_dir  = os.path.join(self.workspace_dir, EDITED_ISO_DIR)
+    
+    self.editor_data_dir = os.path.join(self.workspace_dir, EDITOR_DATA_DIR)
+    self.toc_file        = os.path.join(self.editor_data_dir, TOC_FILE)
+    self.toc2_file       = os.path.join(self.editor_data_dir, TOC2_FILE)
     
   def skip_setup(self):
     
@@ -221,13 +232,15 @@ class SetupWizard(QtGui.QDialog):
       os.makedirs(self.backup_dir)
     progress.setValue(progress.value() + 1)
     
+    if not os.path.isdir(self.editor_data_dir):
+      os.makedirs(self.editor_data_dir)
+    progress.setValue(progress.value() + 1)
+    
     thread_fns = [
       {"target": extract_umdimage, "kwargs": {"filename": umdimage,  "out_dir": self.umdimage_dir,  "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best,  "toc_filename": self.toc_file}},
       {"target": extract_umdimage, "kwargs": {"filename": umdimage2, "out_dir": self.umdimage2_dir, "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best2, "toc_filename": self.toc2_file}},
       {"target": extract_pak,      "kwargs": {"filename": voice,     "out_dir": self.voice_dir}},
     ]
-    
-    THREAD_TIMEOUT = 0.1
     
     # Going to capture stdout because I don't feel like
     # rewriting the extract functions to play nice with GUI.
@@ -262,7 +275,7 @@ class SetupWizard(QtGui.QDialog):
     thread.start()
     
     while thread.isAlive():
-      thread.join(1.0)
+      thread.join(THREAD_TIMEOUT)
       progress.setLabelText("Copying ISO files...")
       # It has to increase by some amount or it won't update and the UI will lock up.
       progress.setValue(progress.value() + 1)
@@ -282,16 +295,23 @@ class SetupWizard(QtGui.QDialog):
       with open(blank, "wb") as f:
         pass
     
-    # Copy the decrypted EBOOT into the ISO folder so the builder can use it.
-    shutil.copy(self.eboot_path, os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
+    # Copy the decrypted EBOOT into the ISO folder and apply our hacks to it.
+    progress.setLabelText("Hacking EBOOT...")
+    progress.setValue(progress.value() + 1)
+    
+    hacked_eboot = BitStream(filename = self.eboot_path)
+    hacked_eboot, offset = apply_eboot_patches(hacked_eboot)
+    with open(os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"), "wb") as f:
+      hacked_eboot.tofile(f)
+    # shutil.copy(self.eboot_path, os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
     
     progress.setLabelText("Extracting similarity database...")
+    progress.setValue(progress.value() + 1)
     
     # Extract the similarity database.
-    similarity_db = zipfile.ZipFile("data/similarity-db.zip", "r")
-    # similarity_db.extract("similarity-db.sql", "data")
-    similarity_db.extract("similarity-db.sql", self.workspace_dir)
-    similarity_db.close()
+    editor_data = zipfile.ZipFile("data/editor_data.zip", "r")
+    editor_data.extractall(self.editor_data_dir)
+    editor_data.close()
     
     progress.setValue(progress.maximum())
     progress.close()
@@ -303,7 +323,7 @@ class SetupWizard(QtGui.QDialog):
   ### STEP 5
   ##############################################################################
   def copy_gfx(self):
-    gfx_dir = os.path.join(self.workspace_dir, "gfxyayay")
+    gfx_dir = os.path.join(self.editor_data_dir, "gfx")
     
     if os.path.isdir(gfx_dir):
       shutil.rmtree(gfx_dir)
@@ -494,6 +514,8 @@ class SetupWizard(QtGui.QDialog):
     
     progress.close()
     
+    self.gfx_dir = gfx_dir
+    
     self.ui.grpStep5.setEnabled(False)
     self.ui.grpStep6.setEnabled(True)
     
@@ -511,17 +533,48 @@ class SetupWizard(QtGui.QDialog):
       self.ui.txtTerminology.setText(dir)
   
   def check_terminology(self):
-    self.ui.grpStep6.setEnabled(False)
+    terms_file = unicode(self.ui.txtTerminology.text().toUtf8(), "UTF-8")
     
-    self.ui.btnClose.disconnect(self.reject)
-    self.ui.btnClose.connect(self.accept)
-    self.ui.btnClose.setText("Finish")
+    if not terms_file:
+      self.show_error("No terminology file provided.")
+      return
+    
+    if not os.path.isfile(terms_file):
+      # Create it.
+      with open(terms_file, "wb") as f:
+        self.show_info("Terminology file created.")
+    
+    self.terminology = terms_file
+    
+    self.ui.grpStep6.setEnabled(False)
+    self.ui.btnFinish.setEnabled(True)
   
   ##############################################################################
   ### @fn   accept()
   ### @desc Overrides the OK button.
   ##############################################################################
   def accept(self):
+    # Save typing~
+    cfg = common.editor_config
+    
+    cfg.backup_dir    = self.backup_dir
+    cfg.changes_dir   = self.changes_dir
+    cfg.dupes_csv     = os.path.join(self.editor_data_dir, DUPES_CSV)
+    cfg.eboot_text    = os.path.join(self.editor_data_dir, EBOOT_TEXT)
+    cfg.gfx_dir       = self.gfx_dir
+    cfg.iso_dir       = self.edited_iso_dir
+    cfg.iso_file      = os.path.join(self.workspace_dir, EDITED_ISO_FILE)
+    cfg.similarity_db = os.path.join(self.editor_data_dir, SIMILARITY_DB)
+    cfg.terminology   = self.terminology
+    cfg.toc           = self.toc_file
+    cfg.toc2          = self.toc2_file
+    cfg.umdimage_dir  = self.umdimage_dir
+    cfg.umdimage2_dir = self.umdimage2_dir
+    cfg.voice_dir     = self.voice_dir
+    
+    common.editor_config = cfg
+    common.editor_config.save_config()
+    
     super(SetupWizard, self).accept()
   
   ##############################################################################

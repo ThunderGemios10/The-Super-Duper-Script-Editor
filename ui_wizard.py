@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\wizard.ui'
 #
-# Created: Wed Dec 26 20:28:58 2012
+# Created: Mon Dec 31 22:31:10 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,7 +55,7 @@ class Ui_SetupWizard(object):
         font = QtGui.QFont()
         font.setPointSize(8)
         self.txtIso.setFont(font)
-        self.txtIso.setText(QtGui.QApplication.translate("SetupWizard", "X:\\Danganronpa\\Danganronpa_BEST\\!ISO", None, QtGui.QApplication.UnicodeUTF8))
+        self.txtIso.setText(_fromUtf8(""))
         self.txtIso.setObjectName(_fromUtf8("txtIso"))
         self.horizontalLayout.addWidget(self.txtIso)
         self.btnIsoBrowse = QtGui.QPushButton(self.grpStep1)
@@ -102,7 +102,7 @@ class Ui_SetupWizard(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.txtWorkspace = QtGui.QLineEdit(self.grpStep2)
-        self.txtWorkspace.setText(QtGui.QApplication.translate("SetupWizard", "X:\\Danganronpa\\Workspace-test", None, QtGui.QApplication.UnicodeUTF8))
+        self.txtWorkspace.setText(_fromUtf8(""))
         self.txtWorkspace.setObjectName(_fromUtf8("txtWorkspace"))
         self.horizontalLayout_3.addWidget(self.txtWorkspace)
         self.btnWorkspaceBrowse = QtGui.QPushButton(self.grpStep2)
@@ -253,16 +253,22 @@ class Ui_SetupWizard(object):
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem6)
-        self.btnClose = QtGui.QPushButton(SetupWizard)
-        self.btnClose.setText(QtGui.QApplication.translate("SetupWizard", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnClose.setObjectName(_fromUtf8("btnClose"))
-        self.horizontalLayout_4.addWidget(self.btnClose)
+        self.btnFinish = QtGui.QPushButton(SetupWizard)
+        self.btnFinish.setEnabled(False)
+        self.btnFinish.setText(QtGui.QApplication.translate("SetupWizard", "Finish", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnFinish.setObjectName(_fromUtf8("btnFinish"))
+        self.horizontalLayout_4.addWidget(self.btnFinish)
+        self.btnCancel = QtGui.QPushButton(SetupWizard)
+        self.btnCancel.setText(QtGui.QApplication.translate("SetupWizard", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnCancel.setObjectName(_fromUtf8("btnCancel"))
+        self.horizontalLayout_4.addWidget(self.btnCancel)
         spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem7)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
 
         self.retranslateUi(SetupWizard)
-        QtCore.QObject.connect(self.btnClose, QtCore.SIGNAL(_fromUtf8("clicked()")), SetupWizard.reject)
+        QtCore.QObject.connect(self.btnCancel, QtCore.SIGNAL(_fromUtf8("clicked()")), SetupWizard.reject)
+        QtCore.QObject.connect(self.btnFinish, QtCore.SIGNAL(_fromUtf8("clicked()")), SetupWizard.accept)
         QtCore.QMetaObject.connectSlotsByName(SetupWizard)
 
     def retranslateUi(self, SetupWizard):

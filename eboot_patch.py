@@ -39,7 +39,7 @@ LANG_CFG_ID = "sys_menu_lang"
 EBOOT_PATCHES = [
   {NAME: "Extend EBOOT", ENABLED: True, CFG_ID: None, DATA:
     [
-      {POS: 0x0000002C, ORIG:  ConstBitStream(hex = "0x0300"), PATCH: ConstBitStream(hex = "0x0400")},
+      {POS: 0x0000002C, ORIG:  ConstBitStream(hex = "0x0300"),     PATCH: ConstBitStream(hex = "0x0400")},
       {POS: 0x00000038, ORIG:  ConstBitStream(hex = "0xA0000000"), PATCH: ConstBitStream(hex = "0xC0000000")},
       {POS: 0x00000040, ORIG:  ConstBitStream(hex = "0x84C70D00"), PATCH: ConstBitStream(hex = "0xA4C70D00")},
       {POS: 0x00000054, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000"),
@@ -179,21 +179,17 @@ def extend_eboot(eboot):
   TABLE_START = 0x1143E0
   eboot.bytepos = TABLE_START
   
-  overwritten = 0
-  
   while True:
     
     eboot.bytepos += 5
     
     if eboot.peek(8) == "0x01":
       eboot.overwrite("0x02")
-      overwritten += 1
     else:
       eboot.bytepos += 1
     
     if eboot.peek(8) == "0x01":
       eboot.overwrite("0x02")
-      overwritten += 1
     else:
       eboot.bytepos += 1
     
@@ -202,7 +198,6 @@ def extend_eboot(eboot):
     if eboot.bytepos >= eboot.len / 8:
       break
   
-  print overwritten, "bytes overwritten"
   return eboot, HEADER_EXTEND_SIZE
 
 def apply_eboot_patches(eboot):

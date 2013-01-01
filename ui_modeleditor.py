@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\modeleditor.ui'
 #
-# Created: Wed Dec 26 20:28:57 2012
+# Created: Mon Dec 31 22:31:09 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -204,6 +204,12 @@ class Ui_ModelEditor(object):
         QtCore.QObject.connect(self.treePaks, QtCore.SIGNAL(_fromUtf8("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)")), ModelEditor.model_pak_selected)
         QtCore.QObject.connect(self.treeModels, QtCore.SIGNAL(_fromUtf8("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)")), ModelEditor.texture_selected)
         QtCore.QMetaObject.connectSlotsByName(ModelEditor)
+        ModelEditor.setTabOrder(self.btnExtract, self.btnImport)
+        ModelEditor.setTabOrder(self.btnImport, self.treePaks)
+        ModelEditor.setTabOrder(self.treePaks, self.treeModels)
+        ModelEditor.setTabOrder(self.treeModels, self.btnBGColor)
+        ModelEditor.setTabOrder(self.btnBGColor, self.btnClearBG)
+        ModelEditor.setTabOrder(self.btnClearBG, self.buttonBox)
 
     def retranslateUi(self, ModelEditor):
         pass

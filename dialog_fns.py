@@ -23,14 +23,14 @@ from PyQt4.QtGui import QFileDialog
 
 import os
 
-def get_save_file(parent, default, filter):
+def get_save_file(parent, default, filter = ""):
   file = QFileDialog.getSaveFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
   if not file == "":
     return os.path.abspath(file)
   else:
     return file
 
-def get_open_file(parent, default, filter):
+def get_open_file(parent, default, filter = ""):
   file = QFileDialog.getOpenFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
   if not file == "":
     return os.path.abspath(file)

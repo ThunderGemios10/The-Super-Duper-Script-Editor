@@ -1706,13 +1706,15 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionImportOther"/>
     </widget>
     <addaction name="menuImport_Directory"/>
-    <addaction name="actionTerminology"/>
     <addaction name="actionReloadDupesDB"/>
     <addaction name="separator"/>
-    <addaction name="actionCheckForErrors"/>
-    <addaction name="actionBuild"/>
+    <addaction name="actionFontGenerator"/>
+    <addaction name="actionModelEditor"/>
+    <addaction name="actionTerminology"/>
     <addaction name="separator"/>
     <addaction name="actionCalculateProgress"/>
+    <addaction name="actionCheckForErrors"/>
+    <addaction name="actionBuild"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -2126,6 +2128,27 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="iconVisibleInMenu">
     <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionFontGenerator">
+   <property name="icon">
+    <iconset resource="../res/icons.qrc">
+     <normaloff>:/font.png</normaloff>:/font.png</iconset>
+   </property>
+   <property name="text">
+    <string>Font Generator</string>
+   </property>
+  </action>
+  <action name="actionModelEditor">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/icons.qrc">
+     <normaloff>:/brick.png</normaloff>:/brick.png</iconset>
+   </property>
+   <property name="text">
+    <string>Model Editor</string>
    </property>
   </action>
  </widget>

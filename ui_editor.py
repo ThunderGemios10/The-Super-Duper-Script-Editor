@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\editor.ui'
 #
-# Created: Wed Dec 26 20:28:56 2012
+# Created: Mon Dec 31 22:31:08 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -883,6 +883,19 @@ class Ui_Editor(object):
         self.actionAutoPlayBGM.setShortcut(QtGui.QApplication.translate("Editor", "Ctrl+Alt+B", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAutoPlayBGM.setIconVisibleInMenu(True)
         self.actionAutoPlayBGM.setObjectName(_fromUtf8("actionAutoPlayBGM"))
+        self.actionFontGenerator = QtGui.QAction(Editor)
+        icon22 = QtGui.QIcon()
+        icon22.addPixmap(QtGui.QPixmap(_fromUtf8(":/font.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionFontGenerator.setIcon(icon22)
+        self.actionFontGenerator.setText(QtGui.QApplication.translate("Editor", "Font Generator", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFontGenerator.setObjectName(_fromUtf8("actionFontGenerator"))
+        self.actionModelEditor = QtGui.QAction(Editor)
+        self.actionModelEditor.setEnabled(False)
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(_fromUtf8(":/brick.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionModelEditor.setIcon(icon23)
+        self.actionModelEditor.setText(QtGui.QApplication.translate("Editor", "Model Editor", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionModelEditor.setObjectName(_fromUtf8("actionModelEditor"))
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionReloadDirectory)
         self.menuFile.addAction(self.actionSave)
@@ -896,13 +909,15 @@ class Ui_Editor(object):
         self.menuImport_Directory.addAction(self.actionImportUmdimage2)
         self.menuImport_Directory.addAction(self.actionImportOther)
         self.menuTools.addAction(self.menuImport_Directory.menuAction())
-        self.menuTools.addAction(self.actionTerminology)
         self.menuTools.addAction(self.actionReloadDupesDB)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionCheckForErrors)
-        self.menuTools.addAction(self.actionBuild)
+        self.menuTools.addAction(self.actionFontGenerator)
+        self.menuTools.addAction(self.actionModelEditor)
+        self.menuTools.addAction(self.actionTerminology)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionCalculateProgress)
+        self.menuTools.addAction(self.actionCheckForErrors)
+        self.menuTools.addAction(self.actionBuild)
         self.menuView.addAction(self.actionFirstFile)
         self.menuView.addAction(self.actionPreviousFile)
         self.menuView.addAction(self.actionNextFile)

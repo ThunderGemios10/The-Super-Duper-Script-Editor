@@ -75,7 +75,7 @@
            </font>
           </property>
           <property name="text">
-           <string>X:\Danganronpa\Danganronpa_BEST\!ISO</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -155,7 +155,7 @@
         <item>
          <widget class="QLineEdit" name="txtWorkspace">
           <property name="text">
-           <string>X:\Danganronpa\Workspace-test</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -493,7 +493,17 @@ p, li { white-space: pre-wrap; }
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="btnClose">
+      <widget class="QPushButton" name="btnFinish">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Finish</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel">
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -521,7 +531,7 @@ p, li { white-space: pre-wrap; }
  </resources>
  <connections>
   <connection>
-   <sender>btnClose</sender>
+   <sender>btnCancel</sender>
    <signal>clicked()</signal>
    <receiver>SetupWizard</receiver>
    <slot>reject()</slot>
@@ -533,6 +543,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>232</x>
      <y>613</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnFinish</sender>
+   <signal>clicked()</signal>
+   <receiver>SetupWizard</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>634</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>148</x>
+     <y>625</y>
     </hint>
    </hints>
   </connection>

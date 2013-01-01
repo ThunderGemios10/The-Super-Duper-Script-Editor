@@ -391,6 +391,15 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>btnExtract</tabstop>
+  <tabstop>btnImport</tabstop>
+  <tabstop>treePaks</tabstop>
+  <tabstop>treeModels</tabstop>
+  <tabstop>btnBGColor</tabstop>
+  <tabstop>btnClearBG</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="../res/icons.qrc"/>
  </resources>
@@ -434,8 +443,8 @@
    <slot>set_background_color()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>419</x>
-     <y>256</y>
+     <x>452</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
      <x>356</x>
@@ -450,8 +459,8 @@
    <slot>clear_background_color()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>506</x>
-     <y>256</y>
+     <x>512</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
      <x>458</x>

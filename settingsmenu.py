@@ -19,6 +19,7 @@
 ################################################################################
 
 from PyQt4 import Qt, QtGui, QtCore
+from PyQt4.QtCore import QSignalMapper
 from ui_settings import Ui_SettingsMenu
 
 import os
@@ -27,8 +28,56 @@ import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
 import eboot_patch
 
+################################################################################
+### So I can loop all this shit and only have to edit stuff
+### in one place instead of like fifty.
+################################################################################
+TEXT    = "text"
+BTN     = "btn"
+CFG     = "cfg"
+CHK     = "chk"
+DEFAULT = "def"
+FN      = "fn"
+FILTER  = "filter"
+
+FILE_LOCATIONS = [
+  {TEXT: "txtIsoDir",       BTN: "btnIsoDir",       CFG: "iso_dir",       FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtIsoFile",      BTN: "btnIsoFile",      CFG: "iso_file",      FN: get_save_file,    FILTER: "PSP ISO Files (*.iso)"},
+  {TEXT: "txtUmdDir",       BTN: "btnUmdDir",       CFG: "umdimage_dir",  FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtUmd2Dir",      BTN: "btnUmd2Dir",      CFG: "umdimage2_dir", FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtGFXDir",       BTN: "btnGFXDir",       CFG: "gfx_dir",       FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtVoice",        BTN: "btnVoice",        CFG: "voice_dir",     FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtTerminology",  BTN: "btnTerminology",  CFG: "terminology",   FN: get_open_file,    FILTER: "Terminology.csv (*.csv)"},
+  {TEXT: "txtDupes",        BTN: "btnDupes",        CFG: "dupes_csv",     FN: get_open_file,    FILTER: "dupes.csv (*.csv)"},
+  {TEXT: "txtEbootText",    BTN: "btnEbootText",    CFG: "eboot_text",    FN: get_open_file,    FILTER: "eboot_text.csv (*.csv)"},
+  {TEXT: "txtSimilarity",   BTN: "btnSimilarity",   CFG: "similarity_db", FN: get_open_file,    FILTER: "similarity-db.sql (*.sql)"},
+  {TEXT: "txtToc",          BTN: "btnToc",          CFG: "toc",           FN: get_open_file,    FILTER: "!toc.txt (*.txt)"},
+  {TEXT: "txtToc2",         BTN: "btnToc2",         CFG: "toc2",          FN: get_open_file,    FILTER: "!toc2.txt (*.txt)"},
+  {TEXT: "txtCopy",         BTN: "btnCopy",         CFG: "changes_dir",   FN: get_existing_dir, FILTER: None},
+  {TEXT: "txtBackup",       BTN: "btnBackup",       CFG: "backup_dir",    FN: get_existing_dir, FILTER: None},
+]
+
+EDITOR_PREFS = [
+  {CHK: "chkPlayVoices",    CFG: "auto_play_voice", DEFAULT: False},
+  {CHK: "chkPlayBGM",       CFG: "auto_play_bgm",   DEFAULT: False},
+  {CHK: "chkPlaySFX",       CFG: "auto_play_sfx",   DEFAULT: False},
+  {CHK: "chkSpellCheck",    CFG: "spell_check",     DEFAULT: True},
+  {CHK: "chkTextRepl",      CFG: "text_repl",       DEFAULT: False},
+  {CHK: "chkSmartQuotes",   CFG: "smart_quotes",    DEFAULT: False},
+  {CHK: "chkTagHighlight",  CFG: "highlight_tags",  DEFAULT: False},
+  {CHK: "chkTermHighlight", CFG: "highlight_terms", DEFAULT: True},
+  {CHK: "chkMangle",        CFG: "mangle_text",     DEFAULT: True},
+  {CHK: "chkPackUmdimage",  CFG: "pack_umdimage",   DEFAULT: True},
+  {CHK: "chkPackUmdimage2", CFG: "pack_umdimage2",  DEFAULT: True},
+  {CHK: "chkBuildISO",      CFG: "build_iso",       DEFAULT: True},
+  {CHK: "chkExpandTrees",   CFG: "auto_expand",     DEFAULT: True},
+]
+
+################################################################################
+### Settings Menu
+################################################################################
 class SettingsMenu(QtGui.QDialog):
-  def __init__(self, parent=None):
+  def __init__(self, parent = None):
     super(SettingsMenu, self).__init__(parent)
     
     self.ui = Ui_SettingsMenu()
@@ -47,158 +96,64 @@ class SettingsMenu(QtGui.QDialog):
 ### TAB: PREFERENCES
 ################################################################################
   def setup_prefs(self):
-    self.ui.chkPlayVoices   .setChecked(common.editor_config.get_pref("auto_play_voice", default = False))
-    self.ui.chkPlayBGM      .setChecked(common.editor_config.get_pref("auto_play_bgm", default = False))
-    self.ui.chkPlaySFX      .setChecked(common.editor_config.get_pref("auto_play_sfx", default = False))
-    
-    self.ui.chkSpellCheck   .setChecked(common.editor_config.get_pref("spell_check", default = True))
-    self.ui.chkTextRepl     .setChecked(common.editor_config.get_pref("text_repl", default = False))
-    self.ui.chkSmartQuotes  .setChecked(common.editor_config.get_pref("smart_quotes", default = False))
-    self.ui.chkTagHighlight .setChecked(common.editor_config.get_pref("highlight_tags", default = False))
-    self.ui.chkTermHighlight.setChecked(common.editor_config.get_pref("highlight_terms", default = True))
-    self.ui.chkMangle       .setChecked(common.editor_config.get_pref("mangle_text", default = True))
-    
-    self.ui.chkPackUmdimage .setChecked(common.editor_config.get_pref("pack_umdimage", default = True))
-    self.ui.chkPackUmdimage2.setChecked(common.editor_config.get_pref("pack_umdimage2", default = True))
-    self.ui.chkBuildISO     .setChecked(common.editor_config.get_pref("build_iso", default = True))
-    
-    self.ui.chkExpandTrees  .setChecked(common.editor_config.get_pref("auto_expand", default = True))
+    for item in EDITOR_PREFS:
+      self.ui.__dict__[item[CHK]].setChecked(common.editor_config.get_pref(item[CFG], item[DEFAULT]))
   
   def apply_prefs(self):
-    common.editor_config.set_pref("auto_play_voice",  self.ui.chkPlayVoices.isChecked())
-    common.editor_config.set_pref("auto_play_bgm",    self.ui.chkPlayBGM.isChecked())
-    common.editor_config.set_pref("auto_play_sfx",    self.ui.chkPlaySFX.isChecked())
-
-    common.editor_config.set_pref("spell_check",      self.ui.chkSpellCheck.isChecked())
-    common.editor_config.set_pref("text_repl",        self.ui.chkTextRepl.isChecked())
-    common.editor_config.set_pref("smart_quotes",     self.ui.chkSmartQuotes.isChecked())
-    common.editor_config.set_pref("highlight_tags",   self.ui.chkTagHighlight.isChecked())
-    common.editor_config.set_pref("highlight_terms",  self.ui.chkTermHighlight.isChecked())
-    common.editor_config.set_pref("mangle_text",      self.ui.chkMangle.isChecked())
-
-    common.editor_config.set_pref("pack_umdimage",    self.ui.chkPackUmdimage.isChecked())
-    common.editor_config.set_pref("pack_umdimage2",   self.ui.chkPackUmdimage2.isChecked())
-    common.editor_config.set_pref("build_iso",        self.ui.chkBuildISO.isChecked())
-
-    common.editor_config.set_pref("auto_expand",      self.ui.chkExpandTrees.isChecked())
+    for item in EDITOR_PREFS:
+      common.editor_config.set_pref(item[CFG], self.ui.__dict__[item[CHK]].isChecked())
     
     return True
 
 ################################################################################
 ### TAB: FILE LOCATIONS
 ################################################################################
+  # A helper function for our signal mapper.
+  # Shows a dialog asking for a file or directory to use in the text box
+  # associated with the given index.
+  def __get_cfg_item(self, index):
+    box     = FILE_LOCATIONS[index][TEXT]
+    fn      = FILE_LOCATIONS[index][FN]
+    filter  = FILE_LOCATIONS[index][FILTER]
+    
+    if filter:
+      item = fn(self, self.ui.__dict__[box].text(), filter)
+    else:
+      item = fn(self, self.ui.__dict__[box].text())
+    
+    if not item == "":
+      self.ui.__dict__[box].setText(item)
+  
   def setup_file_locs(self):
     
-    # I so don't feel like doing this in Qt Designer. :D
-    self.connect(self.ui.btnIsoDir,       QtCore.SIGNAL("clicked()"), self.get_iso_dir)
-    self.connect(self.ui.btnIsoFile,      QtCore.SIGNAL("clicked()"), self.get_iso_file)
-    self.connect(self.ui.btnUmdDir,       QtCore.SIGNAL("clicked()"), self.get_umd_dir)
-    self.connect(self.ui.btnUmd2Dir,      QtCore.SIGNAL("clicked()"), self.get_umd2_dir)
-    self.connect(self.ui.btnGFXDir,       QtCore.SIGNAL("clicked()"), self.get_gfx_dir)
-    self.connect(self.ui.btnToc,          QtCore.SIGNAL("clicked()"), self.get_toc)
-    self.connect(self.ui.btnToc2,         QtCore.SIGNAL("clicked()"), self.get_toc2)
-    self.connect(self.ui.btnTerminology,  QtCore.SIGNAL("clicked()"), self.get_terminology)
-    self.connect(self.ui.btnVoice,        QtCore.SIGNAL("clicked()"), self.get_voice)
-    self.connect(self.ui.btnCopy,         QtCore.SIGNAL("clicked()"), self.get_copy)
-    self.connect(self.ui.btnBackup,       QtCore.SIGNAL("clicked()"), self.get_backup)
+    # Because the default margins are ugly as h*ck.
+    self.ui.tabLocs.layout().setContentsMargins(0, 0, 0, 0)
+    
+    # Map our buttons to functions that retrieve the necessary data.
+    cfg_mapper = QSignalMapper(self)
+    
+    for i, item in enumerate(FILE_LOCATIONS):
+      self.connect(self.ui.__dict__[item[BTN]], QtCore.SIGNAL("clicked()"), cfg_mapper, QtCore.SLOT("map()"))
+      cfg_mapper.setMapping(self.ui.__dict__[item[BTN]], i)
+    
+    self.connect(cfg_mapper, QtCore.SIGNAL("mapped(int)"), self.__get_cfg_item)
     
     # Load in all our info from the config file.
-    self.ui.txtIsoDir.setText       (common.editor_config.iso_dir)
-    self.ui.txtIsoFile.setText      (common.editor_config.iso_file)
-    self.ui.txtUmdDir.setText       (common.editor_config.umdimage_dir)
-    self.ui.txtUmd2Dir.setText      (common.editor_config.umdimage2_dir)
-    self.ui.txtGFXDir.setText       (common.editor_config.gfx_dir)
-    self.ui.txtToc.setText          (common.editor_config.toc)
-    self.ui.txtToc2.setText         (common.editor_config.toc2)
-    self.ui.txtTerminology.setText  (common.editor_config.terminology)
-    self.ui.txtVoice.setText        (common.editor_config.voice_dir)
-    self.ui.txtCopy.setText         (common.editor_config.changes_dir)
-    self.ui.txtBackup.setText       (common.editor_config.backup_dir)
+    for item in FILE_LOCATIONS:
+      self.ui.__dict__[item[TEXT]].setText(common.editor_config.get_pref(item[CFG]))
   
   def apply_file_locs(self):
-    if self.ui.txtIsoDir.text().length() == 0 or \
-       self.ui.txtIsoFile.text().length() == 0 or \
-       self.ui.txtUmdDir.text().length() == 0 or \
-       self.ui.txtUmd2Dir.text().length() == 0 or \
-       self.ui.txtGFXDir.text().length() == 0 or \
-       self.ui.txtToc.text().length() == 0 or \
-       self.ui.txtToc2.text().length() == 0 or \
-       self.ui.txtTerminology.text().length() == 0 or \
-       self.ui.txtVoice.text().length() == 0 or \
-       self.ui.txtCopy.text().length() == 0 or \
-       self.ui.txtBackup.text().length() == 0:
-      QtGui.QMessageBox.critical(self, "Error", "Please supply locations for all the listed files or folders.")
-      return False
+    # Check to make sure none of our boxes are blank.
+    for item in FILE_LOCATIONS:
+      if self.ui.__dict__[item[TEXT]].text().length() == 0:
+        QtGui.QMessageBox.critical(self, "Error", "Please supply locations for all the listed files or folders.")
+        return False
     
-    common.editor_config.iso_dir        = unicode(self.ui.txtIsoDir.text().toUtf8(), "UTF-8")
-    common.editor_config.iso_file       = unicode(self.ui.txtIsoFile.text().toUtf8(), "UTF-8")
-    common.editor_config.umdimage_dir   = unicode(self.ui.txtUmdDir.text().toUtf8(), "UTF-8")
-    common.editor_config.umdimage2_dir  = unicode(self.ui.txtUmd2Dir.text().toUtf8(), "UTF-8")
-    common.editor_config.gfx_dir        = unicode(self.ui.txtGFXDir.text().toUtf8(), "UTF-8")
-    common.editor_config.toc            = unicode(self.ui.txtToc.text().toUtf8(), "UTF-8")
-    common.editor_config.toc2           = unicode(self.ui.txtToc2.text().toUtf8(), "UTF-8")
-    common.editor_config.terminology    = unicode(self.ui.txtTerminology.text().toUtf8(), "UTF-8")
-    common.editor_config.voice_dir      = unicode(self.ui.txtVoice.text().toUtf8(), "UTF-8")
-    common.editor_config.changes_dir    = unicode(self.ui.txtCopy.text().toUtf8(), "UTF-8")
-    common.editor_config.backup_dir     = unicode(self.ui.txtBackup.text().toUtf8(), "UTF-8")
+    # Then apply our changes.
+    for item in FILE_LOCATIONS:
+      common.editor_config.set_pref(item[CFG], unicode(self.ui.__dict__[item[TEXT]].text().toUtf8(), "UTF-8"))
     
     return True
-    
-  def get_iso_dir(self):
-    dir = get_existing_dir(self, self.ui.txtIsoDir.text())
-    if not dir == "":
-      self.ui.txtIsoDir.setText(dir)
-
-  def get_iso_file(self):
-    file = get_save_file(self, self.ui.txtIsoFile.text(), filter = "PSP ISO Files (*.iso)")
-    if not file == "":
-      self.ui.txtIsoFile.setText(file)
-
-  def get_umd_dir(self):
-    dir = get_existing_dir(self, self.ui.txtUmdDir.text())
-    if not dir == "":
-      self.ui.txtUmdDir.setText(dir)
-
-  def get_umd2_dir(self):
-    dir = get_existing_dir(self, self.ui.txtUmd2Dir.text())
-    if not dir == "":
-      self.ui.txtUmd2Dir.setText(dir)
-
-  def get_gfx_dir(self):
-    dir = get_existing_dir(self, self.ui.txtGFXDir.text())
-    if not dir == "":
-      self.ui.txtGFXDir.setText(dir)
-
-  def get_toc(self):
-    file = get_open_file(self, self.ui.txtToc.text(), filter = "!toc.txt (*.txt)")
-    if not file == "":
-      self.ui.txtToc.setText(file)
-    return
-
-  def get_toc2(self):
-    file = get_open_file(self, self.ui.txtToc2.text(), filter = "!toc2.txt (*.txt)")
-    if not file == "":
-      self.ui.txtToc2.setText(file)
-
-  def get_terminology(self):
-    file = get_open_file(self, self.ui.txtTerminology.text(), filter = "Terminology.csv (*.csv)")
-    if not file == "":
-      self.ui.txtTerminology.setText(file)
-
-  def get_voice(self):
-    dir = get_existing_dir(self, self.ui.txtVoice.text())
-    if not dir == "":
-      self.ui.txtVoice.setText(dir)
-
-  def get_copy(self):
-    dir = get_existing_dir(self, self.ui.txtCopy.text())
-    if not dir == "":
-      self.ui.txtCopy.setText(dir)
-
-  def get_backup(self):
-    dir = get_existing_dir(self, self.ui.txtBackup.text())
-    if not dir == "":
-      self.ui.txtBackup.setText(dir)
   
 ################################################################################
 ### TAB: TAGS
