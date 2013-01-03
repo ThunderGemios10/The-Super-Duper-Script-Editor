@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 

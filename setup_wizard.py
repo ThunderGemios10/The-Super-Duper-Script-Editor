@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -22,6 +22,7 @@ from PyQt4 import QtGui, QtCore, Qt
 from PyQt4.QtGui import QFileDialog, QProgressDialog
 from ui_wizard import Ui_SetupWizard
 
+import base64
 import cStringIO
 import glob
 import os
@@ -214,12 +215,13 @@ class SetupWizard(QtGui.QDialog):
     
     self.generate_directories()
     
-    progress = QProgressDialog("", QtCore.QString(), 0, 10600, self)
+    progress = QProgressDialog("", QtCore.QString(), 0, 11000, self)
     progress.setWindowTitle("Setting up workspace...")
     progress.setWindowModality(Qt.Qt.WindowModal)
     progress.setMinimumDuration(0)
     progress.setValue(0)
     progress.setAutoClose(False)
+    progress.setAutoReset(False)
     
     progress.setLabelText("Creating directories...")
     
@@ -305,10 +307,10 @@ class SetupWizard(QtGui.QDialog):
       hacked_eboot.tofile(f)
     # shutil.copy(self.eboot_path, os.path.join(self.edited_iso_dir, "PSP_GAME", "SYSDIR", "EBOOT.BIN"))
     
-    progress.setLabelText("Extracting similarity database...")
+    progress.setLabelText("Extracting editor data...")
     progress.setValue(progress.value() + 1)
     
-    # Extract the similarity database.
+    # Extract the editor data.
     editor_data = zipfile.ZipFile("data/editor_data.zip", "r")
     editor_data.extractall(self.editor_data_dir)
     editor_data.close()
@@ -330,10 +332,33 @@ class SetupWizard(QtGui.QDialog):
     
     os.makedirs(gfx_dir)
     
+    progress = QProgressDialog("", "Abort", 0, 0, self)
+    progress.setWindowTitle("Copying GFX...")
+    progress.setWindowModality(Qt.Qt.WindowModal)
+    progress.setMinimumDuration(0)
+    progress.setValue(0)
+    progress.setAutoClose(False)
+    
+    progress.setLabelText("Setting up GFX dir.")
+    progress.setMaximum(5)
+    progress.setValue(0)
+    
     # Extract the images we can't just take directly from the game's data.
-    gfx_base = zipfile.ZipFile("data/gfx-base.zip", "r")
+    gfx_bin = zipfile.ZipFile("data/gfx_base.bin", "r")
+    progress.setValue(1)
+    gfx_enc = gfx_bin.open("gfx_base.bin")
+    progress.setValue(2)
+    gfx_dec = cStringIO.StringIO()
+    base64.decode(gfx_enc, gfx_dec)
+    progress.setValue(3)
+    gfx_base = zipfile.ZipFile(gfx_dec, "r")
+    progress.setValue(4)
     gfx_base.extractall(gfx_dir)
+    progress.setValue(5)
     gfx_base.close()
+    gfx_dec.close()
+    gfx_enc.close()
+    gfx_bin.close()
     
     # We can mostly loop this.
     gfx_data = [
@@ -349,13 +374,6 @@ class SetupWizard(QtGui.QDialog):
       ("sprites",   "bustup_??_??.gim"),
       ("sprites",   "stand_??_??.gmo"),
     ]
-    
-    progress = QProgressDialog("", "Abort", 0, 0, self)
-    progress.setWindowTitle("Copying GFX...")
-    progress.setWindowModality(Qt.Qt.WindowModal)
-    progress.setMinimumDuration(0)
-    progress.setValue(0)
-    progress.setAutoClose(False)
     
     for (dir, file_glob) in gfx_data:
       out_dir = os.path.join(gfx_dir, dir)
@@ -410,7 +428,7 @@ class SetupWizard(QtGui.QDialog):
       os.makedirs(flash_dir)
     
     # Because there's so many in so many different places, I just stored a list
-    # of the flash files we need in the gfx-base archive. So let's load that.
+    # of the flash files we need in the gfx_base archive. So let's load that.
     with open(os.path.join(gfx_dir, "fla.txt"), "rb") as fla:
       fla_list = fla.readlines()
       

@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -218,8 +218,14 @@ class DatPacker():
     # Text replacement
     to_replace = eboot_text.get_eboot_text()
     for replacement in to_replace:
+    
       orig = bytearray(replacement.orig, encoding = replacement.enc)
-      data = bytearray(replacement.text, encoding = replacement.enc)
+      
+      # If they left something blank, write the original text back.
+      if len(replacement.text) == 0:
+        data = orig
+      else:
+        data = bytearray(replacement.text, encoding = replacement.enc)
       
       pos  = replacement.pos.int + eboot_offset
       
@@ -271,7 +277,7 @@ class DatPacker():
         
         # Special handling for certain data types.
         if ext == ".txt":
-          
+        
           text = text_files.load_text(full_path)
           text = RE_SCRIPT.sub(u"\g<1>", text)
           

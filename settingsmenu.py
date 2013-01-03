@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -23,6 +23,7 @@ from PyQt4.QtCore import QSignalMapper
 from ui_settings import Ui_SettingsMenu
 
 import os
+import enchant
 
 import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
@@ -98,10 +99,19 @@ class SettingsMenu(QtGui.QDialog):
   def setup_prefs(self):
     for item in EDITOR_PREFS:
       self.ui.__dict__[item[CHK]].setChecked(common.editor_config.get_pref(item[CFG], item[DEFAULT]))
+    
+    # And our spellcheck language has to be handled manually.
+    self.ui.cboSpellCheckLang.clear()
+    self.ui.cboSpellCheckLang.addItems(enchant.list_languages())
+    
+    lang_index = self.ui.cboSpellCheckLang.findText(common.editor_config.spell_check_lang, Qt.Qt.MatchContains)
+    self.ui.cboSpellCheckLang.setCurrentIndex(lang_index)
   
   def apply_prefs(self):
     for item in EDITOR_PREFS:
       common.editor_config.set_pref(item[CFG], self.ui.__dict__[item[CHK]].isChecked())
+    
+    common.editor_config.spell_check_lang = self.ui.cboSpellCheckLang.currentText()
     
     return True
 

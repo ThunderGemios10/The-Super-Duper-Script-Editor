@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -33,7 +33,7 @@ FONT_TYPES = Enum("font01", "font02")
 GAMES = Enum("dr", "sdr2")
 
 LINE_HEIGHT   = {FONT_TYPES.font01: 25, FONT_TYPES.font02: 26}
-MAX_HEIGHT    = 4096
+MAX_HEIGHT    = 2048
 HEIGHT_FACTOR = 128
 
 # UNKNOWN1 is different for every font I've seen.

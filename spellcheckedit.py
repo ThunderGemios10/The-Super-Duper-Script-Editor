@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -35,6 +35,21 @@ class SpellCheckEdit(QtGui.QTextEdit):
     super(SpellCheckEdit, self).__init__(parent)
     self.setAcceptRichText(False)
     self.highlighter = SpellCheckHighlighter(self.document())
+  
+  def set_language(self, lang):
+    self.highlighter.set_language(lang)
+  
+  def get_language(self):
+    return self.highlighter.get_language()
+  
+  def spellcheck_enabled(self):
+    return self.highlighter.document() == self.document()
+  
+  def enable_spellcheck(self):
+    self.highlighter.setDocument(self.document())
+  
+  def disable_spellcheck(self):
+    self.highlighter.setDocument(None)
   
   ##############################################################################
   ### @fn   error_at_pos(line, pos)
@@ -83,7 +98,7 @@ class SpellCheckEdit(QtGui.QTextEdit):
           self.connect(actions[-1], QtCore.SIGNAL("triggered()"), suggestion_mapper, QtCore.SLOT("map()"))
           suggestion_mapper.setMapping(actions[-1], data)
         
-        self.connect(suggestion_mapper, QtCore.SIGNAL("mapped(QString)"), self.replace)
+        self.connect(suggestion_mapper, QtCore.SIGNAL("mapped(QString)"), self.__replace)
         menu.addActions(actions)
       else:
         action = QtGui.QAction("(No spelling suggestions)", None)
@@ -99,11 +114,11 @@ class SpellCheckEdit(QtGui.QTextEdit):
       
       self.connect(add_action, QtCore.SIGNAL("triggered()"), add_mapper, QtCore.SLOT("map()"))
       add_mapper.setMapping(add_action, word[0])
-      self.connect(add_mapper, QtCore.SIGNAL("mapped(QString)"), self.add)
+      self.connect(add_mapper, QtCore.SIGNAL("mapped(QString)"), self.__add)
       
       self.connect(ignore_action, QtCore.SIGNAL("triggered()"), ignore_mapper, QtCore.SLOT("map()"))
       ignore_mapper.setMapping(ignore_action, word[0])
-      self.connect(ignore_mapper, QtCore.SIGNAL("mapped(QString)"), self.ignore)
+      self.connect(ignore_mapper, QtCore.SIGNAL("mapped(QString)"), self.__ignore)
       
       menu.addAction(add_action)
       menu.addAction(ignore_action)
@@ -118,21 +133,21 @@ class SpellCheckEdit(QtGui.QTextEdit):
   ### @fn   add(word)
   ### @desc Adds the given word to the dictionary.
   ##############################################################################
-  def add(self, word):
+  def __add(self, word):
     self.highlighter.add(unicode(word.toUtf8(), "UTF-8"))
   
   ##############################################################################
   ### @fn   ignore(word)
-  ### @desc Tells the dictionary to ignore the given error/
+  ### @desc Tells the dictionary to ignore the given error.
   ##############################################################################
-  def ignore(self, word):
+  def __ignore(self, word):
     self.highlighter.ignore(unicode(word.toUtf8(), "UTF-8"))
   
   ##############################################################################
   ### @fn   replace(data)
   ### @desc Replaces the word under the cursor with the word given.
   ##############################################################################
-  def replace(self, data):
+  def __replace(self, data):
     # Since Qt's Signal Mapper will only accept a QString, we have to convert it
     # to a Python string in such a way that it won't try to actually encode/decode
     # any of the data, because nothing but the container changed when it turned

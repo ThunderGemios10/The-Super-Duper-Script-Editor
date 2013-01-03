@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -29,14 +29,20 @@ class SpellCheckHighlighter(QtGui.QSyntaxHighlighter):
   def __init__(self, parent = None):
     super(SpellCheckHighlighter, self).__init__(parent)
     
-    dict = enchant.DictWithPWL("en_US", "data/dict/enchant.txt")
-    self.checker = SpellChecker(dict, chunkers = (HTMLChunker,))
+    self.set_language("en_US")
     
     self.format = QTextCharFormat()
     self.format.setUnderlineColor(QColor(255, 0, 0))
     self.format.setUnderlineStyle(QTextCharFormat.SpellCheckUnderline)
     
     self.errors = []
+  
+  def set_language(self, lang):
+    dict = enchant.DictWithPWL(lang, "data/dict/enchant.txt")
+    self.checker = SpellChecker(dict, chunkers = (HTMLChunker,))
+  
+  def get_language(self):
+    return self.checker.dict.tag
   
   def highlightBlock(self, text):
     

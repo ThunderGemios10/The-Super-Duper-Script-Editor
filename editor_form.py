@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -488,7 +488,7 @@ class EditorForm(QtGui.QMainWindow):
         self,
         "Insert Line",
         "You are about to insert a new line after a file that has dupes.\n\n" + 
-        "This can really fuck things up if you're not careful.\n\n" +
+        "This can really screw things up if you're not careful.\n\n" +
         "Proceed?",
         buttons = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
         defaultButton = QtGui.QMessageBox.No
@@ -962,9 +962,8 @@ class EditorForm(QtGui.QMainWindow):
   ### @desc Three guesses.
   ##############################################################################
   def showSettingsMenu(self):
-    # if self.askUnsavedChanges():
     # Store this so we can see if they changed anything.
-    temp_umdimage = common.editor_config.umdimage_dir
+    temp_umdimage    = common.editor_config.umdimage_dir
     
     menu = SettingsMenu(self)
     result = menu.exec_()
@@ -972,6 +971,7 @@ class EditorForm(QtGui.QMainWindow):
     self.showImage()
     self.updateActions()
     self.updateHighlight()
+    self.updateSpellCheck()
     
     # If they changed umdimage, reload the directory,
     # so we're looking at the one they're actually set to use.
@@ -1372,6 +1372,7 @@ class EditorForm(QtGui.QMainWindow):
     # Has to happen early, so the highlighter can take advantage of any changes
     # to the terms list as soon as the new text is shown.
     self.updateHighlight()
+    self.updateSpellCheck()
     
     self.bg = text_printer.draw_scene(self.script_pack[index].scene_info)
     
@@ -2210,6 +2211,20 @@ class EditorForm(QtGui.QMainWindow):
       self.ui.txtOriginal.clear_keywords()
   
   ##############################################################################
+  ### @fn   updateSpellCheck()
+  ### @desc Updates the spellchecker based on our setting.
+  ##############################################################################
+  def updateSpellCheck(self):
+    if common.editor_config.spell_check != self.ui.txtTranslated.spellcheck_enabled():
+      if common.editor_config.spell_check:
+        self.ui.txtTranslated.enable_spellcheck()
+      else:
+        self.ui.txtTranslated.disable_spellcheck()
+    
+    if common.editor_config.spell_check_lang != self.ui.txtTranslated.get_language():
+      self.ui.txtTranslated.set_language(common.editor_config.spell_check_lang)
+  
+  ##############################################################################
   ### @fn   showNodeInEditor()
   ### @desc Code duplication is for faggots.
   ##############################################################################
@@ -2290,7 +2305,7 @@ class EditorForm(QtGui.QMainWindow):
       u"About",
       u"""
 <b>The Super Duper Script Editor</b> v1.0.0.0<br/>
-Copyright © 2012 BlackDragonHunt, released under the GNU GPL (see file COPYING).<br/>
+Copyright © 2012-2013 BlackDragonHunt, released under the GNU GPL (see file COPYING).<br/>
 <br/>
 Attributions:
 <ol>

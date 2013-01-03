@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -54,6 +54,20 @@ class EbootEditor(QtGui.QDialog):
     self.ui.lstLines.setCurrentRow(0)
   
   ##############################################################################
+  ### @fn   updateSpellCheck()
+  ### @desc Updates the spellchecker based on our setting.
+  ##############################################################################
+  def updateSpellCheck(self):
+    if common.editor_config.spell_check != self.ui.txtTranslated.spellcheck_enabled():
+      if common.editor_config.spell_check:
+        self.ui.txtTranslated.enable_spellcheck()
+      else:
+        self.ui.txtTranslated.disable_spellcheck()
+    
+    if common.editor_config.spell_check_lang != self.ui.txtTranslated.get_language():
+      self.ui.txtTranslated.set_language(common.editor_config.spell_check_lang)
+  
+  ##############################################################################
   ### @fn   changedTranslation()
   ### @desc asd
   ##############################################################################
@@ -81,6 +95,8 @@ class EbootEditor(QtGui.QDialog):
   ### @desc asd
   ##############################################################################
   def changedLine(self, index):
+    self.updateSpellCheck()
+    
     self.current_line = index
     
     self.ui.txtTranslated.setPlainText(self.lines[index].text)

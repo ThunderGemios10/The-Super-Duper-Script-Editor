@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>585</width>
-    <height>649</height>
+    <height>666</height>
    </rect>
   </property>
   <property name="font">
@@ -400,7 +400,7 @@ p, li { white-space: pre-wrap; }
          </font>
         </property>
         <property name="text">
-         <string>NOTE: You can only convert to PNG on Windows. If you're on another OS, you will need to find something else to convert the GIM files in Editor/data/gfx to PNG.</string>
+         <string>NOTE: You can only convert to PNG on Windows. If you're on another OS, you will need to find something else to convert the GIM files in [Workspace]/!editor/gfx to PNG.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

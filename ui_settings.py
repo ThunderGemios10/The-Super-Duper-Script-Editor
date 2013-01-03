@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\settings.ui'
 #
-# Created: Mon Dec 31 22:31:10 2012
+# Created: Wed Jan 02 20:35:02 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,7 +68,7 @@ class Ui_SettingsMenu(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.chkSpellCheck = QtGui.QCheckBox(self.groupBox_2)
-        self.chkSpellCheck.setEnabled(False)
+        self.chkSpellCheck.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -79,7 +79,7 @@ class Ui_SettingsMenu(object):
         self.chkSpellCheck.setObjectName(_fromUtf8("chkSpellCheck"))
         self.horizontalLayout.addWidget(self.chkSpellCheck)
         self.cboSpellCheckLang = QtGui.QComboBox(self.groupBox_2)
-        self.cboSpellCheckLang.setEnabled(False)
+        self.cboSpellCheckLang.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -178,7 +178,7 @@ class Ui_SettingsMenu(object):
         self.scrFileLocs.setObjectName(_fromUtf8("scrFileLocs"))
         self.scrFileLocsContents = QtGui.QWidget()
         self.scrFileLocsContents.setGeometry(QtCore.QRect(0, 0, 452, 424))
-        self.scrFileLocsContents.setAutoFillBackground(False)
+        self.scrFileLocsContents.setAutoFillBackground(True)
         self.scrFileLocsContents.setStyleSheet(_fromUtf8(""))
         self.scrFileLocsContents.setObjectName(_fromUtf8("scrFileLocsContents"))
         self.gridLayout_2 = QtGui.QGridLayout(self.scrFileLocsContents)
@@ -609,6 +609,7 @@ class Ui_SettingsMenu(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), SettingsMenu.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), SettingsMenu.reject)
+        QtCore.QObject.connect(self.chkSpellCheck, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.cboSpellCheckLang.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(SettingsMenu)
         SettingsMenu.setTabOrder(self.tabWidget, self.chkPlayVoices)
         SettingsMenu.setTabOrder(self.chkPlayVoices, self.chkPlayBGM)

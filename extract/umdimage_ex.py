@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -43,9 +43,9 @@ SKIP_EXTRACT_FILE_RE = re.compile(ur"hs_mtb_s\d\d|bg_\d\d\d|bg_lc01")
 FILE_NORECURSIVE_RE  = re.compile(ur"effect_lensflare00")
 
 SPECIAL_FILE_EXTRACT = [
-  (re.compile(ur"e?\d\d_.*?.pak$"),               get_txt_files),
+  (re.compile(ur"^e?\d\d_.*?.pak$"),              get_txt_files),
   (re.compile(ur"^(event|mtb_s\d\d|voice).pak$"), get_txt_files),
-  (re.compile(ur"script_pak_.*?\.pak$"),          get_script_pak_files),
+  (re.compile(ur"^script_pak_.*?\.pak$"),         get_script_pak_files),
   (re.compile(ur"\.lin$"),                        get_lin_files),
   (re.compile(ur"\.pak$"),                        get_pak_files),
 ]

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\wizard.ui'
 #
-# Created: Mon Dec 31 22:31:10 2012
+# Created: Wed Jan 02 20:35:03 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName(_fromUtf8("SetupWizard"))
-        SetupWizard.resize(585, 649)
+        SetupWizard.resize(585, 666)
         font = QtGui.QFont()
         font.setFamily(_fromUtf8("Meiryo UI"))
         SetupWizard.setFont(font)
@@ -203,7 +203,7 @@ class Ui_SetupWizard(object):
         font = QtGui.QFont()
         font.setPointSize(10)
         self.label_3.setFont(font)
-        self.label_3.setText(QtGui.QApplication.translate("SetupWizard", "NOTE: You can only convert to PNG on Windows. If you\'re on another OS, you will need to find something else to convert the GIM files in Editor/data/gfx to PNG.", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("SetupWizard", "NOTE: You can only convert to PNG on Windows. If you\'re on another OS, you will need to find something else to convert the GIM files in [Workspace]/!editor/gfx to PNG.", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setWordWrap(True)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout_5.addWidget(self.label_3)

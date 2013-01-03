@@ -12,9 +12,9 @@ license_template.py
 
 # Most of what's in the data folder we don't want going in the repo.
 data/
-!data/dict/
-!data/dupes.csv
-!data/eboot_text.csv
+# !data/dict/
+# !data/dupes.csv
+# !data/eboot_text.csv
 !data/file_order.txt
 
 # Same with the output of the font_gen stuff.

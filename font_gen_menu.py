@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -45,13 +45,21 @@ from font_gen_widget import FontGenWidget
 FONT_EXTENSION = ".sdse-font"
 THREAD_TIMEOUT = 0.1
 
+REQUIRED_CHARS = [
+  u'\u2261', # The default character the game uses in case something's missing.
+  u'.',      # Needed for the hacked version of the ammo/present menu.
+  u'…',      # Needed for the original version of the ammo/present menu.
+  u'?',      # Needed for names of unknown items/extras/etc.
+  u'？',     # Same.
+]
+
 class FontGenMenu(QtGui.QDialog):
   def __init__(self, parent=None):
     super(FontGenMenu, self).__init__(parent)
     
     self.ui = Ui_FontGenerator()
     self.ui.setupUi(self)
-    self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+    # self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
     
     self.ui.tabFonts.tabBar().tabMoved.connect(self.export_changed)
     
@@ -310,7 +318,12 @@ class FontGenMenu(QtGui.QDialog):
     if self.ui.rdoRightToLeft.isChecked():
       font_data.reverse()
     
-    font = font_generator.gen_font(font_data, font_type = font_type, img_width = 512, draw_outlines = False)
+    # Add the required characters to the end of the lowest-priority font
+    # so they're there by default but they don't override any existing
+    # settings for them, if they're already there.
+    font_data[-1].chars += ''.join(REQUIRED_CHARS)
+    
+    font = font_generator.gen_font(font_data, font_type = font_type, img_width = 1024, draw_outlines = False)
     font.save(temp_dir, temp_name, for_game, for_editor, font_type, game = font_generator.GAMES.dr)
     
     basename  = os.path.join(temp_dir, temp_name)

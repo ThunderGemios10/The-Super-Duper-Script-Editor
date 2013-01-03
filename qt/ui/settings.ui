@@ -114,7 +114,7 @@
               <item>
                <widget class="QCheckBox" name="chkSpellCheck">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -133,7 +133,7 @@
               <item>
                <widget class="QComboBox" name="cboSpellCheckLang">
                 <property name="enabled">
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -363,7 +363,7 @@
            </rect>
           </property>
           <property name="autoFillBackground">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <property name="styleSheet">
            <string notr="true"/>
@@ -1274,8 +1274,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>376</x>
-     <y>395</y>
+     <x>385</x>
+     <y>340</y>
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
@@ -1290,12 +1290,28 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>407</x>
-     <y>395</y>
+     <x>416</x>
+     <y>340</y>
     </hint>
     <hint type="destinationlabel">
      <x>195</x>
      <y>325</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkSpellCheck</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cboSpellCheckLang</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>197</x>
+     <y>121</y>
     </hint>
    </hints>
   </connection>

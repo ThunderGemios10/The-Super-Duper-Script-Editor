@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -60,6 +60,7 @@ DEFAULT_SETTINGS = {
   "similarity_db":      "./data/similarity-db.sql",
   "smart_quotes":       "False",
   "spell_check":        "True",
+  "spell_check_lang":   "en_US",
   "terminology":        "X:/My Dropbox/Danganronpa/Terminology.csv",
   "text_repl":          "False",
   "toc":                "./!toc.txt",

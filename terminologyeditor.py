@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -369,7 +369,7 @@ class TerminologyEditor(QtGui.QDialog):
     tree_widget.setFrameShape(QtGui.QFrame.NoFrame)
     tree_widget.setRootIsDecorated(False)
     tree_widget.setColumnCount(2)
-    tree_widget.setHeaderLabels(["Japanese", "English"])
+    tree_widget.setHeaderLabels(["Original", "Translated"])
     tree_widget.setSortingEnabled(True)
     tree_widget.sortItems(0, Qt.Qt.AscendingOrder)
     self.ui.tabTerminology.addTab(tree_widget, section)

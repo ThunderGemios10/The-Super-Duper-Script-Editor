@@ -1,6 +1,6 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
-### Copyright © 2012 /a/nonymous scanlations
+### Copyright © 2012-2013 BlackDragonHunt
+### Copyright © 2012-2013 /a/nonymous scanlations
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 

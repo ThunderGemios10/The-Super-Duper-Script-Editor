@@ -1,5 +1,5 @@
 ﻿################################################################################
-### Copyright © 2012 BlackDragonHunt
+### Copyright © 2012-2013 BlackDragonHunt
 ### 
 ### This file is part of the Super Duper Script Editor.
 ### 
@@ -32,10 +32,10 @@ def check_config():
   msg_box = QMessageBox()
   msg_box.setWindowTitle("Config Error")
   msg_box.setTextFormat(Qt.Qt.RichText)
-  msg_box.setText("<p>Couldn't find some of the files or directories needed by the editor.</p><p>If this is your first time running the editor, you should run the setup wizard and create a workspace. If you already have a workspace (created <strong>by this editor</strong>, not any other tools), then just go to the preferences menu and make sure everything's correct.</p><p>What would you like to do?</p>")
+  msg_box.setText("<p>Couldn't find some of the files or directories needed by the editor.</p><p>If this is your first time running the editor, you should run the setup wizard and create a workspace. If you already have a workspace (created <strong>by this editor</strong>, not any other tools), then just go to the settings menu and make sure everything's correct.</p><p>What would you like to do?</p>")
   msg_box.setIcon(QMessageBox.Warning)
   wizard_btn = msg_box.addButton("Run the setup wizard", QMessageBox.AcceptRole)
-  config_btn = msg_box.addButton("Show the preferences menu", QMessageBox.AcceptRole)
+  config_btn = msg_box.addButton("Show the settings menu", QMessageBox.AcceptRole)
   exit_btn   = msg_box.addButton("Exit", QMessageBox.RejectRole)
   msg_box.setEscapeButton(exit_btn)
   
