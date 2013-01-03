@@ -44,7 +44,7 @@ See how every line is going to look in-game, so you don't have to waste time gue
 
 ### Comments
 
-If you're not sure how you want to word a line, or you just want to leave a note about a reference or something, leave a comment.
+If you're not sure how you want to word a line, or you just want to make a note about a reference or something, leave a comment in the box on the bottom. Every line can have its own comment.
 
 #### References
 
@@ -78,24 +78,26 @@ PyEnchant comes with a few dictionaries by default, but if you want to install a
 
 ### Font generation
 
-The font that comes with _Danganronpa_ pretty much only supports Japanese and English, and the non-Japanese characters have some weird alignment issues, so the SDSE comes with a font generator that will allow you to create your own font, to your own specifications, with any glyphs needed by the language you're translating into
+The fonts that come with _Danganronpa_ pretty much only support Japanese and English, and the non-Japanese characters have some weird alignment issues. The SDSE comes with a font generator that allows you to create your own fonts, to your own specifications, with any glyphs needed by the language you're translating into.
 
 You can even create fonts for the game using glyphs from more than one font on your system, so if you don't line how a certain glyph looks, just use a different font for it. (Both of the fonts Project Zetsubou uses, which are available on the downloads page, are blends.)
 
+Or if you just want to play _Danganronpa_ in [Comic Sans](https://dl.dropbox.com/u/4617327/Danganronpa/shot0099.png), you can do that, too. (Don't do that. [Or this.](https://dl.dropbox.com/u/4617327/Danganronpa/shot0100.png))
+
 ### And much, much more
 
-Explore, click on things, right-click on things, push buttons, play around. I've done so much work on things thing, I honestly don't remember everything it can do.
+Explore, click on things, right-click on things, push buttons, play around. I've done so much work on this thing, I honestly don't remember everything it can do.
 
 ## Some handy shortcuts
 
-* `Page Up` = Go to previous line
-* `Page Down` = Go to next line
-* `Ctrl` + `Page Up` = Go to first line
-* `Ctrl` + `Page Down` = Go to last line
-* `F5` = Replay voice
-* `F6` = Stop voice
-* `Ctrl` + `O` = Open
-* `Ctrl` + `S` = Save
-* `Ctrl` + `F` = Find
-* `Ctrl` + `T` = Terminology editor
-* `Ctrl` + `B` = Build ISO
+* `Page Up`: Go to previous line
+* `Page Down`: Go to next line
+* `Ctrl` + `Page Up`: Go to first line
+* `Ctrl` + `Page Down`: Go to last line
+* `F5`: Replay voice
+* `F6`: Stop voice
+* `Ctrl` + `O`: Open
+* `Ctrl` + `S`: Save
+* `Ctrl` + `F`: Find
+* `Ctrl` + `T`: Terminology editor
+* `Ctrl` + `B`: Build ISO
