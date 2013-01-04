@@ -546,7 +546,7 @@ def parse_wrd(in_file):
       flag_group = wrd.read('uint:8')
       flag_id    = wrd.read('uint:8')
       flag_state = wrd.read('uint:8')
-      #print '0x%04X -> %d' % (flag_id, flag_state)
+      # print '0x%02X%02X -> %s' % (flag_group, flag_id, "True" if flag_state else "False")
     
     elif command == WRD_CHECKFLAG:
       # 70 35 XX XX 00 YY 
@@ -558,8 +558,8 @@ def parse_wrd(in_file):
       #
       #   * XX XX = Flag group/ID
       #   * YY = Flag State
-      #     * 00 00 = Off
-      #     * 00 01 = On
+      #     * 00 = Off
+      #     * 01 = On
       #
       #   * WW = Operator
       #     * 06 = AND
@@ -767,7 +767,7 @@ if __name__ == "__main__":
   import glob
   import pprint
   
-  for file in glob.iglob("X:/Danganronpa/Danganronpa_BEST/umdimage/*/*.scp.wrd"):
+  for file in glob.iglob("X:/Danganronpa/Danganronpa_BEST/umdimage/e04*/*.scp.wrd"):
     print file
     parse_wrd(file)
     print
