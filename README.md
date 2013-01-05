@@ -64,7 +64,7 @@ You can also make in-folder references, so if you're in `e00_001_000.lin`, you c
 
 ### Duplicate and similar line tracking
 
-The SDSE keeps track of lines that are identical to one another and propogates changes to all of those lines. But not only that, it also keeps track of lines that are similar, but not necessarily identical. This way, you can see lines that have been subtly changed so you can keep your translation consistent while still reflecting the difference.
+The SDSE keeps track of lines that are identical to one another and propagates changes to all of those lines. But not only that, it also keeps track of lines that are similar, but not necessarily identical. This way, you can see lines that have been subtly changed so you can keep your translation consistent while still reflecting the differences.
 
 Since, in certain cases, identical lines don't need to be translated identically, you can tell the editor that one line isn't a duplicate of another line by right-clicking on it in the Duplicates tab and selecting `remove duplicate`. You can also break up an entire duplicate group by selecting `remove all duplicates`.
 

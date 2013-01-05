@@ -457,11 +457,11 @@ class SetupWizard(QtGui.QDialog):
     # be, just because of how they're stored in umdimage.
     progress.setLabelText("Renaming files.")
     to_rename = [
-      ("movies",    "movie_%03d.gim"),
-      ("nametags",  "%02d.gim"),
+      ("movies",    "movie_%03d.gim", range(32)),
+      ("nametags",  "%02d.gim", range(23) + [24, 25, 30, 31]),
     ]
     
-    for (folder, pattern) in to_rename:
+    for (folder, pattern, nums) in to_rename:
       folder  = os.path.join(gfx_dir, folder)
       files   = glob.glob(os.path.join(folder, "*.gim"))
       
@@ -476,7 +476,7 @@ class SetupWizard(QtGui.QDialog):
           return
         
         src  = image
-        dest = os.path.join(folder, pattern % i)
+        dest = os.path.join(folder, pattern % nums[i])
         
         if os.path.isfile(dest):
           os.remove(dest)
