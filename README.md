@@ -1,6 +1,6 @@
 # The Super Duper Script Editor
 
-A (mostly) fully featured script editor for _Danganronpa: Hope's Academy and Despair's Students_, released under the GNU GPL, Version 3.
+A (mostly) fully featured script editor for _Danganronpa: Hope's Academy and Despair's Students_.
 
 ## Dependencies
 
@@ -119,3 +119,9 @@ The code for parsing, extracting, and reinserting textures into the game's model
 * `Ctrl` + `B`: Build
 * `F5`: Replay voice
 * `F6`: Stop voice
+
+## Licensing and legal stuff
+
+The Super Duper Script Editor is released under the GNU GPL, Version 3. A list of attributions can be found under `Help` -> `About` from within the editor.
+
+A very small collection of images from the game is included with the editor, mostly screenshots of rooms taken to use in place of the game's 3D models. I claim no rights to any of these images; they all belong to Spike. The vast majority of graphics used by the editor are _not_ provided here, but are extracted from the user's personal copy of _Danganronpa_. I believe this constitues fair use, but I will gladly take the images down at the request of the copyright holder.
