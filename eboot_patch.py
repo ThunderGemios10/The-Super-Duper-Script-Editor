@@ -51,8 +51,8 @@ EBOOT_PATCHES = [
   {NAME: "Swap O/X Buttons", ENABLED: True, CFG_ID: "swap_ox", DATA:
     [
       {POS: 0x0001B404, ORIG:  ConstBitStream(hex = "0x21108000"), PATCH: ConstBitStream(hex = "0x01000224")},
-      {POS: 0x0000E2A4, ORIG:  ConstBitStream(hex = "0x0400B18F"), PATCH: ConstBitStream(hex = "0xB07F320A")},
-      {POS: 0x001097C0, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+      {POS: 0x0000E2A4, ORIG:  ConstBitStream(hex = "0x0400B18F"), PATCH: ConstBitStream(hex = "0xBC7F320A")},
+      {POS: 0x001097F0, ORIG:  ConstBitStream(hex = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
                         PATCH: ConstBitStream(hex = "0x0400B18F21202002002025320200A014004031360040313A0040843002008014002031360020313A7B48200A")},
     ]
   },
@@ -128,7 +128,47 @@ EBOOT_PATCHES = [
       {POS: 0x0008BB94, ORIG: ConstBitStream(hex = "0x0B108300"), PATCH: ConstBitStream(hex = "0x21108000")},
     ]
   },
-  {NAME: "Fix Glyph Height", ENABLED: False, CFG_ID: "glyph_height", DATA:
+  {NAME: "Ammo Menu (Updated Preview Descriptions)", ENABLED: True, CFG_ID: "ammo_updated_desc", DATA:
+    [
+      {POS: 0x0008C85C, ORIG:  ConstBitStream(hex = "0x4401068E"), PATCH: ConstBitStream(hex = "0xB07F320E")},
+      {POS: 0x001097C0, ORIG:  ConstBitStream(hex = "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000"),
+                        PATCH: ConstBitStream(hex = "0xC808053C1C28A524212865000000A680FFFFC62480300600213006023401C58C0800E0034401C68C")},
+    ]
+  },
+  {NAME: "Help Menu (31-Character/Line Limit)", ENABLED: True, CFG_ID: "help_line_length", DATA:
+    [
+      {POS: 0x000768A0, ORIG: ConstBitStream(hex = "0x80"), PATCH: ConstBitStream(hex = "0x10")},
+      {POS: 0x000768A4, ORIG: ConstBitStream(hex = "0x4C"), PATCH: ConstBitStream(hex = "0xBC")},
+      {POS: 0x000768B4, ORIG: ConstBitStream(hex = "0x64"), PATCH: ConstBitStream(hex = "0xD4")},
+      {POS: 0x000768BC, ORIG: ConstBitStream(hex = "0x60"), PATCH: ConstBitStream(hex = "0xD0")},
+      {POS: 0x000768C0, ORIG: ConstBitStream(hex = "0x5C"), PATCH: ConstBitStream(hex = "0xCC")},
+      {POS: 0x000768C4, ORIG: ConstBitStream(hex = "0x58"), PATCH: ConstBitStream(hex = "0xC8")},
+      {POS: 0x000768C8, ORIG: ConstBitStream(hex = "0x54"), PATCH: ConstBitStream(hex = "0xC4")},
+      {POS: 0x000768CC, ORIG: ConstBitStream(hex = "0x50"), PATCH: ConstBitStream(hex = "0xC0")},
+      {POS: 0x000768D0, ORIG: ConstBitStream(hex = "0x48"), PATCH: ConstBitStream(hex = "0xB8")},
+      {POS: 0x000768D4, ORIG: ConstBitStream(hex = "0x44"), PATCH: ConstBitStream(hex = "0xB4")},
+      {POS: 0x000768D8, ORIG: ConstBitStream(hex = "0x40"), PATCH: ConstBitStream(hex = "0xB0")},
+      {POS: 0x000768DC, ORIG: ConstBitStream(hex = "0x78"), PATCH: ConstBitStream(hex = "0xE8")},
+      {POS: 0x000768E0, ORIG: ConstBitStream(hex = "0x74"), PATCH: ConstBitStream(hex = "0xE4")},
+      {POS: 0x000768E8, ORIG: ConstBitStream(hex = "0x70"), PATCH: ConstBitStream(hex = "0xE0")},
+      {POS: 0x00076910, ORIG: ConstBitStream(hex = "0x64"), PATCH: ConstBitStream(hex = "0xD4")},
+      {POS: 0x00076914, ORIG: ConstBitStream(hex = "0x60"), PATCH: ConstBitStream(hex = "0xD0")},
+      {POS: 0x00076918, ORIG: ConstBitStream(hex = "0x5C"), PATCH: ConstBitStream(hex = "0xCC")},
+      {POS: 0x0007691C, ORIG: ConstBitStream(hex = "0x58"), PATCH: ConstBitStream(hex = "0xC8")},
+      {POS: 0x00076920, ORIG: ConstBitStream(hex = "0x54"), PATCH: ConstBitStream(hex = "0xC4")},
+      {POS: 0x00076924, ORIG: ConstBitStream(hex = "0x50"), PATCH: ConstBitStream(hex = "0xC0")},
+      {POS: 0x00076928, ORIG: ConstBitStream(hex = "0x4C"), PATCH: ConstBitStream(hex = "0xBC")},
+      {POS: 0x0007692C, ORIG: ConstBitStream(hex = "0x48"), PATCH: ConstBitStream(hex = "0xB8")},
+      {POS: 0x00076930, ORIG: ConstBitStream(hex = "0x44"), PATCH: ConstBitStream(hex = "0xB4")},
+      {POS: 0x00076934, ORIG: ConstBitStream(hex = "0x40"), PATCH: ConstBitStream(hex = "0xB0")},
+      {POS: 0x00076938, ORIG: ConstBitStream(hex = "0x78"), PATCH: ConstBitStream(hex = "0xE8")},
+      {POS: 0x0007693C, ORIG: ConstBitStream(hex = "0x74"), PATCH: ConstBitStream(hex = "0xE4")},
+      {POS: 0x00076940, ORIG: ConstBitStream(hex = "0x70"), PATCH: ConstBitStream(hex = "0xE0")},
+      {POS: 0x0007694C, ORIG: ConstBitStream(hex = "0x80"), PATCH: ConstBitStream(hex = "0xF0")},
+      {POS: 0x00076D98, ORIG: ConstBitStream(hex = "0x1E"), PATCH: ConstBitStream(hex = "0x56")},
+    ]
+  },
+  {NAME: "Fix Glyph Height", ENABLED: True, CFG_ID: "glyph_height", DATA:
     [
       {POS: 0x00082F1C, ORIG: ConstBitStream(hex = "0x10001724"), PATCH: ConstBitStream(hex = "0x18001724")},
       {POS: 0x00082F38, ORIG: ConstBitStream(hex = "0x2110E202"), PATCH: ConstBitStream(hex = "0x10004224")},

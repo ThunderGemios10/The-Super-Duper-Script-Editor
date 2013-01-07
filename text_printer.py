@@ -92,7 +92,7 @@ TEXT_FORMAT = {
   common.SCENE_MODES.eventname:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
   common.SCENE_MODES.moviename:   {"x": 262, "y":  85, "w": 196, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": True},
   common.SCENE_MODES.theatre:     {"x":  18, "y": 202, "w": 420, "h": 24, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
-  common.SCENE_MODES.help:        {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
+  common.SCENE_MODES.help:        {"x":  34, "y":  18, "w": 420, "h": 20, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
   common.SCENE_MODES.other:       {"x":  18, "y":  18, "w": 420, "h": 14, "a": TEXT_ALIGN.left,   "clt":  6, "killblanks": False},
   common.SCENE_SPECIAL.option:    {"x": 227, "y":  85, "w": 254, "h": 25, "a": TEXT_ALIGN.left,   "clt":  0, "killblanks": True},
 }
@@ -968,7 +968,8 @@ def mangle_line(line, lengths, index, scene_mode, cur_font, default_clt):
     max_len = 24
   
   elif scene_mode == common.SCENE_MODES.help:
-    max_len = 31
+    # max_len = 31
+    max_len = 87
   
   extra_chars = len(line) - max_len
   if extra_chars > 0:
