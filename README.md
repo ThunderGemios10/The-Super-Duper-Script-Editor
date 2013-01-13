@@ -8,6 +8,7 @@ A (mostly) fully featured script editor for _Danganronpa: Hope's Academy and Des
 
 * Python 2.7
     * <http://www.python.org/download/>
+    * Not the 64-bit version
 * PyQt4
     * <http://www.riverbankcomputing.co.uk/software/pyqt/download>
 * PyEnchant

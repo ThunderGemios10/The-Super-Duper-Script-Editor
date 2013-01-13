@@ -21,12 +21,17 @@
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import QMessageBox
 
+import logging
 import os
 import sys
 
 import common
 from settingsmenu import SettingsMenu
 from setup_wizard import SetupWizard
+
+LOG_FILE = "data/debug.log"
+LOG_FMT  = "\n%(asctime)s: %(message)s"
+logging.basicConfig(filename = LOG_FILE, level = logging.DEBUG, format = LOG_FMT)
 
 def check_config():
   msg_box = QMessageBox()
@@ -76,27 +81,32 @@ def check_config():
 
 if __name__ == '__main__':
 
-  app = QtGui.QApplication(sys.argv)
+  try:
+    app = QtGui.QApplication(sys.argv)
+    
+    if not check_config():
+      sys.exit()
+    
+    from editor_form import EditorForm
+    editor = EditorForm()
+    
+    desktop = app.desktop()
+    
+    desk_w = desktop.width()
+    desk_h = desktop.height()
+    form_w = editor.geometry().width()
+    form_h = editor.geometry().height()
+    
+    x = (desk_w - form_w) / 2
+    y = (desk_h - form_h) / 2
+    
+    editor.move(x, y)
+    editor.show()
+    
+    sys.exit(app.exec_())
   
-  if not check_config():
-    exit()
-  
-  from editor_form import EditorForm
-  editor = EditorForm()
-  
-  desktop = app.desktop()
-  
-  desk_w = desktop.width()
-  desk_h = desktop.height()
-  form_w = editor.geometry().width()
-  form_h = editor.geometry().height()
-  
-  x = (desk_w - form_w) / 2
-  y = (desk_h - form_h) / 2
-  
-  editor.move(x, y)
-  editor.show()
-  
-  sys.exit(app.exec_())
+  except:
+    logging.exception('Exception on editor.pyw')
+    raise
 
 ##### EOF #####
