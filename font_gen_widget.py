@@ -52,8 +52,21 @@ class FontGenWidget(QtGui.QWidget):
     self.ui.setupUi(self)
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
     
+    self.importing = True
+    
     self.ui.treeSubs.clear()
     self.ui.treeSubs.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+    
+    self.ui.cboPenCap.clear()
+    self.ui.cboPenCap.addItem("Flat",   Qt.Qt.FlatCap)
+    self.ui.cboPenCap.addItem("Square", Qt.Qt.SquareCap)
+    self.ui.cboPenCap.addItem("Round",  Qt.Qt.RoundCap)
+    
+    self.ui.cboPenJoin.clear()
+    self.ui.cboPenJoin.addItem("Miter",     Qt.Qt.MiterJoin)
+    self.ui.cboPenJoin.addItem("Bevel",     Qt.Qt.BevelJoin)
+    self.ui.cboPenJoin.addItem("Round",     Qt.Qt.RoundJoin)
+    self.ui.cboPenJoin.addItem("SVG Miter", Qt.Qt.SvgMiterJoin)
     
     self.font_type = FONT_TYPES.font01
     
@@ -73,6 +86,8 @@ class FontGenWidget(QtGui.QWidget):
       y_margin  = self.ui.spnYMargin.value(),
       y_shift   = self.ui.spnYShift.value(),
       pen_size  = self.ui.spnPenSize.value(),
+      pen_cap   = self.ui.cboPenCap.itemData(self.ui.cboPenCap.currentIndex()).toInt()[0],
+      pen_join  = self.ui.cboPenJoin.itemData(self.ui.cboPenJoin.currentIndex()).toInt()[0],
       use_pen   = self.ui.chkTrace.isChecked(),
       chars     = unicode(self.ui.txtChars.toPlainText().toUtf8(), "utf-8"),
       subs      = self.get_subs(),
@@ -99,7 +114,10 @@ class FontGenWidget(QtGui.QWidget):
     self.ui.spnPenSize    .setValue(config.pen_size)
     self.ui.chkTrace    .setChecked(config.use_pen)
     
-    self.ui.txtChars  .setPlainText(config.chars)
+    self.ui.cboPenCap .setCurrentIndex(self.ui.cboPenCap.findData(config.pen_cap))
+    self.ui.cboPenJoin.setCurrentIndex(self.ui.cboPenJoin.findData(config.pen_join))
+    
+    self.ui.txtChars.setPlainText(config.chars)
     self.set_subs(config.subs)
     
     # All done~

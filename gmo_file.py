@@ -19,9 +19,10 @@
 ################################################################################
 
 import os
+import tempfile
 
 from bitstring import BitStream, ConstBitStream
-from gim_converter import GimConverter
+from gim_converter import GimConverter, QuantizeType
 
 GIM_MAGIC       = ConstBitStream(hex='0x4D49472E') # MIG.
 GIM_SIZE_OFFSET = 0x14
@@ -36,6 +37,15 @@ GMO_SIZE_OFFSET = 0x14
 GMO_SIZE_DIFF   = 0x18
 
 ################################################################################
+### Exceptions
+################################################################################
+class GimSizeError(Exception):
+  pass
+
+class GimIndexError(IndexError):
+  pass
+
+################################################################################
 ### A very simplified GMO parser, just intended to provide access
 ### to the GIM textures inside a model.
 ################################################################################
@@ -43,6 +53,8 @@ class GmoFile():
   def __init__(self, data = None, offset = 0, filename = None):
     self.data = None
     self.__gim_files = []
+    
+    self.gimconv = GimConverter()
     
     if not data == None:
       self.load_data(data, offset)
@@ -88,13 +100,43 @@ class GmoFile():
   
   def get_gim(self, gim_id):
     if gim_id >= self.gim_count():
-      print "Invalid GIM ID."
-      return None
+      raise GimIndexError("Invalid GIM ID.")
     
     gim_start, gim_size = self.__gim_files[gim_id]
     gim_data = self.data[gim_start * 8 : (gim_start + gim_size) * 8]
     
     return gim_data
+  
+  def replace_png_file(self, gim_id, filename, quantize_to_fit = True):
+  
+    if quantize_to_fit:
+      quantize_order = [QuantizeType.auto, QuantizeType.index8, QuantizeType.index4]
+    else:
+      quantize_order = [QuantizeType.auto]
+    quantize_id = 0
+    
+    (fd, temp_gim) = tempfile.mkstemp(suffix = ".gim", prefix = "sdse-")
+    os.close(fd) # Don't need the open file handle.
+    
+    while True:
+      self.gimconv.png_to_gim(filename, temp_gim, quantize_order[quantize_id])
+      
+      try:
+        self.replace_gim_file(gim_id, temp_gim)
+      except GimSizeError:
+        quantize_id += 1
+      except GimIndexError:
+        os.remove(temp_gim)
+        raise
+      else:
+        # If we didn't except, that means we succeeded, so we can leave.
+        break
+      
+      if quantize_id > len(quantize_order):
+        print "Failed to convert PNG into a GIM small enough to insert."
+        break
+    
+    os.remove(temp_gim)
   
   def replace_gim_file(self, gim_id, filename):
     gim_data = BitStream(filename = filename)
@@ -102,14 +144,13 @@ class GmoFile():
   
   def replace_gim(self, gim_id, gim_data):
     if gim_id >= self.gim_count():
-      print "Invalid GIM ID."
-      return
+      raise GimIndexError("Invalid GIM ID.")
     
     gim_start, gim_size = self.__gim_files[gim_id]
     
     if gim_data.len / 8 > gim_size:
-      print "GIM too large. %d bytes > %d bytes" % (gim_data.len / 8, gim_size)
-      return
+      raise GimSizeError("GIM too large. %d bytes > %d bytes" % (gim_data.len / 8, gim_size))
+      # return
     
     self.data.overwrite(gim_data, gim_start * 8)
     
@@ -122,8 +163,6 @@ class GmoFile():
     if not os.path.isdir(directory):
       os.makedirs(directory)
     
-    gimconv = GimConverter()
-    
     for id in range(self.gim_count()):
       gim = self.get_gim(id)
       
@@ -134,11 +173,11 @@ class GmoFile():
         gim.tofile(f)
       
       if to_png:
-        gimconv.gim_to_png(out_gim, out_png)
+        self.gimconv.gim_to_png(out_gim, out_png)
         os.remove(out_gim)
 
 if __name__ == "__main__":
-  gmo = GmoFile(filename = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage2-sfx-tex\\bg_160.pak\\0007.gmo")
+  # gmo = GmoFile(filename = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage2-sfx-tex\\bg_160.pak\\0007.gmo")
   # gim = gmo.get_gim(4)
   # gmo.replace_gim_file(4,  "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0004-2-fs8.gim")
   # gmo.replace_gim_file(24, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
@@ -151,11 +190,16 @@ if __name__ == "__main__":
   # with open("debug/test.gim", "wb") as f:
     # gim.tofile(f)
   
-  # gimconv = GimConverter()
+  gimconv = GimConverter()
   # gimconv.gim_to_png("debug/test.gim", "debug/test.png")
+  gimconv.png_to_gim("debug/bloodbathfever.png", "debug/bloodbathfever.gim")
+  
+  gmo = GmoFile(filename = "debug/bg_029_p00.gmo")
+  gmo.replace_gim_file(3, "debug/bloodbathfever.gim")
+  gmo.save("debug/bg_029_p00-test.gmo")
   
   # print gmo.gim_count()
   
-  gmo.extract("debug/bg_160.pak", to_png = True)
+  # gmo.extract("debug/bg_160.pak", to_png = True)
 
 ### EOF ###

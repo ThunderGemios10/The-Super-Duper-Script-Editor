@@ -240,55 +240,117 @@
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_6">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
-          <item>
-           <widget class="QCheckBox" name="chkTrace">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+       <widget class="QGroupBox" name="chkTrace">
+        <property name="title">
+         <string>Trace Outlines</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_13">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>4</number>
+         </property>
+         <property name="bottomMargin">
+          <number>8</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Pen Size</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="spnPenSize">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="decimals">
+            <number>4</number>
+           </property>
+           <property name="minimum">
+            <double>0.000100000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.010000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.333300000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Cap Style</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cboPenCap">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <item>
             <property name="text">
-             <string>Trace Outlines</string>
+             <string>Square</string>
             </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <widget class="QLabel" name="label_6">
+           </item>
+           <item>
             <property name="text">
-             <string>Pen Size</string>
+             <string>Flat</string>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="spnPenSize">
-            <property name="enabled">
-             <bool>false</bool>
+           </item>
+           <item>
+            <property name="text">
+             <string>Round</string>
             </property>
-            <property name="decimals">
-             <number>4</number>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>Join Style</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cboPenJoin">
+           <property name="currentIndex">
+            <number>2</number>
+           </property>
+           <item>
+            <property name="text">
+             <string>Miter</string>
             </property>
-            <property name="minimum">
-             <double>0.000100000000000</double>
+           </item>
+           <item>
+            <property name="text">
+             <string>Bevel</string>
             </property>
-            <property name="singleStep">
-             <double>0.010000000000000</double>
+           </item>
+           <item>
+            <property name="text">
+             <string>Round</string>
             </property>
-            <property name="value">
-             <double>0.333300000000000</double>
+           </item>
+           <item>
+            <property name="text">
+             <string>SVG Miter</string>
             </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer">
@@ -573,8 +635,6 @@
   <tabstop>spnXMargin</tabstop>
   <tabstop>spnYMargin</tabstop>
   <tabstop>spnYShift</tabstop>
-  <tabstop>chkTrace</tabstop>
-  <tabstop>spnPenSize</tabstop>
   <tabstop>chkBoundingBoxes</tabstop>
   <tabstop>chkAutoRefresh</tabstop>
   <tabstop>btnRefreshPreview</tabstop>
@@ -748,46 +808,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkTrace</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>spnPenSize</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>340</x>
-     <y>89</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>352</x>
-     <y>114</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkTrace</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>FontGenWidget</receiver>
-   <slot>adv_changed()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>386</x>
-     <y>91</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>522</x>
-     <y>61</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>spnPenSize</sender>
    <signal>valueChanged(double)</signal>
    <receiver>FontGenWidget</receiver>
    <slot>adv_changed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>368</x>
-     <y>126</y>
+     <x>420</x>
+     <y>118</y>
     </hint>
     <hint type="destinationlabel">
      <x>536</x>
@@ -856,6 +884,54 @@
     <hint type="destinationlabel">
      <x>742</x>
      <y>194</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboPenCap</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>FontGenWidget</receiver>
+   <slot>adv_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>506</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>709</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cboPenJoin</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>FontGenWidget</receiver>
+   <slot>adv_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>637</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>738</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkTrace</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FontGenWidget</receiver>
+   <slot>adv_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>347</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>737</x>
+     <y>113</y>
     </hint>
    </hints>
   </connection>

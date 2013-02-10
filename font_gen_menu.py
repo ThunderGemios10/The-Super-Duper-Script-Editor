@@ -94,7 +94,7 @@ class FontGenMenu(QtGui.QDialog):
     elif answer == QtGui.QMessageBox.Discard:
       return True
     elif answer == QtGui.QMessageBox.Save:
-      self.save_changes()
+      self.save(filename = self.filename)
       return True
   
   def update_config(self):

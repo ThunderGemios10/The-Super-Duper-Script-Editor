@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\modeleditor.ui'
 #
-# Created: Wed Jan 02 20:35:02 2013
+# Created: Tue Jan 15 16:55:59 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!

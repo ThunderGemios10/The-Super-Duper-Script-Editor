@@ -114,10 +114,12 @@ class ScriptAnalytics():
   ### @fn load()
   ####################################################################
   def load(self):
-    if os.path.isfile(DATA_FILE):
+    # if os.path.isfile(DATA_FILE):
+    try:
       with open(DATA_FILE, "rb") as f:
         self.script_data = pickle.load(f)
-    else:
+    # else:
+    except:
       self.script_data = {}
     
     self.update()

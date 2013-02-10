@@ -33,7 +33,7 @@ QuantizeType = Enum("none", "auto", "index4", "index8")
 
 OUTPUT_RE = re.compile(ur"save : ([^\n\r]*)")
 
-class GimConverter():
+class GimConverter:
   def __init__(self, parent = None):
     self.parent = parent
     self.process = QProcess()

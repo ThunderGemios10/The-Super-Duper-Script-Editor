@@ -148,8 +148,9 @@ class GameFont:
 class FontConfig:
   def __init__(self, family = "Meiryo", size = 11, weight = 50,
       x_offset = 0, y_offset = 2, x_margin = 2, y_margin = 2,
-      y_shift = -1, pen_size = 0, use_pen = False,
-      chars = "", subs = {u"\t": u'  '}):
+      y_shift = -1, pen_size = 0, pen_cap = Qt.Qt.RoundCap,
+      pen_join = Qt.Qt.RoundJoin, use_pen = False, chars = "",
+      subs = {u"\t": u'  '}):
     
     self.family   = family
     self.size     = size
@@ -160,6 +161,8 @@ class FontConfig:
     self.y_margin = y_margin
     self.y_shift  = y_shift
     self.pen_size = pen_size
+    self.pen_cap  = pen_cap
+    self.pen_join = pen_join
     self.use_pen  = use_pen
     
     self.chars    = chars
@@ -212,8 +215,8 @@ def gen_font(font_configs, font_type = FONT_TYPES.font01, img_width = 1024, draw
     text_pen = painter.pen()
     text_pen.setBrush(QColor(255, 255, 255, 255))
     text_pen.setWidthF(config.pen_size)
-    text_pen.setCapStyle(Qt.Qt.RoundCap)
-    text_pen.setJoinStyle(Qt.Qt.RoundJoin)
+    text_pen.setCapStyle(config.pen_cap)
+    text_pen.setJoinStyle(config.pen_join)
     text_pen.setStyle(Qt.Qt.SolidLine if config.use_pen else Qt.Qt.NoPen)
     painter.setPen(text_pen)
     
@@ -225,7 +228,6 @@ def gen_font(font_configs, font_type = FONT_TYPES.font01, img_width = 1024, draw
         seen_chars.append(char)
       
       # If we want a character to represent something it's not.
-      # Basically just for … = ... because in Meiryo, … is mid-aligned.
       char_to_print = char
       
       if char in config.subs:

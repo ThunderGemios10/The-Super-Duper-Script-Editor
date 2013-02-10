@@ -18,7 +18,7 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import Qt, QtGui, QtCore
 from PyQt4.QtCore import QRect, QSignalMapper
 from PyQt4.QtGui import QTextCursor, QApplication
 from keyword_highlighter import KeywordHighlighter, Keyword
@@ -75,7 +75,13 @@ class KeywordEdit(QtGui.QTextEdit):
   ### @desc Returns the tooltip and the boundaries for it given the cursor pos.
   ##############################################################################
   def get_tooltip(self, pos):
-    cursor   = QTextCursor(self.cursorForPosition(pos))
+    cursor_pos = self.document().documentLayout().hitTest(QtCore.QPointF(pos), Qt.Qt.ExactHit)
+    
+    if cursor_pos == -1:
+      return "", QRect()
+    
+    cursor   = QTextCursor(self.document())
+    cursor.setPosition(cursor_pos)
     col      = cursor.positionInBlock()
     line     = cursor.blockNumber()
     

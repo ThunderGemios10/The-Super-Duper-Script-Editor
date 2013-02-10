@@ -25,13 +25,17 @@ import logging
 import os
 import sys
 
-import common
-from settingsmenu import SettingsMenu
-from setup_wizard import SetupWizard
-
 LOG_FILE = "data/debug.log"
 LOG_FMT  = "\n%(asctime)s: %(message)s"
 logging.basicConfig(filename = LOG_FILE, level = logging.DEBUG, format = LOG_FMT)
+
+try:
+  import common
+  from settingsmenu import SettingsMenu
+  from setup_wizard import SetupWizard
+except:
+  logging.exception('Exception importing.')
+  raise
 
 def check_config():
   msg_box = QMessageBox()

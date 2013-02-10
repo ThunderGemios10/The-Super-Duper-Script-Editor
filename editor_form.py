@@ -2405,7 +2405,7 @@ Attributions:
   ### @desc Requests a reload of the duplicate database.
   ##############################################################################
   def reloadDupes(self):
-    dupe_db.load_csv()
+    dupe_db.load_csv(common.editor_config.dupes_csv)
     self.findInternalDupes()
     self.showDupes()
   
