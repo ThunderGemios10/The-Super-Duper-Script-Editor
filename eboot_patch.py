@@ -176,6 +176,25 @@ EBOOT_PATCHES = [
       {POS: 0x00076D98, ORIG: ConstBitStream(hex = "0x1E"), PATCH: ConstBitStream(hex = "0x56")},
     ]
   },
+  {NAME: "Dialogue Box (54-Character/Line Limit)", ENABLED: True, CFG_ID: "dialog_54", DATA:
+    [
+      {POS: 0x00059C04, ORIG: ConstBitStream(hex = "0x36"), PATCH: ConstBitStream(hex = "0x42")},
+      {POS: 0x00059DDC, ORIG: ConstBitStream(hex = "0x36"), PATCH: ConstBitStream(hex = "0x42")},
+      {POS: 0x00059E60, ORIG: ConstBitStream(hex = "0x36"), PATCH: ConstBitStream(hex = "0x42")},
+      {POS: 0x00059ED4, ORIG: ConstBitStream(hex = "0x36"), PATCH: ConstBitStream(hex = "0x42")},
+      {POS: 0x0005106C, ORIG: ConstBitStream(hex = "0xDA4B"), PATCH: ConstBitStream(hex = "0x0F3E")},
+      {POS: 0x00051070, ORIG: ConstBitStream(hex = "0xF712"), PATCH: ConstBitStream(hex = "0x83E1")},
+      {POS: 0x00051090, ORIG: ConstBitStream(hex = "0xC0"), PATCH: ConstBitStream(hex = "0x80")},
+      {POS: 0x00051098, ORIG: ConstBitStream(hex = "0xC020"), PATCH: ConstBitStream(hex = "0x4021")},
+    ]
+  },
+  {NAME: "Options Centering", ENABLED: True, CFG_ID: "option_center", DATA:
+    [
+      {POS: 0x001041DE, ORIG: ConstBitStream(hex = "0x09"), PATCH: ConstBitStream(hex = "0x0A")},
+      {POS: 0x001041E0, ORIG: ConstBitStream(hex = "0x66"), PATCH: ConstBitStream(hex = "0x6A")},
+      {POS: 0x001041E2, ORIG: ConstBitStream(hex = "0x37"), PATCH: ConstBitStream(hex = "0x3A")},
+    ]
+  },
 ]
 
 def apply_sys_lang(eboot):

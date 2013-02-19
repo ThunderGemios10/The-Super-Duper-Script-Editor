@@ -941,7 +941,8 @@ def mangle_line(line, lengths, index, scene_mode, cur_font, default_clt):
 
   # The game auto-wraps after 54 characters.
   # Not that we should ever run into an issue with that.
-  max_len = 54
+  # max_len = 54
+  max_len = 66
   
   # Replace extra characters with something ugly
   # so it's easy to know it needs to be fixed.
