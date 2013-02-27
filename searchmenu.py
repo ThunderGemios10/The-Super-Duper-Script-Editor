@@ -91,7 +91,7 @@ class SearchMenu(QtGui.QDialog):
   ### @desc Commences a search.
   ##############################################################################
   def search(self):
-    text = unicode(self.ui.txtQuery.text().toUtf8(), "UTF-8")
+    text = common.qt_to_unicode(self.ui.txtQuery.text())
     
     dir = common.editor_config.umdimage_dir
     
@@ -163,7 +163,7 @@ class SearchMenu(QtGui.QDialog):
     
     query_re = re.compile(query, self.re_flags)
     
-    dir_filter  = unicode(self.ui.txtFilterRe.text().toUtf8(), "UTF-8")
+    dir_filter  = common.qt_to_unicode(self.ui.txtFilterRe.text())
     if dir_filter == "":
       filter_re = script_analytics.DEFAULT_FILTER
     else:
@@ -359,7 +359,7 @@ class SearchMenu(QtGui.QDialog):
     if current == None or current.childCount() != 0:
       return
     
-    file = unicode(current.text(0).toUtf8(), "UTF-8")
+    file = common.qt_to_unicode(current.text(0))
     path = tree.tree_item_to_path(current.parent())
     path = dir_tools.expand_dir(path)
     

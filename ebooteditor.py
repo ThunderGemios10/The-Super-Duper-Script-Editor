@@ -72,7 +72,7 @@ class EbootEditor(QtGui.QDialog):
   ### @desc asd
   ##############################################################################
   def changedTranslation(self):
-    text = unicode(self.ui.txtTranslated.toPlainText().toUtf8(), "UTF-8")
+    text = common.qt_to_unicode(self.ui.txtTranslated.toPlainText())
     
     bytes  = bytearray(text, encoding = self.lines[self.current_line].enc)
     length = len(bytes)

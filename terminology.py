@@ -53,9 +53,7 @@ def last_edited():
 
 def add_term(section, term):
   
-  section = str(section)#.title()
-  
-  new_row = {'Section': section, 'Word': term.word, 'Meaning': term.meaning}
+  new_row = {'Section': section.encode("UTF-8"), 'Word': term.word.encode("UTF-8"), 'Meaning': term.meaning.encode("UTF-8")}
   
   rows = load_csv()
   out_rows = []
@@ -70,10 +68,8 @@ def add_term(section, term):
 
 def replace_term(section, old_term, new_term):
   
-  section = str(section)#.title()
-  
-  old_row = {'Section': section, 'Word': old_term.word, 'Meaning': old_term.meaning}
-  new_row = {'Section': section, 'Word': new_term.word, 'Meaning': new_term.meaning}
+  old_row = {'Section': section.encode("UTF-8"), 'Word': old_term.word.encode("UTF-8"), 'Meaning': old_term.meaning.encode("UTF-8")}
+  new_row = {'Section': section.encode("UTF-8"), 'Word': new_term.word.encode("UTF-8"), 'Meaning': new_term.meaning.encode("UTF-8")}
   
   rows = load_csv()
   out_rows = []
@@ -87,9 +83,7 @@ def replace_term(section, old_term, new_term):
 
 def remove_term(section, term):
   
-  section = str(section)#.title()
-  
-  to_kill = {'Section': section, 'Word': term.word, 'Meaning': term.meaning}
+  to_kill = {'Section': section.encode("UTF-8"), 'Word': term.word.encode("UTF-8"), 'Meaning': term.meaning.encode("UTF-8")}
   
   rows = load_csv()
   out_rows = []
@@ -102,8 +96,8 @@ def remove_term(section, term):
 
 def rename_section(oldname, newname):
   
-  newname = str(newname)#.title()
-  oldname = str(oldname)#.title()
+  newname = newname.encode("UTF-8")
+  oldname = oldname.encode("UTF-8")
   
   rows = load_csv()
   out_rows = []
@@ -119,7 +113,7 @@ def rename_section(oldname, newname):
 
 def remove_section(section):
   
-  section = str(section)#.title()
+  section = section.encode("UTF-8")
   
   rows = load_csv()
   out_rows = []
@@ -132,7 +126,7 @@ def remove_section(section):
 
 def section_exists(section):
   
-  section = str(section)#.title()
+  section = section.encode("UTF-8")
   
   rows = load_csv()
   out_rows = []
@@ -145,8 +139,7 @@ def section_exists(section):
 
 def term_exists(section, term):
   
-  section = str(section)#.title()
-  to_find = {'Section': section, 'Word': term.word, 'Meaning': term.meaning}
+  to_find = {'Section': section.encode("UTF-8"), 'Word': term.word.encode("UTF-8"), 'Meaning': term.meaning.encode("UTF-8")}
   
   rows = load_csv()
   out_rows = []

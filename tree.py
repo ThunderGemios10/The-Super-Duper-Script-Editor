@@ -22,6 +22,7 @@ from PyQt4 import QtGui
 import os
 import re
 
+import common
 from make_unique import make_unique
 
 def path_to_tree(filename):
@@ -57,11 +58,11 @@ def tree_item_to_path(tree_item):
   if tree_item == None:
     return ""
   
-  path = unicode(tree_item.text(0).toUtf8(), "UTF-8")
+  path = common.qt_to_unicode(tree_item.text(0))
   tree_item = tree_item.parent()
   
   while tree_item != None:
-    base = unicode(tree_item.text(0).toUtf8(), "UTF-8")
+    base = common.qt_to_unicode(tree_item.text(0))
     path = os.path.join(base, path)
     tree_item = tree_item.parent()
   
@@ -76,7 +77,7 @@ def consolidate_tree_items(tree_items):
   item_map = {}
   
   for item in tree_items:
-    header = unicode(item.text(0).toUtf8(), "UTF-8")
+    header = common.qt_to_unicode(item.text(0))
     headers.append(header)
     
     if not header in item_map:

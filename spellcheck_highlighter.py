@@ -25,6 +25,8 @@ import enchant
 from enchant.checker import SpellChecker
 from enchant.tokenize import HTMLChunker
 
+import common
+
 class SpellCheckHighlighter(QtGui.QSyntaxHighlighter):
   def __init__(self, parent = None):
     super(SpellCheckHighlighter, self).__init__(parent)
@@ -56,7 +58,7 @@ class SpellCheckHighlighter(QtGui.QSyntaxHighlighter):
       self.errors.append([])
     
     self.errors[line] = []
-    self.checker.set_text(unicode(text.toUtf8(), "UTF-8"))
+    self.checker.set_text(common.qt_to_unicode(text))
     
     for err in self.checker:
       self.setFormat(err.wordpos, len(err.word), self.format)

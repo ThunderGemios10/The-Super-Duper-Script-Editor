@@ -25,6 +25,8 @@ from PyQt4.QtCore import pyqtSignal
 import copy
 import re
 
+import common
+
 RE_REFERENCE = re.compile(ur"\{([^\{\}]+?\.txt)\}", re.UNICODE | re.S | re.DOTALL)
 
 class ReferenceHighlighter(QtGui.QSyntaxHighlighter):
@@ -61,7 +63,7 @@ class ReferenceHighlighter(QtGui.QSyntaxHighlighter):
     
     self.references[line] = []
     
-    text = unicode(text.toUtf8(), "UTF-8").lower()
+    text = common.qt_to_unicode(text).lower()
     
     matches = RE_REFERENCE.finditer(text)
     

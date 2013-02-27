@@ -30,6 +30,8 @@ import dir_tools
 import text_files
 import tree
 
+import common
+
 from list_files import list_all_files
 from script_file import ScriptFile
 
@@ -208,7 +210,7 @@ class DiffsMenu(QtGui.QDialog):
     if current == None or current.childCount() != 0:
       return
     
-    file = unicode(current.text(0).toUtf8(), "UTF-8")
+    file = common.qt_to_unicode(current.text(0))
     path = tree.tree_item_to_path(current.parent())
     self.setWindowTitle("%s - %s" % (self.menu_name, os.path.join(path, file)))
     path = dir_tools.expand_dir(path)

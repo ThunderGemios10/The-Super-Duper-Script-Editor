@@ -21,6 +21,9 @@
 from enum import Enum
 import re
 
+from PyQt4 import QtCore
+from PyQt4.QtCore import QString
+
 from config import EditorConfig
 
 SCENE_MODES   = Enum("normal", "trial", "rules", "ammo", "ammoname", "ammosummary", "present", "presentname", "debate", "mtb", "climax", "anagram", "menu", "map", "report", "report2", "skill", "skill2", "music", "eventname", "moviename", "theatre", "help", "other")
@@ -278,5 +281,11 @@ def chapter_to_text(chapter):
     text = "Other"
   
   return text
+
+def qt_to_unicode(str, normalize = True):
+  if normalize:
+    str = str.normalized(QString.NormalizationForm_C)
+  
+  return unicode(str.toUtf8(), "UTF-8")
 
 ### EOF ###

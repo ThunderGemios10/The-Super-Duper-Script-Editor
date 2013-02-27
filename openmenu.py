@@ -96,7 +96,7 @@ class OpenMenu(QtGui.QDialog):
   def changeSelection(self, current, prev):
   
     if current.childCount() == 0:
-      self.current_dir = unicode(current.text(0).toUtf8(), "UTF-8")
+      self.current_dir = common.qt_to_unicode(current.text(0))
     else:
       self.current_dir = None
       

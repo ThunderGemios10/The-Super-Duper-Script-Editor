@@ -29,6 +29,8 @@ import tempfile
 from bitstring import ConstBitStream
 from enum import Enum
 
+import common
+
 QuantizeType = Enum("none", "auto", "index4", "index8")
 
 OUTPUT_RE = re.compile(ur"save : ([^\n\r]*)")
@@ -110,7 +112,7 @@ class GimConverter:
     saved_file = None
     
     for line in output:
-      line = unicode(line.toUtf8(), "utf-8")
+      line = common.qt_to_unicode(line)
       
       match = OUTPUT_RE.match(line)
       

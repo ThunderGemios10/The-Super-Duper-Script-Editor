@@ -22,7 +22,7 @@ from PyQt4 import Qt, QtGui, QtCore
 from PyQt4.QtCore import pyqtSignal
 from ui_fontgenwidget import Ui_FontGenWidget
 
-# import common
+import common
 from font_generator import FontConfig, gen_font, FONT_TYPES
 
 # A few escapes for our substitutions.
@@ -89,7 +89,7 @@ class FontGenWidget(QtGui.QWidget):
       pen_cap   = self.ui.cboPenCap.itemData(self.ui.cboPenCap.currentIndex()).toInt()[0],
       pen_join  = self.ui.cboPenJoin.itemData(self.ui.cboPenJoin.currentIndex()).toInt()[0],
       use_pen   = self.ui.chkTrace.isChecked(),
-      chars     = unicode(self.ui.txtChars.toPlainText().toUtf8(), "utf-8"),
+      chars     = common.qt_to_unicode(self.ui.txtChars.toPlainText()),
       subs      = self.get_subs(),
     )
   
@@ -127,7 +127,7 @@ class FontGenWidget(QtGui.QWidget):
     self.update_preview()
   
   def font_name(self):
-    return unicode(self.ui.cboFont.currentFont().family().toUtf8(), "utf-8")
+    return common.qt_to_unicode(self.ui.cboFont.currentFont().family(), normalize = False)
   
   def font_size(self):
     return self.ui.spnFontSize.value()
@@ -206,7 +206,7 @@ class FontGenWidget(QtGui.QWidget):
   
   def sub_changed(self, item, col):
     # Make sure everything's valid.
-    sub = unicode(item.text(col).toUtf8(), "utf-8")
+    sub = common.qt_to_unicode(item.text(col))
     sub = unescape(sub)
     
     # The replacement column can only be single characters
@@ -240,8 +240,8 @@ class FontGenWidget(QtGui.QWidget):
     for i in range(self.ui.treeSubs.topLevelItemCount()):
       item = self.ui.treeSubs.topLevelItem(i)
       
-      repl      = unescape(unicode(item.text(0).toUtf8(), "utf-8"))
-      repl_with = unescape(unicode(item.text(1).toUtf8(), "utf-8"))
+      repl      = unescape(common.qt_to_unicode(item.text(0)))
+      repl_with = unescape(common.qt_to_unicode(item.text(1)))
       
       if len(repl) > 0:
         subs[repl] = repl_with

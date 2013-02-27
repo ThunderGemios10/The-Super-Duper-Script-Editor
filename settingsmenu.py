@@ -161,7 +161,7 @@ class SettingsMenu(QtGui.QDialog):
     
     # Then apply our changes.
     for item in FILE_LOCATIONS:
-      common.editor_config.set_pref(item[CFG], unicode(self.ui.__dict__[item[TEXT]].text().toUtf8(), "UTF-8"))
+      common.editor_config.set_pref(item[CFG], common.qt_to_unicode(self.ui.__dict__[item[TEXT]].text(), normalize = False))
     
     return True
   
@@ -228,7 +228,7 @@ class SettingsMenu(QtGui.QDialog):
   
   def apply_hacks(self):
     for i in range(self.ui.lstHacks.count()):
-      cfg_id  = unicode(self.ui.lstHacks.item(i).data(Qt.Qt.UserRole).toString().toUtf8(), "utf-8")
+      cfg_id  = common.qt_to_unicode(self.ui.lstHacks.item(i).data(Qt.Qt.UserRole).toString())
       enabled = self.ui.lstHacks.item(i).checkState() == Qt.Qt.Checked
       
       if cfg_id:

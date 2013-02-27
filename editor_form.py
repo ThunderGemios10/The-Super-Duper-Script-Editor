@@ -20,7 +20,7 @@
 
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import QSound, QProgressDialog, QProgressBar, QTextCursor, QImage, QApplication, QShortcut, QKeySequence
-from PyQt4.QtCore import QProcess
+from PyQt4.QtCore import QProcess, QString
 
 from ui_editor import Ui_Editor
 
@@ -610,7 +610,7 @@ class EditorForm(QtGui.QMainWindow):
   
     if image_pos == None or image_pos == IMAGE_POS.original:
       if not self.hide_original:
-        text = unicode(self.ui.txtOriginal.toPlainText().toUtf8(), "utf-8")
+        text = common.qt_to_unicode(self.ui.txtOriginal.toPlainText())
         orig = text_printer.print_text(bg, text, scene_info.mode, mangle)
         
         if scene_info.special == common.SCENE_SPECIAL.option:
@@ -626,7 +626,7 @@ class EditorForm(QtGui.QMainWindow):
         self.ui.lblOriginal.setPixmap(qt_pixmap)
     
     if image_pos == None or image_pos == IMAGE_POS.translated:
-      text = unicode(self.ui.txtTranslated.toPlainText().toUtf8(), "utf-8")
+      text = common.qt_to_unicode(self.ui.txtTranslated.toPlainText())
       trans = text_printer.print_text(bg, text, scene_info.mode, mangle)
       
       if scene_info.special == common.SCENE_SPECIAL.option:
@@ -909,7 +909,7 @@ class EditorForm(QtGui.QMainWindow):
     
     self.updateStatusRelated()
     
-    file         = unicode(tree_item.text(0).toUtf8(), "UTF-8")
+    file         = common.qt_to_unicode(tree_item.text(0))
     directory    = tree.tree_item_to_path(tree_item.parent())
     expanded_dir = dir_tools.expand_dir(directory)
     
@@ -1240,7 +1240,7 @@ class EditorForm(QtGui.QMainWindow):
     # have a useful look at how long the lines are. So we search for all
     # CLTs on the line we're in that start before the cursor position and
     # we chop them out of the column count.
-    line      = unicode(cursor.block().text().toUtf8(), "utf-8")
+    line      = common.qt_to_unicode(cursor.block().text())
     tag_re    = script_file.TAG_KILLER
     
     adjusted_col = col
@@ -1263,7 +1263,7 @@ class EditorForm(QtGui.QMainWindow):
   ### @desc Updates the label on the status bar for the text box.
   ##############################################################################
   def updateStatusWordCount(self):
-    words = count_words(unicode(self.ui.txtTranslated.toPlainText().toUtf8(), "utf-8"))
+    words = count_words(common.qt_to_unicode(self.ui.txtTranslated.toPlainText()))
     self.ui.statusLabelWordCount.setText("Words: %d" % words)
   
   ##############################################################################
@@ -1318,7 +1318,7 @@ class EditorForm(QtGui.QMainWindow):
   ###       information and the preview image.
   ##############################################################################
   def changedTranslated(self):
-    translated = unicode(self.ui.txtTranslated.toPlainText().toUtf8(), "utf-8")
+    translated = common.qt_to_unicode(self.ui.txtTranslated.toPlainText())
     
     if not translated == self.script_pack[self.cur_script].translated:
       self.setWindowModified(True)
@@ -1347,7 +1347,7 @@ class EditorForm(QtGui.QMainWindow):
   ### @desc Called when txtComments is changed. Updates the internal script.
   ##############################################################################
   def changedComments(self):
-    comments = unicode(self.ui.txtComments.toPlainText().toUtf8(), "utf-8")
+    comments = common.qt_to_unicode(self.ui.txtComments.toPlainText())
     
     if not comments == self.script_pack[self.cur_script].comments:
       self.setWindowModified(True)
@@ -1496,7 +1496,7 @@ class EditorForm(QtGui.QMainWindow):
     selected_dir  = tree.tree_item_to_path(current.parent())
     selected_dir  = dir_tools.expand_dir(selected_dir)
     selected_dir  = os.path.join("umdimage", selected_dir)
-    selected_file = unicode(current.text(0).toUtf8(), "UTF-8")
+    selected_file = common.qt_to_unicode(current.text(0))
     selected_file = os.path.join(selected_dir, selected_file)
     
     active_dir  = self.script_pack.get_real_dir()
@@ -1673,7 +1673,7 @@ class EditorForm(QtGui.QMainWindow):
     dupe_dir  = tree.tree_item_to_path(current.parent())
     dupe_dir  = dir_tools.expand_dir(dupe_dir)
     dupe_dir  = os.path.join("umdimage", dupe_dir)
-    dupe_file = unicode(current.text(0).toUtf8(), "UTF-8")
+    dupe_file = common.qt_to_unicode(current.text(0))
     dupe_file = os.path.join(dupe_dir, dupe_file)
     
     self.removeDupe(dupe_file)
@@ -1708,7 +1708,7 @@ class EditorForm(QtGui.QMainWindow):
     similar_dir  = tree.tree_item_to_path(current.parent())
     similar_dir  = dir_tools.expand_dir(similar_dir)
     similar_dir  = os.path.join("umdimage", similar_dir)
-    similar_file = unicode(current.text(0).toUtf8(), "UTF-8")
+    similar_file = common.qt_to_unicode(current.text(0))
     similar_file = os.path.join(similar_dir, similar_file)
     
     active_dir  = self.script_pack.get_real_dir()

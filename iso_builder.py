@@ -25,6 +25,8 @@ from PyQt4.QtCore import QProcess, QString
 import os
 import re
 
+import common
+
 OUTPUT_RE = re.compile(ur".*?([0-9\.]+)\%\sdone")
 
 class IsoBuilder():
@@ -40,7 +42,7 @@ class IsoBuilder():
     output = output.split("\n", QString.SkipEmptyParts)
     
     for line in output:
-      line = unicode(line.toUtf8(), "utf-8")
+      line = common.qt_to_unicode(line)
       
       match = OUTPUT_RE.match(line)
       

@@ -27,6 +27,8 @@ try:
   import cPickle as pickle
 except:
   import pickle
+  
+import common
 
 MAX_SUGGESTIONS = 6
 
@@ -134,14 +136,14 @@ class SpellCheckEdit(QtGui.QTextEdit):
   ### @desc Adds the given word to the dictionary.
   ##############################################################################
   def __add(self, word):
-    self.highlighter.add(unicode(word.toUtf8(), "UTF-8"))
+    self.highlighter.add(common.qt_to_unicode(word))
   
   ##############################################################################
   ### @fn   ignore(word)
   ### @desc Tells the dictionary to ignore the given error.
   ##############################################################################
   def __ignore(self, word):
-    self.highlighter.ignore(unicode(word.toUtf8(), "UTF-8"))
+    self.highlighter.ignore(common.qt_to_unicode(word))
   
   ##############################################################################
   ### @fn   replace(data)

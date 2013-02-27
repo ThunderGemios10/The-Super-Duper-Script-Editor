@@ -103,7 +103,7 @@ class SetupWizard(QtGui.QDialog):
   
   def check_iso(self):
   
-    iso_dir = unicode(self.ui.txtIso.text().toUtf8(), "UTF-8")
+    iso_dir = common.qt_to_unicode(self.ui.txtIso.text(), normalize = False)
     if not os.path.isdir(iso_dir):
       self.show_error("ISO directory does not exist.")
       return
@@ -140,7 +140,7 @@ class SetupWizard(QtGui.QDialog):
       self.ui.txtWorkspace.setText(dir)
   
   def check_workspace(self):
-    workspace_dir = unicode(self.ui.txtWorkspace.text().toUtf8(), "UTF-8")
+    workspace_dir = common.qt_to_unicode(self.ui.txtWorkspace.text(), normalize = False)
     
     if not os.path.isdir(workspace_dir):
       try:
@@ -551,7 +551,7 @@ class SetupWizard(QtGui.QDialog):
       self.ui.txtTerminology.setText(dir)
   
   def check_terminology(self):
-    terms_file = unicode(self.ui.txtTerminology.text().toUtf8(), "UTF-8")
+    terms_file = common.qt_to_unicode(self.ui.txtTerminology.text(), normalize = False)
     
     if not terms_file:
       self.show_error("No terminology file provided.")

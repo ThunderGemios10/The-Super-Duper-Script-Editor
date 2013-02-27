@@ -45,7 +45,7 @@ def to_fullwidth(text):
 ### @desc Convert text to a format useful for the anagram mode.
 ################################################################################
 def sanitize_text(text):
-  text = unicode(text.toUtf8(), "UTF-8")
+  text = common.qt_to_unicode(text)
   text = text.upper()
   text = to_fullwidth(text)
   text = re.sub("\s", "", text)
@@ -191,9 +191,9 @@ class AnagramEditor(QtGui.QDialog):
     text = ""
     
     if type == CHK_TYPE.Trans:
-      text = unicode(self.ui.txtSolutionTrans.text().toUtf8(), "UTF-8")
+      text = common.qt_to_unicode(self.ui.txtSolutionTrans.text())
     else:
-      text = unicode(self.ui.txtSolutionOrig.text().toUtf8(), "UTF-8")
+      text = common.qt_to_unicode(self.ui.txtSolutionOrig.text())
     
     letters = len(text)
     
@@ -213,9 +213,9 @@ class AnagramEditor(QtGui.QDialog):
     text = ""
     
     if type == CHK_TYPE.Trans:
-      text = unicode(self.ui.txtSolutionTrans.text().toUtf8(), "UTF-8")
+      text = common.qt_to_unicode(self.ui.txtSolutionTrans.text())
     else:
-      text = unicode(self.ui.txtSolutionOrig.text().toUtf8(), "UTF-8")
+      text = common.qt_to_unicode(self.ui.txtSolutionOrig.text())
     
     letters = len(text)
     

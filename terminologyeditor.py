@@ -61,8 +61,8 @@ class TerminologyEditor(QtGui.QDialog):
     if word == None or meaning == None:
       return
     
-    new_term = Term(word.toUtf8(), meaning.toUtf8())
-    section = self.get_section().toUtf8()
+    new_term = Term(common.qt_to_unicode(word), common.qt_to_unicode(meaning))
+    section = common.qt_to_unicode(self.get_section())
     
     if term_exists(section, new_term):
       QtGui.QMessageBox.warning(
@@ -91,9 +91,9 @@ class TerminologyEditor(QtGui.QDialog):
     if word == old_word and meaning == old_meaning:
       return
     
-    old_term = Term(old_word.toUtf8(), old_meaning.toUtf8())
-    new_term = Term(word.toUtf8(), meaning.toUtf8())
-    section = self.get_section().toUtf8()
+    old_term = Term(common.qt_to_unicode(old_word), common.qt_to_unicode(old_meaning))
+    new_term = Term(common.qt_to_unicode(word),     common.qt_to_unicode(meaning))
+    section = common.qt_to_unicode(self.get_section())
     
     if term_exists(section, new_term):
       QtGui.QMessageBox.warning(
@@ -125,10 +125,10 @@ class TerminologyEditor(QtGui.QDialog):
     if answer == QtGui.QMessageBox.No:
       return
     
-    section = self.get_section().toUtf8()
+    section = common.qt_to_unicode(self.get_section())
     word, meaning = self.get_current_term()
     
-    term = Term(word.toUtf8(), meaning.toUtf8())
+    term = Term(common.qt_to_unicode(word), common.qt_to_unicode(meaning))
     remove_term(section, term)
     
     self.refresh_ui()
@@ -161,7 +161,7 @@ class TerminologyEditor(QtGui.QDialog):
     if section == None:
       return
     
-    if section_exists(section.toUtf8()):
+    if section_exists(common.qt_to_unicode(section)):
       QtGui.QMessageBox.warning(
         self,
         "Section Exists",
@@ -172,7 +172,7 @@ class TerminologyEditor(QtGui.QDialog):
       self.show_section(section)
       return
     
-    add_term(section.toUtf8(), Term("プレイスホルダー", "Placeholder"))
+    add_term(common.qt_to_unicode(section), Term("プレイスホルダー", "Placeholder"))
     self.refresh_ui()
     self.show_section(section)
   
@@ -191,7 +191,7 @@ class TerminologyEditor(QtGui.QDialog):
       return
     
     # All this encoding conversion shit is confusing me.
-    if section_exists(new_section.toUtf8()):
+    if section_exists(common.qt_to_unicode(new_section)):
       answer = QtGui.QMessageBox.warning(
         self,
         "Section Exists",
@@ -205,7 +205,7 @@ class TerminologyEditor(QtGui.QDialog):
       if answer == QtGui.QMessageBox.Cancel:
         return
     
-    rename_section(old_section.toUtf8(), new_section.toUtf8())
+    rename_section(common.qt_to_unicode(old_section), common.qt_to_unicode(new_section))
     self.refresh_ui()
     self.show_section(new_section)
     
@@ -227,7 +227,7 @@ class TerminologyEditor(QtGui.QDialog):
     if answer == QtGui.QMessageBox.No:
       return
     
-    remove_section(section.toUtf8())
+    remove_section(common.qt_to_unicode(section))
     self.refresh_ui()
   
   ##############################################################################

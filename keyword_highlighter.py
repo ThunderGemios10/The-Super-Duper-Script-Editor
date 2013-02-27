@@ -22,6 +22,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QTextCharFormat, QColor
 
 import re
+import common
 
 # lol
 from terminology import Term as Keyword
@@ -65,7 +66,7 @@ class KeywordHighlighter(QtGui.QSyntaxHighlighter):
     
     self.matches[line] = []
     
-    text = unicode(text.toUtf8(), "UTF-8")
+    text = common.qt_to_unicode(text)
     
     for keyword in self.keywords:
       #matches = [match.start() for match in re.finditer(re.escape(keyword.word), text)]
