@@ -96,8 +96,8 @@ if __name__ == '__main__':
     
     desktop = app.desktop()
     
-    desk_w = desktop.width()
-    desk_h = desktop.height()
+    desk_w = desktop.screenGeometry().width()
+    desk_h = desktop.screenGeometry().height()
     form_w = editor.geometry().width()
     form_h = editor.geometry().height()
     

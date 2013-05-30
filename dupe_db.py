@@ -22,6 +22,7 @@ from csv import DictReader, DictWriter
 from collections import defaultdict
 import codecs
 import hashlib
+import logging
 import os.path
 import sys
 import shutil
@@ -32,6 +33,9 @@ file_list = []
 GROUP_SIZES = {}
 
 CSV_FILE = common.editor_config.dupes_csv
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 ################################################################################
 ### SOME FUNCTIONS
@@ -121,8 +125,7 @@ class DupesDB:
     
     test_group = self.group_from_file(filename)
     if not test_group == None:
-      #print "ERROR: File %s already a member of group %d. Try merging groups." % (filename, test_group)
-      #print "ERROR: File already a member of group %d. Try merging groups." % (test_group)
+      _LOGGER.error("File %s already a member of group %d. Try merging groups." % (filename, test_group))
       return None
     
     if group == None:
@@ -137,7 +140,7 @@ class DupesDB:
     
     group = self.group_from_file(filename)
     if group == None:
-      #print "ERROR: File %s not in any duplicate group, cannot remove." % filename
+      _LOGGER.error("File %s not in any duplicate group, cannot remove." % filename)
       return
     
     # If we have two or fewer and attempt to remove a file,
@@ -151,17 +154,12 @@ class DupesDB:
 
   def remove_group(self, group):
     if not group in self.dupes:
-      #print "ERROR: Cannot remove group %d. Group does not exist." % group
+      _LOGGER.error("Cannot remove group %d. Group does not exist." % group)
       return
     
     del self.dupes[group]
     
   def merge_groups(self, groups):
-    #for group in groups:
-      #if not group in self.dupes:
-        #print "ERROR: Cannot merge groups. One or more groups does not exist."
-        #return
-    
     groups = set(groups)
     if len(groups) < 2:
       return
@@ -173,115 +171,6 @@ class DupesDB:
     
     for group in groups:
       del self.dupes[group]
-
-################################################################################
-### OLD FUNCTIONS
-################################################################################
-
-#def hash_check_group(dir, group):
-#  
-#  files = get_files_in_group(group)
-#  testhash = ""
-#  
-#  match = True
-#  
-#  if not files == None:
-#    
-#    for index, file in enumerate(files):
-#      
-#      if os.path.isfile(os.path.join(dir, file)):
-#        hasher = hashlib.md5()
-#        f = open(os.path.join(dir, file), 'rb')
-#        
-#        data = f.read()
-#        hasher.update(data)
-#        
-#        f.close()
-#        
-#        if index == 0:
-#          testhash = hasher.hexdigest()
-#        elif not testhash == hasher.hexdigest():
-#          match = False
-#          break
-#        
-#  return match
-
-#def get_most_recently_updated(dir, group):
-#  
-#  if hash_check_group(dir, group):
-#    #print "Group " + str(group) + " does not need updating (hashes)."
-#    return None
-#  
-#  files = get_files_in_group(group)
-#  
-#  most_recent_time = 0
-#  most_recent = None
-#  needs_updating = False
-#  
-#  if not files == None:
-#    
-#    for index, file in enumerate(files):
-#      
-#      if os.path.isfile(os.path.join(dir, file)):
-#      
-#        file_stats = os.stat(os.path.join(dir, file))
-#          
-#        if index >= 1 and file_stats.st_mtime != most_recent_time:
-#          needs_updating = True
-#        
-#        if file_stats.st_mtime > most_recent_time:
-#          most_recent_time = file_stats.st_mtime
-#          most_recent = file
-#  
-#  if not needs_updating:
-#    #print "Group " + str(group) + " does not need updating (timestamps)."
-#    return None
-#  
-#  return most_recent
-
-#def list_all_files(dir, subdir = ""):
-#  
-#  files = []
-#  
-#  basedir = os.path.join(dir, subdir)
-#  
-#  for item in os.listdir(basedir):
-#    full_path = os.path.join(basedir, item)
-#    full_item = os.path.join(subdir, item)
-#  
-#    if os.path.isfile(full_path):
-#      files.append(full_item)
-#      
-#    else:
-#      for file in list_all_files(dir, full_item):
-#        files.append(file)
-#      
-#  return files
-
-#def list_unique_files(dir):
-#  
-#  groups_seen = {}
-#  unique_files = []
-#  
-#  for key in GROUP_SIZES.keys():
-#    groups_seen[key] = False
-#  
-#  for item in list_all_files(dir):
-#    group = get_group_from_file(item)
-#    
-#    if group == None:
-#      unique_files.append(item)
-#    elif groups_seen[group] == False:
-#      unique_files.append(item)
-#      groups_seen[group] = True
-#      
-#      others_in_group = get_files_in_group(group)
-#      
-#      for other in others_in_group:
-#        if other != item:
-#          unique_files.append(" -> " + other)
-#  
-#  return unique_files
 
 ################################################################################
 ### MAIN
@@ -319,9 +208,5 @@ db = DupesDB()
         # print "Failed to add %s" % file
     
   # db.save_csv()
-  
-################################################################################
-### ALL DONE
-################################################################################
 
 ### EOF ###

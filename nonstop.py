@@ -18,7 +18,8 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from bitstring import ConstBitStream
+from bitstring import ConstBitStream, BitStream
+import logging
 import os
 
 from enum import Enum
@@ -28,10 +29,17 @@ from script_pack import ScriptPack
 from sprite import SpriteId, SPRITE_TYPE
 from voice import VoiceId
 
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
+
 NONSTOP_LINE_TYPE = Enum("normal", "chatter")
 LINE_TYPE_MAP = {
   ConstBitStream(hex = "0x00000000"): NONSTOP_LINE_TYPE.normal,
   ConstBitStream(hex = "0x01000100"): NONSTOP_LINE_TYPE.chatter,
+  # ConstBitStream(hex = "0x01000000"): NONSTOP_LINE_TYPE.unknown1,
+  # ConstBitStream(hex = "0x02000000"): NONSTOP_LINE_TYPE.unknown2,
+  # ConstBitStream(hex = "0x03000000"): NONSTOP_LINE_TYPE.unknown3,
+  # ConstBitStream(hex = "0x04000000"): NONSTOP_LINE_TYPE.unknown4,
 }
 
 NONSTOP_DIR = {
@@ -148,18 +156,61 @@ class NonstopLine():
     self.unknown4     = -1
     self.chapter      = -1
     self.unknown5     = -1
+  
+  def to_data(self):
+    data = \
+      ConstBitStream(uintle = self.file_num, length = 16) + \
+      [key for key, value in LINE_TYPE_MAP.iteritems() if value == self.line_type][0] + \
+      ConstBitStream(uintle = self.ammo_id, length = 16) + \
+      ConstBitStream(uintle = self.converted_id, length = 16) + \
+      self.unknown1 + \
+      ConstBitStream(uintle = self.weak_point, length = 16) + \
+      ConstBitStream(intle = self.delay, length = 16) + \
+      ConstBitStream(intle = self.unknown2, length = 16) + \
+      ConstBitStream(intle = self.in_effect, length = 16) + \
+      ConstBitStream(intle = self.out_effect, length = 16) + \
+      ConstBitStream(intle = self.time_visible, length = 16) + \
+      ConstBitStream(intle = self.x_start, length = 16) + \
+      ConstBitStream(intle = self.y_start, length = 16) + \
+      ConstBitStream(intle = self.velocity, length = 16) + \
+      ConstBitStream(intle = self.angle, length = 16) + \
+      ConstBitStream(intle = self.zoom_start, length = 16) + \
+      ConstBitStream(intle = self.zoom_change, length = 16) + \
+      ConstBitStream(intle = self.shake, length = 16) + \
+      ConstBitStream(intle = self.rot_angle, length = 16) + \
+      ConstBitStream(intle = self.spin_vel, length = 16) + \
+      ConstBitStream(uintle = self.char_id, length = 16) + \
+      ConstBitStream(uintle = self.sprite_id, length = 16) + \
+      self.unknown3 + \
+      ConstBitStream(uintle = self.voice_id, length = 16) + \
+      self.unknown4 + \
+      ConstBitStream(uintle = self.chapter, length = 16) + \
+      self.unknown5
+    
+    return data
 
 class NonstopParser():
   def __init__(self):
     self.script_pack = ScriptPack()
     self.filename = ""
+    self.magic = None
     self.lines = []
+  
+  def save(self, filename):
+    
+    data = BitStream(self.magic) + BitStream(uintle = len(self.lines), length = 16)
+    
+    for line in self.lines:
+      data += line.to_data()
+    
+    with open(filename, "wb") as f:
+      data.tofile(f)
   
   def load(self, filename):
     filename = filename.lower()
     
     if not filename in NONSTOP_DIR:
-      print "Invalid nonstop file."
+      _LOGGER.error("Invalid nonstop file: %s" % filename)
       return
     
     self.filename = filename
@@ -217,7 +268,7 @@ class NonstopParser():
     # XX XX XX XX -- ??? (padding?)
     nonstop = ConstBitStream(filename = os.path.join(common.editor_config.umdimage_dir, self.filename))
     
-    magic = nonstop.read(16)
+    self.magic = nonstop.read(16)
     num_lines = nonstop.read('uintle:16')
     
     # Four byte header plus 60 bytes per line.
@@ -298,7 +349,7 @@ class NonstopParser():
         self.script_pack[line.file_num].scene_info.extra_val = prev_non_chatter
       
       else:
-        print "Invalid line type:", line.line_type
+        _LOGGER.error("Invalid line type: %s" % line.line_type)
       
       ordered_files.append(self.script_pack[line.file_num])
       seen_file_ids.append(line.file_num)
@@ -312,14 +363,43 @@ class NonstopParser():
     self.script_pack.script_files = ordered_files
 
 if __name__ == "__main__":
-  #for file in sorted(NONSTOP_DIR.keys()):
-    parser = NonstopParser()
-    file = "nonstop_02_009.dat"
-    parser.load(file)
+  pass
+  # parser = NonstopParser()
+  # file = "nonstop_06_006.dat"
+  # parser.load(file)
+  # parser.lines[2].x_start += 42
+  # parser.lines[2].y_start += 1
+  # parser.lines[4].x_start += 24
+  # parser.lines[6].x_start += 24
+  # parser.lines[8].x_start += 24
+  # parser.lines[10].x_start += 24
+  # parser.lines[12].x_start += 24
+  # parser.lines[14].x_start += 24
+  # parser.lines[18].x_start += 24
+  # parser.lines[21].x_start += 5
+  # parser.save(os.path.join("debug", file))
+  
+  # file = "nonstop_06_005.dat"
+  # parser.load(file)
+  # parser.lines[10].x_start    += 52
+  # parser.lines[10].y_start    += 28
+  # parser.lines[12].x_start    += 49
+  # parser.lines[12].y_start    -= 28
+  # parser.lines[14].x_start    += 52
+  # parser.lines[14].y_start    -= 28
+  # parser.lines[16].x_start    += 49
+  # parser.lines[16].y_start    += 28
+  # parser.lines[18].x_start    += 85
+  # parser.lines[18].y_start    -= 1
+  # parser.lines[18].zoom_start += 5
+  # parser.lines[18].angle       = 90
+  # parser.lines[18].velocity    = 2
+  # parser.save(os.path.join("debug", file))
     
-    print file
-    for line in parser.lines:
-      print line.file_num, line.x_start, line.y_start, line.in_effect, line.shake
-    print ""
+  #for file in sorted(NONSTOP_DIR.keys()):
+    # print file
+    # for line in parser.lines:
+      # print line.file_num, line.x_start, line.y_start, line.in_effect, line.shake
+    # print ""
 
 ### EOF ###

@@ -26,9 +26,12 @@ from bitstring import BitStream, ConstBitStream
 from tempfile import TemporaryFile
 
 import codecs
+import logging
 import os.path
 import re
+import shutil
 import sys
+import tempfile
 import time
 
 from enum import Enum
@@ -38,7 +41,14 @@ import eboot_text
 import eboot_patch
 import text_files
 
+from extract.eboot import get_toc, UMDIMAGES
+
 from anagram_file import AnagramFile
+from list_files import list_all_files
+from wrd.wrd_file import WrdFile
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 RE_SCRIPT  = re.compile(ur"(.*?)\0.*", re.UNICODE | re.S)
 # UTF-16LE byte-order-marker, since we lose it loading the text
@@ -146,18 +156,36 @@ class DatPacker():
     # So we can loop. :)
     ARCHIVE_INFO = [
       {
-        "toc":  common.editor_config.toc,
+        "toc":  UMDIMAGES.umdimage,
         "dir":  common.editor_config.umdimage_dir,
         "dat":  os.path.join(USRDIR, "umdimage.dat"),
         "name": "umdimage.dat",
         "pack": common.editor_config.pack_umdimage,
+        "eof":  False,
       },
       {
-        "toc":  common.editor_config.toc2,
+        "toc":  UMDIMAGES.umdimage2,
         "dir":  common.editor_config.umdimage2_dir,
         "dat":  os.path.join(USRDIR, "umdimage2.dat"),
         "name": "umdimage2.dat",
         "pack": common.editor_config.pack_umdimage2,
+        "eof":  False,
+      },
+      {
+        "toc":  None,
+        "dir":  common.editor_config.voice_dir,
+        "dat":  os.path.join(USRDIR, "voice.pak"),
+        "name": "voice.pak",
+        "pack": common.editor_config.pack_voice,
+        "eof":  True,
+      },
+      {
+        "toc":  None,
+        "dir":  common.editor_config.bgm_dir,
+        "dat":  os.path.join(USRDIR, "bgm.pak"),
+        "name": "bgm.pak",
+        "pack": common.editor_config.pack_bgm,
+        "eof":  True,
       },
     ]
     
@@ -168,27 +196,26 @@ class DatPacker():
       
       self.progress.setWindowTitle("Building " + archive["name"])
       
-      with open(archive["toc"], "rb") as toc_file:
-        toc_text  = toc_file.read()
-        toc_lines = toc_text.splitlines()
-      
       toc_info = {}
-      file_list = []
+      file_list = None
       
-      for line in toc_lines:
-        entry = line.split()
+      if archive["toc"]:
+        file_list = []
         
-        if len(entry) >= 3:
-          # Stores where the file info is located in the EBOOT, so it can be
-          # changed when we get the TOC info later.
-          # toc_info[file name] = [position of file pos, position of file size]
-          toc_info[entry[0]] = [int(entry[1], 16) + eboot_offset, int(entry[2], 16) + eboot_offset]
-          file_list.append(entry[0])
+        toc = get_toc(eboot, archive["toc"])
+        
+        for entry in toc:
+          filename  = entry["filename"]
+          pos_pos   = entry["file_pos_pos"]
+          len_pos   = entry["file_len_pos"]
+          
+          toc_info[filename] = [pos_pos, len_pos]
+          file_list.append(filename)
       
       # Causes memory issues if I use the original order, for whatever reason.
       file_list = None
       
-      archive_data, table_of_contents = self.pack_dir(archive["dir"], file_list = file_list)
+      archive_data, table_of_contents = self.pack_dir(archive["dir"], file_list = file_list, eof = archive["eof"])
       
       # We're playing fast and loose with the file count anyway, so why not?
       self.file_count += 1
@@ -198,16 +225,17 @@ class DatPacker():
       with open(archive["dat"], "wb") as f:
         archive_data.tofile(f)
       
-      for entry in table_of_contents:
-        if not entry in toc_info:
-          print entry, "missing from", archive["name"], "table of contents."
-          continue
-        
-        file_pos  = table_of_contents[entry]["pos"]
-        file_size = table_of_contents[entry]["size"]
-        
-        eboot.overwrite(BitStream(uintle = file_pos, length = 32),  toc_info[entry][0] * 8)
-        eboot.overwrite(BitStream(uintle = file_size, length = 32), toc_info[entry][1] * 8)
+      if archive["toc"]:
+        for entry in table_of_contents:
+          if not entry in toc_info:
+            _LOGGER.warning("%s missing from %s table of contents." % (entry, archive["name"]))
+            continue
+          
+          file_pos  = table_of_contents[entry]["pos"]
+          file_size = table_of_contents[entry]["size"]
+          
+          eboot.overwrite(BitStream(uintle = file_pos, length = 32),  toc_info[entry][0] * 8)
+          eboot.overwrite(BitStream(uintle = file_size, length = 32), toc_info[entry][1] * 8)
       
       del archive_data
       del table_of_contents
@@ -244,14 +272,9 @@ class DatPacker():
     
     self.progress.close()
 
-  def pack_dir(self, dir, file_list = None, align_toc = 16, align_files = 16):
+  def pack_dir(self, dir, file_list = None, align_toc = 16, align_files = 16, eof = False):
     
     table_of_contents = {}
-    
-    if os.path.basename(dir) in SCRIPT_NONSTOP:
-      is_nonstop = True
-    else:
-      is_nonstop = False
     
     if file_list == None:
       file_list = sorted(os.listdir(dir))
@@ -259,6 +282,10 @@ class DatPacker():
     num_files    = len(file_list)
     
     toc_length = (num_files + 1) * 4
+    
+    if eof:
+      toc_length += 1
+    
     if toc_length % align_toc > 0:
       toc_length += align_toc - (toc_length % align_toc)
     
@@ -277,16 +304,8 @@ class DatPacker():
         
         # Special handling for certain data types.
         if ext == ".txt":
-        
-          text = text_files.load_text(full_path)
-          text = RE_SCRIPT.sub(u"\g<1>", text)
           
-          # Nonstop Debate lines need an extra newline at the end
-          # so they show up in the backlog properly.
-          if is_nonstop and not text[-1] == "\n":
-            text += "\n"
-          
-          data = SCRIPT_BOM + BitStream(bytes = bytearray(text, encoding = "UTF-16LE")) + SCRIPT_NULL
+          data = self.pack_txt(full_path)
         
         # anagram_81.dat is not a valid anagram file. <_>
         elif basename[:8] == "anagram_" and ext == ".dat" and not basename == "anagram_81":
@@ -309,8 +328,12 @@ class DatPacker():
           temp_align_toc = SPECIAL_ALIGN[os.path.basename(dir)][2]
           temp_align_files = SPECIAL_ALIGN[os.path.basename(dir)][3]
         
-        data, toc_discard = self.pack_dir(full_path, align_toc = temp_align_toc, align_files = temp_align_files)
-        del toc_discard
+        if os.path.splitext(full_path)[1].lower() == ".lin":
+          data = self.pack_lin(full_path)
+        
+        else:
+          data, toc_discard = self.pack_dir(full_path, align_toc = temp_align_toc, align_files = temp_align_files, eof = eof)
+          del toc_discard
       
       file_size = data.len / 8
       padding = 0
@@ -343,7 +366,76 @@ class DatPacker():
       table_of_contents[item]["size"] = file_size
       table_of_contents[item]["pos"]  = file_pos
     
+    if eof:
+      archive_data.overwrite(bitstring.pack("uintle:32", archive_data.len / 8), (num_files + 1) * 32)
+    
     return archive_data, table_of_contents
+  
+  def pack_txt(self, filename):
+    
+    if os.path.basename(os.path.dirname(filename)) in SCRIPT_NONSTOP:
+      is_nonstop = True
+    else:
+      is_nonstop = False
+  
+    text = text_files.load_text(filename)
+    text = RE_SCRIPT.sub(u"\g<1>", text)
+    
+    # Nonstop Debate lines need an extra newline at the end
+    # so they show up in the backlog properly.
+    if is_nonstop and not text[-1] == "\n":
+      text += "\n"
+    
+    return SCRIPT_BOM + BitStream(bytes = bytearray(text, encoding = "UTF-16LE")) + SCRIPT_NULL
+    
+  def pack_lin(self, dir):
+    
+    # Collect our files.
+    file_list = sorted(list_all_files(dir))
+    
+    txt = [filename for filename in file_list if os.path.splitext(filename)[1].lower() == ".txt"]
+    wrd = [filename for filename in file_list if os.path.splitext(filename)[1].lower() == ".wrd"]
+    py  = [filename for filename in file_list if os.path.splitext(filename)[1].lower() == ".py"]
+    
+    # If there are more than one for whatever reason, just take the first.
+    # We only have use for a single wrd or python file.
+    wrd = wrd[0] if wrd else None
+    py  = py[0]  if py  else None
+    
+    # Prepare our temporary output directory.
+    temp_dir = tempfile.mkdtemp(prefix = "sdse-")
+    
+    # Where we're outputting our wrd file, regardless of whether it's a python
+    # file or a raw binary data file.
+    wrd_dst = os.path.join(temp_dir, "0.scp.wrd")
+    
+    if py:
+      # _LOGGER.info("Compiling %s to binary." % py)
+      try:
+        wrd_file = WrdFile(py)
+      except:
+        _LOGGER.warning("%s failed to compile. Parsing wrd file instead. Exception info:\n%s" % (py, traceback.format_exc()))
+        shutil.copy(wrd, wrd_dst)
+      else:
+        # If we succeeded in loading the python file, compile it to binary.
+        # wrd_file.save_bin(wrd)
+        wrd_file.save_bin(wrd_dst)
+    
+    else:
+      shutil.copy(wrd, wrd_dst)
+    
+    # Pack the text files in-place to save us a bunch of copying
+    # and then move it to the tmp directory with the wrd file.
+    if txt:
+      data, temp_toc = self.pack_dir(dir, file_list = txt)
+      with open(os.path.join(temp_dir, "1.dat"), "wb") as f:
+        data.tofile(f)
+    
+    # Then pack it like normal.
+    data, temp_toc = self.pack_dir(temp_dir)
+    shutil.rmtree(temp_dir)
+    
+    return data
 
 if __name__ == "__main__":
   import sys

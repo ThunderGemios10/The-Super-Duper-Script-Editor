@@ -30,6 +30,7 @@ import sys
 import time
 
 import common
+import font_parser
 from nonstop import *
 from text_printer import *
 
@@ -42,6 +43,10 @@ class NonstopViewer(QtGui.QDialog):
     self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
     
     self.lines = []
+    
+    self.ui.actionSaveImg = QtGui.QAction("Save image...", None, triggered = self.saveImage)
+    self.ui.actionSaveImg.setShortcut("Ctrl+S")
+    self.addAction(self.ui.actionSaveImg)
   
   def load(self, filename):
     self.nonstop = NonstopParser()
@@ -57,7 +62,7 @@ class NonstopViewer(QtGui.QDialog):
     self.lines = []
     for i in range(len(self.nonstop.lines)):
       if self.nonstop.script_pack[i].translated != "":
-        text = self.nonstop.script_pack[i].translated
+        text = self.nonstop.script_pack[i].original
       else:
         text = self.nonstop.script_pack[i].original
       
@@ -80,7 +85,7 @@ class NonstopViewer(QtGui.QDialog):
     qt_pixmap = QtGui.QPixmap.fromImage(sprite)
     self.lblSprite.setPixmap(qt_pixmap)
     
-    line = 3
+    line = 18
     
     text_img  = self.lines[line]
     line_info = self.nonstop.lines[line]
@@ -108,7 +113,7 @@ class NonstopViewer(QtGui.QDialog):
     #x_end = line_info.x_start + (x_vel * time_visible) - (width_end / 2.0)
     #y_end = line_info.y_start + (y_vel * time_visible) - (height_end / 2.0)
     
-    print x_start, y_start, width_start, height_start
+    print x_start, y_start, width_start, height_start, line_info.zoom_start
     print x_end, y_end, width_end, height_end
     
     self.lblText = QLabel(self.ui.lblPreview)
@@ -126,6 +131,37 @@ class NonstopViewer(QtGui.QDialog):
     self.anim.setEndValue(QRectF(x_end, y_end, width_start, height_start))
     
     self.anim.start()
+    
+  ##############################################################################
+  ### @fn   saveImage()
+  ### @desc Saves a preview image. :D
+  ##############################################################################
+  def saveImage(self):
+  
+    dir   = "ss"
+    index = 0
+    
+    if not os.path.isdir(dir):
+      if os.path.isfile(dir):
+        return
+      else:
+        os.mkdir(dir)
+    
+    while True:
+      if index >= 9999:
+        return
+        
+      filename = os.path.join(dir, ("shot%04d.png" % index))
+      
+      if not os.path.isfile(filename):
+        break
+        
+      index = index + 1
+    
+    if not os.path.isdir(dir):
+      os.mkdir(dir)
+    
+    self.lblText.pixmap().save(filename)
 
 ##############################################################################
 ### @fn   get_text(text, scene_mode = common.SCENE_MODES.normal)
@@ -153,7 +189,7 @@ def get_text(text, scene_mode = common.SCENE_MODES.normal):
     # Start the line off with the last-used CLT, so the parsers know what it is.
     line = ("<CLT %d>" % last_clt) + line
     
-    line, length, clt = get_len(line, format["clt"])
+    line, length, clt = font_parser.get_len(line, format["clt"])
     if not 0 in clt:
       clt[0] = last_clt
     if format["killblanks"] and line.strip() == "":
@@ -269,7 +305,7 @@ if __name__ == "__main__":
              )
   
   form = NonstopViewer()
-  form.load("nonstop_03_010.dat")
+  form.load("nonstop_06_005.dat")
   form.play()
   form.show()
   sys.exit(app.exec_())

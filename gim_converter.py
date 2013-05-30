@@ -21,6 +21,7 @@
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import QProcess, QString
 
+import logging
 import os
 import re
 import shutil
@@ -30,6 +31,9 @@ from bitstring import ConstBitStream
 from enum import Enum
 
 import common
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 QuantizeType = Enum("none", "auto", "index4", "index8")
 
@@ -124,7 +128,7 @@ class GimConverter:
     
     # Make sure we actually generated a file.
     if not saved_file:
-      print "Error generating PNG file."
+      _LOGGER.error("Failed to convert %s" % gim_file)
       return
     
     quant = self.quantize_png(saved_file, quant_type)
@@ -143,7 +147,26 @@ if __name__ == "__main__":
   app = QtGui.QApplication(sys.argv)
   
   conv = GimConverter()
-  conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay.png")
+  
+  in_file   = None
+  out_file  = None
+
+  # Check to see if we have input files and what they want to do with them.
+  if len(sys.argv) > 1:
+    in_file = sys.argv[1].decode(sys.stdin.encoding)
+    
+    if len(sys.argv) > 2:
+      out_file = sys.argv[2].decode(sys.stdin.encoding)
+  
+  ext = os.path.splitext(in_file)[1].lower()
+  print ext, in_file
+  
+  if ext == ".png":
+    conv.png_to_gim(in_file, "debug/test.gim")
+  elif ext == ".gim":
+    conv.gim_to_png(in_file, "debug/test.png")
+  
+  # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay.png")
   # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay2.png", QuantizeType.auto)
   # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay3.png", QuantizeType.index8)
   # conv.gim_to_png("X:\\Danganronpa\\Danganronpa_BEST\\umdimage-img\\fla_735.pak\\0001.gim", "debug/yay4.png", QuantizeType.index4)

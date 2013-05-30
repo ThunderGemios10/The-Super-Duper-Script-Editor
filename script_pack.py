@@ -18,20 +18,28 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import logging
 import os
 import re
+import traceback
 
-from common import SCENE_MODES, SCENE_SPECIAL, BOX_COLORS
-from common import get_dir_info
+# from common import SCENE_MODES, SCENE_SPECIAL, BOX_COLORS, LOGGER_NAME
+# from common import get_dir_info
+import common
 import dir_tools
 from list_files import list_all_files
 from script_file import ScriptFile
-from wrd_parser import parse_wrd
+from wrd.wrd_file import WrdFile
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 class ScriptPack():
   def __init__(self, directory = None, umdimage = "umdimage"):
     self.script_files = []
-    self.directory = directory
+    self.directory    = directory
+    self.wrd          = None
+    self.wrd_file     = None
     
     if not directory == None:
       self.load_dir(directory, umdimage)
@@ -66,7 +74,10 @@ class ScriptPack():
   def load_dir(self, directory, umdimage = "umdimage"):
     
     self.script_files = []
-    self.directory = directory
+    self.directory    = directory
+    self.wrd          = None
+    self.wrd_file     = None
+    self.py_file      = None
     
     base_name = directory
     directory, wrd_file = dir_tools.parse_dir(directory, umdimage)
@@ -86,11 +97,34 @@ class ScriptPack():
       if not os.path.isdir(full_dir):
         raise Exception("There are no text files in \"" + directory + "\".")
       
-      scene_info = parse_wrd(wrd_file)
+      self.wrd  = WrdFile()
+      
+      py_file   = os.path.splitext(wrd_file)[0] + ".py"
+      
+      if os.path.isfile(py_file):
+        try:
+          self.wrd.load_python(py_file)
+        except:
+          _LOGGER.warning("%s failed to load. Parsing wrd file instead. Exception info:\n%s" % (py_file, traceback.format_exc()))
+          self.wrd.load_bin(wrd_file)
+        else:
+          # If we succeeded in loading the python file, compile it to binary.
+          # _LOGGER.info("%s loaded successfully. Compiling to binary." % py_file)
+          # self.wrd.save_bin(wrd_file)
+          _LOGGER.info("%s loaded successfully." % py_file)
+      
+      else:
+        _LOGGER.info("Decompiled wrd file not found. Generating %s" % py_file)
+        self.wrd.load_bin(wrd_file)
+        self.wrd.save_python(py_file)
+      
+      scene_info    = self.wrd.to_scene_info()
       self.wrd_file = wrd_file
+      self.py_file  = py_file
     
     else:
-      scene_info = None
+      scene_info    = None
+      self.wrd      = None
       self.wrd_file = None
     
     self.script_files = []
@@ -106,12 +140,12 @@ class ScriptPack():
         script_file = ScriptFile(filename, info)
         
         if script_file.filename == None:
-          print "ScriptPack: File referenced by wrd does not exist. [%s]" % filename
+          _LOGGER.warning("File %s referenced by %s does not exist." % (filename, wrd_file))
           continue
         
         self.script_files.append(script_file)
     
-    chapter, scene, room, mode = get_dir_info(base_name)
+    chapter, scene, room, mode = common.get_dir_info(base_name)
     
     for file in self.script_files:
       if file.scene_info.chapter == -1: file.scene_info.chapter = chapter
@@ -120,29 +154,26 @@ class ScriptPack():
       if file.scene_info.mode == None:  file.scene_info.mode    = mode
 
 if __name__ == "__main__":
-  from text_printer import draw_scene
-  pack = ScriptPack("e00_000_000.lin")
+  pack = ScriptPack("e00_001_000.lin", umdimage = "X:/Danganronpa/Danganronpa_BEST/umdimage")
   
   for index, file in enumerate(pack.script_files):
-    #bg = draw_scene(file.scene_info, file.translated)
-    #bg.save("ss/temp%04d.png" % index)
     print "File:      ", file.scene_info.file_id
     print " * Speaker:", file.scene_info.speaker
     if not file.scene_info.sprite == (-1, -1):
       print " * Sprite: ", file.scene_info.sprite
-    if not file.scene_info.sfx == (-1, -1):
-      print " * SFX:    ", file.scene_info.sfx
+    # if not file.scene_info.sfx == (-1, -1):
+      # print " * SFX:    ", file.scene_info.sfx
     
-    if file.scene_info.special == SCENE_SPECIAL.option1:
-      print " * Special: Option 1"
-    elif file.scene_info.special == SCENE_SPECIAL.option2:
-      print " * Special: Option 2"
-    elif file.scene_info.special == SCENE_SPECIAL.option3:
-      print " * Special: Option 3"
-    elif file.scene_info.special == SCENE_SPECIAL.optionX:
-      print " * Special: Option ???"
-    elif file.scene_info.special == SCENE_SPECIAL.showopt:
-      print " * Special: Show Options"
-    print ""
+    # if file.scene_info.special == SCENE_SPECIAL.option1:
+      # print " * Special: Option 1"
+    # elif file.scene_info.special == SCENE_SPECIAL.option2:
+      # print " * Special: Option 2"
+    # elif file.scene_info.special == SCENE_SPECIAL.option3:
+      # print " * Special: Option 3"
+    # elif file.scene_info.special == SCENE_SPECIAL.optionX:
+      # print " * Special: Option ???"
+    # elif file.scene_info.special == SCENE_SPECIAL.showopt:
+      # print " * Special: Show Options"
+    # print ""
 
 ### EOF ###

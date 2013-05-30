@@ -18,7 +18,7 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from .umdimage_ex import extract_umdimage, UMDIMAGE_TYPE
+from .umdimage_ex import extract_umdimage
 from .pak_ex import extract_pak, get_pak_files, parse_pak_toc
 
 ### EOF ###

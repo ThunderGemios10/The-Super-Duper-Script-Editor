@@ -248,9 +248,15 @@ def font_bmp_to_alpha(filename):
 # parse_font(2)
 
 if __name__ == '__main__':
-  #for char in sorted(FONT_DATA[1].keys()):
-    #info = FONT_DATA[1][char]
-    #print "%3s %4d %4d %3d %3d" % (char.encode('utf-8'), info['x'], info['y'], info['w'], info['h'])
-  print ''.join(sorted(FONT_DATA[2].keys())).encode('utf-8')
+  
+  # parse_font(1)
+  parse_font(2, "X:/Danganronpa/Editor/data/gfx/font/font02.font")
+
+  print "             W   H".encode('utf-8')
+  for char in sorted(FONT_DATA[2].keys()):
+    info = FONT_DATA[2][char]
+    # if info['w'] % 12 > 0:
+    print ("U+%04X %3s %3d %3d" % (ord(char), char, info['w'], info['h'])).encode('utf-8')
+  # print ''.join(sorted(FONT_DATA[2].keys())).encode('utf-8')
 
 ### EOF ###

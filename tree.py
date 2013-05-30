@@ -18,12 +18,42 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
+
 import os
 import re
+from types import *
 
 import common
 from make_unique import make_unique
+
+################################################################################
+### @fn   list_to_tree()
+### @desc Converts the awkward list format from script_map to a nicer tree.
+################################################################################
+def list_to_tree(data):
+  
+  tree_items = []
+  
+  for item in data:
+    
+    tree_items.append(QtGui.QTreeWidgetItem())
+    
+    if type(item) == TupleType:
+      item_name     = item[0]
+      item_children = item[1]
+      
+      tree_items[-1].setText(0, item_name)
+      
+      children = list_to_tree(item_children)
+      
+      for child in children:
+        tree_items[-1].addChild(child)
+    
+    else:
+      tree_items[-1].setText(0, item)
+    
+  return tree_items
 
 def path_to_tree(filename):
   

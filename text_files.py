@@ -22,8 +22,7 @@ import codecs, os
 
 def load_text(filename):
   if not os.path.isfile(filename):
-    print filename, "is not a file."
-    return ""
+    raise ValueError("%s is not a file." % filename)
   
   file = codecs.open(filename, mode = 'r', encoding = 'utf-16')
   text = file.read()

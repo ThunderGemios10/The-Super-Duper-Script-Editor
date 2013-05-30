@@ -24,9 +24,8 @@ from ui_open import Ui_OpenMenu
 
 import common
 import map_names
-from script_map import SCRIPT_MAP
-
-from types import *
+import script_map
+import tree
 
 class OpenMenu(QtGui.QDialog):
   def __init__(self, parent = None, start_dir = ""):
@@ -54,39 +53,10 @@ class OpenMenu(QtGui.QDialog):
     
     self.ui.treeFileList.clear()
     
-    tree_items = self.list_to_tree(SCRIPT_MAP)
+    tree_items = tree.list_to_tree(script_map.SCRIPT_MAP)
     
     for item in tree_items:
       self.ui.treeFileList.addTopLevelItem(item)
-  
-  ##############################################################################
-  ### @fn   list_to_tree()
-  ### @desc Converts the awkward list format to a nicer tree.
-  ##############################################################################
-  def list_to_tree(self, data):
-    
-    tree_items = []
-    
-    for item in data:
-      
-      tree_items.append(QtGui.QTreeWidgetItem())
-      
-      if type(item) == TupleType:
-        item_name = QtCore.QString(item[0])
-        item_children = item[1]
-        
-        tree_items[-1].setText(0, item_name)
-        
-        children = self.list_to_tree(item_children)
-        
-        for child in children:
-          tree_items[-1].addChild(child)
-      
-      else:
-        item_name = QtCore.QString(item)
-        tree_items[-1].setText(0, item_name)
-      
-    return tree_items
   
   ##############################################################################
   ### @fn   changeSelection()

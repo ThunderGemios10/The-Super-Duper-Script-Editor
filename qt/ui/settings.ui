@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>511</width>
-    <height>350</height>
+    <height>373</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@
             <item>
              <widget class="QCheckBox" name="chkTextRepl">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text">
                <string>Enable automatic text replacement</string>
@@ -171,10 +171,23 @@
             <item>
              <widget class="QCheckBox" name="chkSmartQuotes">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>Automatically replaces straight apostrophes and quotes with angled versions.</string>
               </property>
               <property name="text">
                <string>Enable smart quotes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chkQuickClt">
+              <property name="toolTip">
+               <string>Automatically replaces &lt;X&gt; with &lt;CLT X&gt;&lt;CLT&gt; or &lt;CLT&gt;&lt;CLT X&gt;&lt;CLT&gt;&lt;CLT Y&gt; if there's an active CLT (Y) at the cursor.</string>
+              </property>
+              <property name="text">
+               <string>Enable quick CLT</string>
               </property>
              </widget>
             </item>
@@ -211,6 +224,19 @@
                <bool>true</bool>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -259,6 +285,13 @@
             </property>
             <property name="checked">
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="chkPackVoice">
+            <property name="text">
+             <string>Repack voice</string>
             </property>
            </widget>
           </item>
@@ -738,7 +771,7 @@
          </column>
          <item>
           <property name="text">
-           <string>fuckthis</string>
+           <string>lol</string>
           </property>
           <property name="background">
            <brush brushstyle="NoBrush">
@@ -901,7 +934,7 @@
           <bool>false</bool>
          </property>
          <property name="sortingEnabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="allColumnsShowFocus">
           <bool>true</bool>
@@ -925,7 +958,7 @@
           <bool>false</bool>
          </attribute>
          <attribute name="headerShowSortIndicator" stdset="0">
-          <bool>true</bool>
+          <bool>false</bool>
          </attribute>
          <attribute name="headerStretchLastSection">
           <bool>true</bool>
@@ -1315,5 +1348,143 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnNewRepl</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>add_repl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>40</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDelRepl</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>del_repl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>67</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnNewTag</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>add_tag()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>38</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnDelTag</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>del_tag()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>75</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>26</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTagToTop</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>move_tag_top()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>375</x>
+     <y>281</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>315</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTagUp</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>move_tag_up()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>403</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>398</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTagDown</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>move_tag_down()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>439</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>450</x>
+     <y>314</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTagToBottom</sender>
+   <signal>clicked()</signal>
+   <receiver>SettingsMenu</receiver>
+   <slot>move_tag_bottom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>471</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>506</x>
+     <y>291</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>add_repl()</slot>
+  <slot>del_repl()</slot>
+  <slot>add_tag()</slot>
+  <slot>del_tag()</slot>
+  <slot>move_tag_up()</slot>
+  <slot>move_tag_down()</slot>
+  <slot>move_tag_top()</slot>
+  <slot>move_tag_bottom()</slot>
+ </slots>
 </ui>

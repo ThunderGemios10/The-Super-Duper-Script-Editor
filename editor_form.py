@@ -25,22 +25,25 @@ from PyQt4.QtCore import QProcess, QString
 from ui_editor import Ui_Editor
 
 from anagram import AnagramEditor
+from console import Console
 from diffsmenu import DiffsMenu
 from ebooteditor import EbootEditor
 from font_gen_menu import FontGenMenu
-from model_editor import ModelEditor
 from openmenu import OpenMenu
+from script_dump_menu import ScriptDumpMenu
 from searchmenu import SearchMenu
 from settingsmenu import SettingsMenu
 from terminologyeditor import TerminologyEditor
 
 import codecs
+import logging
 import os
 import re
 import shutil
 import time
 from enum import Enum
 
+import backup
 import common
 from dupe_db import db as dupe_db
 import dir_tools
@@ -49,7 +52,6 @@ import script_analytics
 import script_file
 import text_printer
 import tree
-import wrd_inserter
 
 from dat_packer import DatPacker
 from list_files import list_all_files
@@ -65,6 +67,9 @@ from word_count import count_words
 from iso_builder import IsoBuilder
 
 IMAGE_POS = Enum("original", "translated")
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 ################################################################################
 ###                                                                          ###
@@ -94,6 +99,7 @@ class EditorForm(QtGui.QMainWindow):
     
     self.bg = None
     
+    self.console = Console()
     self.iso_builder = IsoBuilder(self)
     
     ##############################
@@ -177,6 +183,8 @@ class EditorForm(QtGui.QMainWindow):
     self.ui.actionReloadDirectory.triggered.connect(self.reloadDirectory)
     
     self.ui.actionTerminology.triggered.connect(self.showTerminologyEditor)
+    self.ui.actionConsole.triggered.connect(self.console.show)
+    self.ui.actionScriptDumper.triggered.connect(self.showScriptDumper)
     
     self.ui.actionBuild.triggered     .connect(self.buildArchives)
     self.ui.actionSearch.triggered    .connect(self.showSearchMenu)
@@ -204,7 +212,6 @@ class EditorForm(QtGui.QMainWindow):
     self.ui.actionCalculateProgress.triggered.connect(self.calculateProgress)
     
     self.ui.actionFontGenerator.triggered.connect(self.showFontGenerator)
-    self.ui.actionModelEditor.triggered.connect(self.showModelEditor)
     
     ##############################
     ### SIGNALS
@@ -216,13 +223,17 @@ class EditorForm(QtGui.QMainWindow):
     self.ui.btnAddEnDash.clicked.connect(lambda: self.replaceSelection(u"–"))
     self.ui.btnAddDash.clicked.connect(lambda: self.replaceSelection(u"―"))
     self.ui.btnAddBrackets.clicked.connect(lambda: self.surroundSelection(u"【", u"】"))
-    self.ui.btnAddClt.clicked.connect(lambda: self.surroundSelection((u"<CLT %d>" % self.ui.spnClt.value()), u"<CLT>"))
-    self.ui.btnAddClt.rightClicked.connect(lambda: self.surroundSelection(u"<CLT>", (u"<CLT %d>" % self.ui.spnClt.value())))
     
-    self.ui.shortcutAddClt = QShortcut(QKeySequence("Ctrl+Alt+C"), self.ui.txtTranslated)
-    self.ui.shortcutAddClt.activated.connect(lambda: self.surroundSelection((u"<CLT %d>" % self.ui.spnClt.value()), u"<CLT>"))
-    self.ui.shortcutAddCltReversed = QShortcut(QKeySequence("Ctrl+Alt+Shift+C"), self.ui.txtTranslated)
-    self.ui.shortcutAddCltReversed.activated.connect(lambda: self.surroundSelection(u"<CLT>", (u"<CLT %d>" % self.ui.spnClt.value())))
+    add_clt     = lambda: self.surroundSelection((u"<CLT %d>" % self.ui.spnClt.value()), u"<CLT>")
+    add_clt_rev = lambda: self.surroundSelection(u"<CLT>", (u"<CLT %d>" % self.ui.spnClt.value()))
+    self.ui.btnAddClt.clicked.connect(add_clt)
+    self.ui.btnAddClt.rightClicked.connect(add_clt_rev)
+    self.ui.actionInsertCLT.triggered.connect(add_clt)
+    
+    # self.ui.shortcutAddClt = QShortcut(QKeySequence("Ctrl+Alt+C"), self.ui.txtTranslated)
+    # self.ui.shortcutAddClt.activated.connect(lambda: self.surroundSelection((u"<CLT %d>" % self.ui.spnClt.value()), u"<CLT>"))
+    # self.ui.shortcutAddCltReversed = QShortcut(QKeySequence("Ctrl+Alt+Shift+C"), self.ui.txtTranslated)
+    # self.ui.shortcutAddCltReversed.activated.connect(lambda: self.surroundSelection(u"<CLT>", (u"<CLT %d>" % self.ui.spnClt.value())))
     
     self.ui.shortcutCltUp   = QShortcut(QKeySequence("Ctrl++"), self)
     self.ui.shortcutCltDown = QShortcut(QKeySequence("Ctrl+-"), self)
@@ -270,9 +281,7 @@ class EditorForm(QtGui.QMainWindow):
     self.open_menu = OpenMenu(self, self.directory)
     
     self.terminology_editor = TerminologyEditor()
-    
     self.font_gen_menu = FontGenMenu()
-    self.model_editor  = ModelEditor()
   
   ##############################################################################
   ### @fn   updateActions()
@@ -446,9 +455,7 @@ class EditorForm(QtGui.QMainWindow):
   def insertLine(self):
     
     # Can't insert without a wrd file.
-    wrd_file = self.script_pack.wrd_file
-    
-    if wrd_file == None:
+    if self.script_pack.wrd == None:
       # Shouldn't be enabled anyway, but we'll be safe about it.
       self.ui.actionInsertLine.setEnabled(False)
       return
@@ -461,11 +468,9 @@ class EditorForm(QtGui.QMainWindow):
     answer = QtGui.QMessageBox.warning(
       self,
       "Insert Line",
-      "You are about to insert a new line into the script. This action cannot be undone.\n\n" + 
-      "Inserting a new line should only be used as a last resort, when a line cannot be adequately worded to fit on a single screen. " +
-      "Please, try your best to rework the line in question before using this function.\n\n" +
+      "You are about to insert a new line into the script. This action cannot be undone. " + 
       "The added line will not have any similarities or duplicates, as there is no good way to keep track of these things for newly created lines.\n\n"
-      "For your safety, the wrd file will be backed up before modification, and you can restore it manually if necessary.\n\n" +
+      "If you made modifications to the decompiled .py file since loading this folder, they will be lost. If you want to keep your changes, click the Reload button and try inserting again.\n\n" +
       "Proceed?",
       buttons = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
       defaultButton = QtGui.QMessageBox.No
@@ -503,41 +508,39 @@ class EditorForm(QtGui.QMainWindow):
     
     # Make sure it works, first.
     try:
-      new_wrd, new_index = wrd_inserter.insert_line(wrd_file, insert_after)
+      # new_wrd, new_index = wrd_inserter.insert_line(wrd_file, insert_after)
+      new_index = self.script_pack.wrd.insert_line(insert_after)
     except Exception as e:
       QtGui.QMessageBox.critical(self, "Error", str(e))
       return
     
     # Get our backup out of the way, first.
+    source_dir = common.editor_config.umdimage_dir
+    
+    wrd_file = self.script_pack.wrd_file
+    py_file  = self.script_pack.py_file
+    
     wrd_basename = os.path.basename(wrd_file)
+    py_basename  = os.path.basename(py_file)
     
-    backup_time = time.strftime("%Y.%m.%d_%H.%M.%S_NEWLINE")
-    backup_dir = os.path.join(common.editor_config.backup_dir, backup_time, self.directory)
-    backup_wrd = os.path.join(backup_dir, wrd_basename)
-    
-    if not os.path.isdir(backup_dir):
-      os.makedirs(backup_dir)
-    
-    shutil.copy(wrd_file, backup_wrd)
+    backup.backup_files(source_dir, [wrd_file[len(source_dir) + 1:], py_file[len(source_dir) + 1:]], suffix = "_NEWLINE")
     
     # A copy for our change set.
     changes_dir = os.path.join(common.editor_config.changes_dir, self.directory)
     changes_wrd = os.path.join(changes_dir, wrd_basename)
+    changes_py  = os.path.join(changes_dir, py_basename)
     
     if not os.path.isdir(changes_dir):
       os.makedirs(changes_dir)
     
     # Dump our wrd file to disk.
-    f = open(wrd_file, "wb")
-    new_wrd.tofile(f)
-    f.close()
+    self.script_pack.wrd.save_bin(wrd_file)
+    self.script_pack.wrd.save_bin(changes_wrd)
     
-    f = open(changes_wrd, "wb")
-    new_wrd.tofile(f)
-    f.close()
+    self.script_pack.wrd.save_python(py_file)
+    self.script_pack.wrd.save_python(changes_py)
     
     # Then duplicate the selected file with the new name.
-    
     changes_dir  = os.path.join(common.editor_config.changes_dir, self.script_pack.get_real_dir())
     original_dir = os.path.join(common.editor_config.umdimage_dir, self.script_pack.get_real_dir())
     
@@ -739,6 +742,8 @@ class EditorForm(QtGui.QMainWindow):
       self.ui.lblSpecial.setText("Chatter %d" % scene_info.extra_val)
     elif scene_info.special == common.SCENE_SPECIAL.checkobj:
       self.ui.lblSpecial.setText("Check Object: ID %d" % scene_info.extra_val)
+    elif scene_info.special == common.SCENE_SPECIAL.checkchar:
+      self.ui.lblSpecial.setText("Check Character: ID %d" % scene_info.extra_val)
     else:
       self.ui.lblSpecial.setText("N/A")
   
@@ -971,7 +976,7 @@ class EditorForm(QtGui.QMainWindow):
     self.showImage()
     self.updateActions()
     self.updateHighlight()
-    self.updateSpellCheck()
+    self.updateTranslatedBoxCfg()
     
     # If they changed umdimage, reload the directory,
     # so we're looking at the one they're actually set to use.
@@ -1020,13 +1025,12 @@ class EditorForm(QtGui.QMainWindow):
     self.font_gen_menu.activateWindow()
   
   ##############################################################################
-  ### @fn   showModelEditor()
+  ### @fn   showScriptDumper()
   ### @desc X guesses.
   ##############################################################################
-  def showModelEditor(self):
-    self.model_editor.show()
-    self.model_editor.raise_()
-    self.model_editor.activateWindow()
+  def showScriptDumper(self):
+    menu = ScriptDumpMenu(self)
+    menu.exec_()
   
   ##############################################################################
   ### @fn   reloadDirectory()
@@ -1372,7 +1376,7 @@ class EditorForm(QtGui.QMainWindow):
     # Has to happen early, so the highlighter can take advantage of any changes
     # to the terms list as soon as the new text is shown.
     self.updateHighlight()
-    self.updateSpellCheck()
+    self.updateTranslatedBoxCfg()
     
     self.bg = text_printer.draw_scene(self.script_pack[index].scene_info)
     
@@ -2211,18 +2215,34 @@ class EditorForm(QtGui.QMainWindow):
       self.ui.txtOriginal.clear_keywords()
   
   ##############################################################################
-  ### @fn   updateSpellCheck()
-  ### @desc Updates the spellchecker based on our setting.
+  ### @fn   updateTranslatedBoxCfg()
+  ### @desc Updates the settings for the translated box based on our config.
   ##############################################################################
-  def updateSpellCheck(self):
-    if common.editor_config.spell_check != self.ui.txtTranslated.spellcheck_enabled():
+  def updateTranslatedBoxCfg(self):
+    ##############################
+    ### Spell-check settings
+    ##############################
+    if not common.editor_config.spell_check == self.ui.txtTranslated.spellcheck_enabled():
       if common.editor_config.spell_check:
         self.ui.txtTranslated.enable_spellcheck()
       else:
         self.ui.txtTranslated.disable_spellcheck()
     
-    if common.editor_config.spell_check_lang != self.ui.txtTranslated.get_language():
+    if not common.editor_config.spell_check_lang == self.ui.txtTranslated.get_language():
       self.ui.txtTranslated.set_language(common.editor_config.spell_check_lang)
+    
+    ##############################
+    ### Text replacement
+    ##############################
+    self.ui.txtTranslated.enable_replacement = common.editor_config.text_repl
+    if not common.editor_config.repl == self.ui.txtTranslated.replacements:
+      self.ui.txtTranslated.replacements = common.editor_config.repl
+    
+    ##############################
+    ### Other settings
+    ##############################
+    self.ui.txtTranslated.enable_smart_quotes = common.editor_config.smart_quotes
+    self.ui.txtTranslated.enable_quick_clt = common.editor_config.quick_clt
   
   ##############################################################################
   ### @fn   showNodeInEditor()
@@ -2317,6 +2337,7 @@ Attributions:
 <li>MeCab: Copyright (c) 2001-2008, Taku Kudo; Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation; Licensed under the GNU GPL, Version 3</li>
 <li>mkisofs: Copyright (C) 1993-1997 Eric Youngdale (C); Copyright (C) 1997-2010 Joerg Schilling; Licensed under the GNU GPL</li>
 <li>pngquant: Copyright (C) 1989, 1991 by Jef Poskanzer; Copyright (C) 1997, 2000, 2002 by Greg Roelofs, based on an idea by Stefan Schneider; Copyright 2009-2012 by Kornel Lesinski</li>
+<li>ProjexUI: Copyright (c) 2011, Projex Software; Licensed under the LGPL</li>
 <li>squish: Copyright (c) 2006 Simon Brown</li>
 <li>Unique Postfix: Copyright (c) 2010 Denis Barmenkov; Licensed under the MIT License</li>
 <li>Silk Icon Set: Copyright Mark James; Licensed under the Creative Commons Attribution 2.5 License; <a href="http://www.famfamfam.com/lab/icons/silk/">Website</a></li>
@@ -2415,6 +2436,7 @@ Attributions:
   ##############################################################################
   def closeEvent(self, event):
     if self.askUnsavedChanges():
+      self.console.close()
       self.search_menu.close()
       self.open_menu.close()
       self.terminology_editor.close()

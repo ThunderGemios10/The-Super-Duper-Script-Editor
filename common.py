@@ -18,16 +18,17 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-from enum import Enum
+import logging
 import re
 
 from PyQt4 import QtCore
 from PyQt4.QtCore import QString
 
 from config import EditorConfig
+from enum import Enum
 
 SCENE_MODES   = Enum("normal", "trial", "rules", "ammo", "ammoname", "ammosummary", "present", "presentname", "debate", "mtb", "climax", "anagram", "menu", "map", "report", "report2", "skill", "skill2", "music", "eventname", "moviename", "theatre", "help", "other")
-SCENE_SPECIAL = Enum("option", "showopt", "react", "debate", "chatter", "checkobj")
+SCENE_SPECIAL = Enum("option", "showopt", "react", "debate", "chatter", "checkobj", "checkchar")
 BOX_COLORS    = Enum("orange", "green", "blue")
 BOX_TYPES     = Enum("normal", "flat")
 
@@ -54,7 +55,7 @@ CHAR_IDS = {
   0x10 : u"Junko Enoshima (黒幕)",
   0x11 : u"Alter Ego",
   0x12 : u"Genocider Shou",
-  0x13 : u"The Principal",
+  0x13 : u"The Headmaster",
   0x14 : u"Naegi's Mother",
   0x15 : u"Naegi's Father",
   0x16 : u"Naegi's Little Sister",
@@ -70,6 +71,9 @@ CHAR_IDS = {
 }
 
 editor_config     = EditorConfig()
+
+LOGGER_NAME = "sdse"
+logging.getLogger(LOGGER_NAME).setLevel(editor_config.log_level.upper())
 
 RE_DIRNAME = re.compile(ur".*?e(?P<chapter>\d\d)_(?P<scene>\d\d\d)_(?P<room>\d\d\d)\.lin", re.I)
 RE_SYSDIR  = re.compile(ur"(?P<index>\d\d)_(?P<name>.*?)\.pak", re.I)

@@ -68,7 +68,7 @@ def parse_diffs(diffs):
   return highlight1, highlight2
 
 class DiffsMenu(QtGui.QDialog):
-  def __init__(self, parent=None):
+  def __init__(self, parent = None):
     super(DiffsMenu, self).__init__(parent)
     
     self.ui = Ui_Diffs()
@@ -288,9 +288,9 @@ class DiffsMenu(QtGui.QDialog):
 if __name__ == "__main__":
 
   # folder1 = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage"
-  # folder2 = "X:\\Danganronpa\\Danganronpa_BEST\\!changes"
-  folder1 = "X:\\My Dropbox\\Danganronpa\\Best\\bdh-umdimage_ch4"
-  folder2 = "X:\\My Dropbox\\Danganronpa\\Best\\silent-umdimage_ch4"
+  folder1 = "X:\\Danganronpa\\Danganronpa_BEST\\!changes"
+  # folder1 = "X:\\My Dropbox\\Danganronpa\\Best\\bdh-umdimage_test-phase2"
+  folder2 = "X:\\My Dropbox\\Danganronpa\\Best\\rito-umdimage_misc1"
   
   import sys
 

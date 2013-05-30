@@ -65,11 +65,13 @@ EDITOR_PREFS = [
   {CHK: "chkSpellCheck",    CFG: "spell_check",     DEFAULT: True},
   {CHK: "chkTextRepl",      CFG: "text_repl",       DEFAULT: False},
   {CHK: "chkSmartQuotes",   CFG: "smart_quotes",    DEFAULT: False},
+  {CHK: "chkQuickClt",      CFG: "quick_clt",       DEFAULT: False},
   {CHK: "chkTagHighlight",  CFG: "highlight_tags",  DEFAULT: False},
   {CHK: "chkTermHighlight", CFG: "highlight_terms", DEFAULT: True},
   {CHK: "chkMangle",        CFG: "mangle_text",     DEFAULT: True},
   {CHK: "chkPackUmdimage",  CFG: "pack_umdimage",   DEFAULT: True},
   {CHK: "chkPackUmdimage2", CFG: "pack_umdimage2",  DEFAULT: True},
+  {CHK: "chkPackVoice",     CFG: "pack_voice",      DEFAULT: False},
   {CHK: "chkBuildISO",      CFG: "build_iso",       DEFAULT: True},
   {CHK: "chkExpandTrees",   CFG: "auto_expand",     DEFAULT: True},
 ]
@@ -176,16 +178,57 @@ class SettingsMenu(QtGui.QDialog):
   def apply_tags(self):
     return True
   
+  def add_tag(self):
+    pass
+    
+  def del_tag(self):
+    pass
+    
+  def move_tag_up(self):
+    pass
+    
+  def move_tag_down(self):
+    pass
+    
+  def move_tag_top(self):
+    pass
+    
+  def move_tag_bottom(self):
+    pass
+  
 ################################################################################
 ### TAB: TEXT REPLACEMENT
 ################################################################################
   def setup_repl(self):
     self.ui.treeTextRepl.clear()
     self.ui.treeTextRepl.header().setResizeMode(QtGui.QHeaderView.Stretch)
-    self.ui.tabRepl.setEnabled(False)
+    self.ui.tabRepl.setEnabled(True)
+    
+    for src, dst in common.editor_config.repl:
+      self.add_repl(src, dst)
   
   def apply_repl(self):
+    common.editor_config.repl = []
+    
+    for i in range(self.ui.treeTextRepl.topLevelItemCount()):
+      item = self.ui.treeTextRepl.topLevelItem(i)
+      src  = common.qt_to_unicode(item.text(0), normalize = False)
+      dst  = common.qt_to_unicode(item.text(1), normalize = False)
+      
+      common.editor_config.repl.append((src, dst))
+      
     return True
+  
+  def add_repl(self, src = u"???", dst = u"???"):
+    new_sub = QtGui.QTreeWidgetItem([src, dst])
+    new_sub.setFlags(new_sub.flags() | Qt.Qt.ItemIsEditable)
+    self.ui.treeTextRepl.addTopLevelItem(new_sub)
+  
+  def del_repl(self):
+    rows = self.ui.treeTextRepl.selectionModel().selectedRows()
+    
+    for row in rows:
+      self.ui.treeTextRepl.takeTopLevelItem(row.row())
   
 ################################################################################
 ### TAB: HACKS

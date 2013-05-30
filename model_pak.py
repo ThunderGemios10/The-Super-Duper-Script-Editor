@@ -18,12 +18,18 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import logging
 import os
 
 from bitstring import BitStream, ConstBitStream
 
 from extract import get_pak_files, parse_pak_toc
 from gmo_file import GmoFile, GMO_MAGIC
+
+import common
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 _NAME  = "Name"
 _START = "Start"
@@ -50,7 +56,7 @@ class ModelPak():
     # The first three I don't know a lot about, and then
     # the GMO files come after that.
     if len(files) < 4:
-      print "Invalid model PAK. Too few files. %d found, need at least 4." % len(files)
+      _LOGGER.error("Invalid model PAK. %d files found, but at least 4 needed." % len(files))
       return
     
     # The name pak contains a list of null-terminated names for
@@ -109,8 +115,8 @@ class ModelPak():
     return len(self.__gmo_files)
     
   def get_gmo(self, index):
-    if index >= self.gmo_count():
-      print "Invalid GMO ID."
+    if index >= self.gmo_count() or index == None:
+      _LOGGER.error("Invalid GMO ID %d." % index)
       return None
     
     return self.__gmo_files[index][_DATA]
@@ -120,7 +126,7 @@ class ModelPak():
   
   def get_name(self, index):
     if index >= self.gmo_count():
-      print "Invalid GMO ID."
+      _LOGGER.error("Invalid GMO ID %d." % index)
       return None
     
     return self.__gmo_files[index][_NAME]
@@ -149,13 +155,13 @@ class ModelPak():
     
   def replace_gmo(self, index, new_gmo):
     if index >= self.gmo_count():
-      print "Invalid GMO ID."
+      _LOGGER.error("Invalid GMO ID %d." % index)
       return None
     
     gmo = self.__gmo_files[index]
     
     if new_gmo.data.len / 8 > gmo[_SIZE]:
-      print "GMO too large. %d bytes > %d bytes" % (new_gmo.data.len / 8, gmo[_SIZE])
+      _LOGGER.error("GMO too large to insert. %d bytes > %d bytes" % (new_gmo.data.len / 8, gmo[_SIZE]))
       return
     
     self.__gmo_files[index][_DATA] = new_gmo

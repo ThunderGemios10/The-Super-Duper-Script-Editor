@@ -35,7 +35,8 @@ from bitstring import ConstBitStream, BitStream
 import common
 from dialog_fns import get_save_file, get_open_file, get_existing_dir
 from eboot_patch import apply_eboot_patches
-from extract import extract_umdimage, UMDIMAGE_TYPE, extract_pak
+from extract import extract_umdimage, extract_pak
+from extract.eboot import UMDIMAGES
 from font_parser import font_bmp_to_alpha
 from gim_converter import GimConverter
 from gmo_file import GmoFile
@@ -239,8 +240,8 @@ class SetupWizard(QtGui.QDialog):
     progress.setValue(progress.value() + 1)
     
     thread_fns = [
-      {"target": extract_umdimage, "kwargs": {"filename": umdimage,  "out_dir": self.umdimage_dir,  "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best,  "toc_filename": self.toc_file}},
-      {"target": extract_umdimage, "kwargs": {"filename": umdimage2, "out_dir": self.umdimage2_dir, "eboot": self.eboot_path, "type": UMDIMAGE_TYPE.best2, "toc_filename": self.toc2_file}},
+      {"target": extract_umdimage, "kwargs": {"filename": umdimage,  "out_dir": self.umdimage_dir,  "eboot": self.eboot_path, "umdimage": UMDIMAGES.umdimage}},
+      {"target": extract_umdimage, "kwargs": {"filename": umdimage2, "out_dir": self.umdimage2_dir, "eboot": self.eboot_path, "umdimage": UMDIMAGES.umdimage2}},
       {"target": extract_pak,      "kwargs": {"filename": voice,     "out_dir": self.voice_dir}},
     ]
     

@@ -176,7 +176,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="SpellCheckEdit" name="txtTranslated">
+   <widget class="SmartTextEdit" name="txtTranslated">
     <property name="geometry">
      <rect>
       <x>500</x>
@@ -1690,6 +1690,7 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionInsertCLT"/>
     <addaction name="actionSearch"/>
     <addaction name="actionCopyOrig"/>
    </widget>
@@ -1709,7 +1710,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionReloadDupesDB"/>
     <addaction name="separator"/>
     <addaction name="actionFontGenerator"/>
-    <addaction name="actionModelEditor"/>
     <addaction name="actionTerminology"/>
     <addaction name="separator"/>
     <addaction name="actionCalculateProgress"/>
@@ -1726,6 +1726,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLastFile"/>
     <addaction name="separator"/>
     <addaction name="actionShowDirectory"/>
+    <addaction name="separator"/>
+    <addaction name="actionConsole"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -2151,17 +2153,39 @@ p, li { white-space: pre-wrap; }
     <string>Model Editor</string>
    </property>
   </action>
+  <action name="actionConsole">
+   <property name="icon">
+    <iconset resource="../res/icons.qrc">
+     <normaloff>:/application_xp_terminal.png</normaloff>:/application_xp_terminal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Console</string>
+   </property>
+  </action>
+  <action name="actionInsertCLT">
+   <property name="text">
+    <string>Insert CLT</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionDecompile_All_wrd_Files">
+   <property name="text">
+    <string>Decompile All wrd Files</string>
+   </property>
+  </action>
+  <action name="actionCompile_All_wrd_Files">
+   <property name="text">
+    <string>Compile All wrd Files</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>KeywordEdit</class>
    <extends>QTextEdit</extends>
    <header>keywordedit</header>
-  </customwidget>
-  <customwidget>
-   <class>SpellCheckEdit</class>
-   <extends>QTextEdit</extends>
-   <header>spellcheckedit</header>
   </customwidget>
   <customwidget>
    <class>ReferenceEdit</class>
@@ -2172,6 +2196,11 @@ p, li { white-space: pre-wrap; }
    <class>SuperButton</class>
    <extends>QPushButton</extends>
    <header>superbutton</header>
+  </customwidget>
+  <customwidget>
+   <class>SmartTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>smarttextedit</header>
   </customwidget>
  </customwidgets>
  <tabstops>

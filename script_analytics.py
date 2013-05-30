@@ -18,6 +18,7 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import logging
 import os
 import re
 import time
@@ -30,6 +31,9 @@ except:
 import common
 import list_files
 from script_file import ScriptFile
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 DATA_FILE = "data/analytics.bin"
 DEFAULT_FILTER = re.compile(ur"^\d\d|^e\d\d|^event|^mtb_s\d\d|^script_pak|^voice", re.IGNORECASE | re.DOTALL | re.UNICODE)
@@ -88,7 +92,7 @@ class ScriptData():
   ####################################################################
   def needs_update(self):
     if not isinstance(self.data, ScriptFile):
-      print "Probably shouldn't be doing this."
+      _LOGGER.warning("Probably shouldn't be doing this.")
       return True
     
     stats = os.stat(self.filename)

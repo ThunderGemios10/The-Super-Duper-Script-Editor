@@ -21,13 +21,19 @@
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import QFont, QFontMetrics, QImage, QPainter, QPainterPath, QColor
 
+import logging
 import math
 import os
 import sys
 
 from bitstring import BitStream
 from enum import Enum
+
+import common
 from font_parser import SPFT_MAGIC
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 FONT_TYPES = Enum("font01", "font02")
 GAMES = Enum("dr", "sdr2")
@@ -243,7 +249,7 @@ def gen_font(font_configs, font_type = FONT_TYPES.font01, img_width = 1024, draw
         y_pos = 0
     
       if y_pos + line_height > MAX_HEIGHT:
-        print "Ran out of vertical space. Generated font does not include all characters."
+        _LOGGER.warning("Ran out of vertical space. Generated font does not include all characters.")
         break
     
       game_font.font_data.data.append({'char': char, 'x': x_pos, 'y': y_pos, 'w': char_w, 'h': line_height, 'y_shift': config.y_shift})

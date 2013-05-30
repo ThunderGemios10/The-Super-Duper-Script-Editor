@@ -19,12 +19,16 @@
 ################################################################################
 
 from bitstring import ConstBitStream
+import logging
 import os
 
 import common
 from script_pack import ScriptPack
 from sprite import SpriteId, SPRITE_TYPE
 from voice import VoiceId
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 MTB_DIR = {
   "hs_mtb_s01.pak": "mtb_s01.pak",
@@ -69,7 +73,7 @@ class MTBParser():
     filename = filename.lower()
     
     if not filename in MTB_DIR:
-      print "Invalid MTB file."
+      _LOGGER.error("Invalid MTB file: %s" % filename)
       return
     
     self.filename = filename

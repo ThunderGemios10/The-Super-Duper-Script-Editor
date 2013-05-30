@@ -18,11 +18,17 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
+import logging
 import os
 import tempfile
 
 from bitstring import BitStream, ConstBitStream
 from gim_converter import GimConverter, QuantizeType
+
+import common
+
+_LOGGER_NAME = common.LOGGER_NAME + "." + __name__
+_LOGGER = logging.getLogger(_LOGGER_NAME)
 
 GIM_MAGIC       = ConstBitStream(hex='0x4D49472E') # MIG.
 GIM_SIZE_OFFSET = 0x14
@@ -67,7 +73,7 @@ class GmoFile():
   
   def load_data(self, data, offset = 0):
     if not data[offset * 8 : offset * 8 + GMO_MAGIC.len] == GMO_MAGIC:
-      print "GMO header not found at 0x%04X." % offset
+      _LOGGER.error("GMO header not found at 0x%04X." % offset)
       return
     
     data.bytepos = offset + GMO_SIZE_OFFSET
@@ -130,10 +136,11 @@ class GmoFile():
         raise
       else:
         # If we didn't except, that means we succeeded, so we can leave.
+        _LOGGER.info("Quantized PNG to %s" % quantize_order[quantize_id])
         break
       
       if quantize_id > len(quantize_order):
-        print "Failed to convert PNG into a GIM small enough to insert."
+        _LOGGER.error("Unable to convert %s into a GIM small enough to insert." % filename)
         break
     
     os.remove(temp_gim)

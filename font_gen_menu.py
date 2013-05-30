@@ -28,6 +28,7 @@ except:
   import pickle
 
 from enum import Enum
+import logging
 import os
 import shutil
 import tempfile

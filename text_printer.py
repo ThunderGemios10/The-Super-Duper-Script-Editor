@@ -966,7 +966,7 @@ def mangle_line(line, lengths, index, scene_mode, cur_font, default_clt):
       # lengths[index][max_len:] = [char_width] * extra_chars
   
   elif scene_mode == common.SCENE_SPECIAL.option:
-    max_len = 24
+    max_len = 54
   
   elif scene_mode == common.SCENE_MODES.help:
     # max_len = 31

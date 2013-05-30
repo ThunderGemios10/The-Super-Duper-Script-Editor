@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>application_xp_terminal.png</file>
     <file>brick.png</file>
     <file>font.png</file>
     <file>cog.png</file>

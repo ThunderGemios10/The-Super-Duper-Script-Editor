@@ -50,13 +50,19 @@ DEFAULT_SETTINGS = {
   "iso_dir":            "./!ISO_EDITED",
   "iso_file":           "./DANGANRONPA_EDITED.iso",
   "last_checked_with":  "./umdimage-orig",
+  "last_exported":      "./umdimage2",
+  "last_export_target": "./umdimage2-ex",
   "last_font":          "./debug/test.sdse-font",
-  "last_import_target": "./!imported",
   "last_imported":      "./!changes",
+  "last_import_target": "./!imported",
   "last_opened":        "e00_001_000.lin",
+  "log_level":          "Info",
   "mangle_text":        "True",
+  "pack_bgm":           "False",
   "pack_umdimage":      "True",
   "pack_umdimage2":     "True",
+  "pack_voice":         "False",
+  "quick_clt":          "False",
   "similarity_db":      "./data/similarity-db.sql",
   "smart_quotes":       "False",
   "spell_check":        "True",
@@ -78,6 +84,8 @@ TAGS_SECTION    = "TAGS"
 REPL_SECTION    = "REPL"
 
 HISTORY_FILE    = os.path.join(CONFIG_DIR, "data/history.bin")
+TAGS_FILE       = os.path.join(CONFIG_DIR, "data/tags.bin")
+REPL_FILE       = os.path.join(CONFIG_DIR, "data/replacements.bin")
 
 class EditorConfig:
   def __init__(self):
@@ -87,8 +95,8 @@ class EditorConfig:
     
     # The other sections work just fine as dictionaries.
     self.hacks = defaultdict(bool)
-    self.tags = {}
-    self.repl = {}
+    self.tags = []
+    self.repl = []
     
     self.load_config()
   
@@ -137,8 +145,9 @@ class EditorConfig:
     
     # Got a few boolean values
     to_bool = ["auto_expand", "auto_play_voice", "auto_play_bgm", "auto_play_sfx",
-      "highlight_terms", "highlight_tags", "spell_check", "pack_umdimage",
-      "pack_umdimage2", "mangle_text", "smart_quotes", "text_repl", "build_iso",
+      "highlight_terms", "highlight_tags", "spell_check", "pack_umdimage", "pack_umdimage2", 
+      "pack_voice", "pack_bgm", "mangle_text", "smart_quotes", "text_repl", "build_iso",
+      "quick_clt"
     ]
     
     # for (name, val) in config.items(PREFS_SECTION):
@@ -175,21 +184,23 @@ class EditorConfig:
     ### TAGS
     ########################################
     
-    if config.has_section(TAGS_SECTION):
-      options = [option for option in config.options(TAGS_SECTION) if option not in DEFAULT_SETTINGS]
-      
-      for option in options:
-        self.tags[option] = config.get(TAGS_SECTION, option)
+    # Load our tags
+    if os.path.isfile(TAGS_FILE):
+      with open(TAGS_FILE, "rb") as f:
+        self.tags = pickle.load(f)
+    else:
+      self.tags = []
     
     ########################################
     ### TEXT REPLACEMENT
     ########################################
     
-    if config.has_section(REPL_SECTION):
-      options = [option for option in config.options(REPL_SECTION) if option not in DEFAULT_SETTINGS]
-      
-      for option in options:
-        self.repl[option] = config.get(REPL_SECTION, option)
+    # Load our text replacements
+    if os.path.isfile(REPL_FILE):
+      with open(REPL_FILE, "rb") as f:
+        self.repl = pickle.load(f)
+    else:
+      self.repl = []
     
     ########################################
     ### HISTORY
@@ -197,9 +208,8 @@ class EditorConfig:
     
     # Load our last-viewed-file history.
     if os.path.isfile(HISTORY_FILE):
-      f = open(HISTORY_FILE, "rb")
-      self.last_file = pickle.load(f)
-      f.close()
+      with open(HISTORY_FILE, "rb") as f:
+        self.last_file = pickle.load(f)
     else:
       self.last_file = {}
   
@@ -215,8 +225,8 @@ class EditorConfig:
         # -section-     -items-           -source-
         (PREFS_SECTION, self.__pref_names, vars(self)),
         (HACKS_SECTION, self.hacks.keys(), self.hacks),
-        (TAGS_SECTION,  self.tags.keys(),  self.tags),
-        (REPL_SECTION,  self.repl.keys(),  self.repl),
+        # (TAGS_SECTION,  self.tags.keys(),  self.tags),
+        # (REPL_SECTION,  self.repl.keys(),  self.repl),
       ]
       
       for (section, items, source) in to_output:
@@ -227,9 +237,16 @@ class EditorConfig:
       
       config.write(outfile)
     
-    # Save our last-opened history.
-    with open(HISTORY_FILE, "wb") as f:
-      pickle.dump(self.last_file, f)
+    binary_files = [
+      # -file-        -var-
+      (TAGS_FILE,     self.tags),
+      (REPL_FILE,     self.repl),
+      (HISTORY_FILE,  self.last_file),
+    ]
+    
+    for filename, var in binary_files:
+      with open(filename, "wb") as f:
+        pickle.dump(var, f, pickle.HIGHEST_PROTOCOL)
 
 # if __name__ == "__main__":
   # test = EditorConfig()

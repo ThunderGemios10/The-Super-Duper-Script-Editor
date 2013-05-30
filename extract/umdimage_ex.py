@@ -19,24 +19,13 @@
 ################################################################################
 
 from bitstring import ConstBitStream
-from enum import Enum
 
 import os
 import re
 
-from pak_ex import get_pak_files, get_txt_files, get_script_pak_files, get_lin_files, EXT_MODE
-from invalidarchiveexception import InvalidArchiveException
-from unique_postfix import add_unique_postfix
-
-UMDIMAGE_TYPE = Enum("demo", "full", "full2", "best", "best2")
-
-TOC_INFO = {
-  UMDIMAGE_TYPE.demo:  {"start": 0x00145C24, "count": 0x00145C1C, "name_offset": 0xC0},
-  UMDIMAGE_TYPE.full:  {"start": 0x000F8248, "count": 0x000F8240, "name_offset": 0xC0},
-  UMDIMAGE_TYPE.full2: {"start": 0x00103C5C, "count": 0x00103C54, "name_offset": 0xC0},
-  UMDIMAGE_TYPE.best:  {"start": 0x000F5A18, "count": 0x00100EB4, "name_offset": 0xA0},
-  UMDIMAGE_TYPE.best2: {"start": 0x000F5200, "count": 0x000F5A10, "name_offset": 0xA0},
-}
+from .eboot import get_toc
+from .pak_ex import get_pak_files, get_txt_files, get_script_pak_files, get_lin_files, EXT_MODE
+from .invalidarchiveexception import InvalidArchiveException
 
 EXTRACT_EXT = [".pak", ".lin"]
 SKIP_EXTRACT_FILE_RE = re.compile(ur"hs_mtb_s\d\d|bg_\d\d\d|bg_lc01")
@@ -69,64 +58,14 @@ def dump_to_file(data, filename):
 ##################################################
 ### 
 ##################################################
-def extract_umdimage(filename, out_dir = None, eboot = "EBOOT.BIN", type = UMDIMAGE_TYPE.best, toc_filename = "!toc.txt"):
+def extract_umdimage(filename, eboot, umdimage, out_dir = None):
   if out_dir == None:
     out_dir = filename + "-out"
   
-  data       = ConstBitStream(filename = filename)
-  eboot_data = ConstBitStream(filename = eboot)
+  data        = ConstBitStream(filename = filename)
+  eboot_data  = ConstBitStream(filename = eboot)
   
-  toc_start     = TOC_INFO[type]["start"]
-  toc_count_pos = TOC_INFO[type]["count"]
-  toc_name_off  = TOC_INFO[type]["name_offset"]
-  
-  eboot_data.bytepos = toc_count_pos
-  toc_count = eboot_data.read("uintle:32")
-  
-  eboot_data.bytepos = toc_start
-  
-  toc = []
-  file_starts = []
-  filenames   = []
-  
-  toc_file = open(toc_filename, "wb")
-  
-  for i in xrange(toc_count):
-    name_pos = eboot_data.read("uintle:32")
-    
-    file_pos_pos  = eboot_data.bytepos
-    file_pos      = eboot_data.read("uintle:32")
-    file_len_pos  = eboot_data.bytepos
-    file_len      = eboot_data.read("uintle:32")
-    
-    name_pos += toc_name_off
-    
-    temp_pos = eboot_data.bytepos
-    eboot_data.bytepos = name_pos
-    
-    filename = eboot_data.readto("0x00", bytealigned = True).bytes
-    # Strip the null character.
-    filename = filename[:-1]
-    
-    # Ensure the filenames don't conflict.
-    filename = add_unique_postfix(filename, check_fn = (lambda fn: fn in filenames))
-    filenames.append(filename)
-    
-    eboot_data.bytepos = temp_pos
-    
-    entry = {
-      "filename":     filename,
-      "file_pos_pos": file_pos_pos,
-      "file_pos":     file_pos,
-      "file_len_pos": file_len_pos,
-      "file_len":     file_len,
-    }
-    
-    toc.append(entry)
-    
-    toc_file.write("%s 0x%08X 0x%08X\n" % (filename, file_pos_pos, file_len_pos))
-  
-  toc_file.close()
+  toc = get_toc(eboot_data, umdimage)
   
   for filename, file_data in get_pak_files(data, recursive = True, toc = toc):
     out_path = os.path.join(out_dir, filename)
