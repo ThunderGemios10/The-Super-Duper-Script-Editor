@@ -1906,7 +1906,7 @@ class EditorForm(QtGui.QMainWindow):
     x = self.x()
     y = self.y()
     
-    files = list_all_files(source_dir)
+    files = list(list_all_files(source_dir))
     
     progress.setValue(0)
     progress.setMaximum(len(files))
@@ -2375,7 +2375,7 @@ Attributions:
     progress.setValue(0)
     progress.setAutoClose(False)
     
-    files = list_all_files(base_dir)
+    files = list(list_all_files(base_dir))
     progress.setMaximum(len(files))
     
     # For our dupe database, we need "umdimage" instead of wherever the files

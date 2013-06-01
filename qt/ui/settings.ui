@@ -1307,8 +1307,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>385</x>
-     <y>340</y>
+     <x>394</x>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel">
      <x>297</x>
@@ -1323,8 +1323,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>416</x>
-     <y>340</y>
+     <x>425</x>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel">
      <x>195</x>
@@ -1355,8 +1355,8 @@
    <slot>add_repl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>40</x>
-     <y>284</y>
+     <x>48</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>103</x>
@@ -1371,8 +1371,8 @@
    <slot>del_repl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>67</x>
-     <y>286</y>
+     <x>82</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>210</x>
@@ -1387,8 +1387,8 @@
    <slot>add_tag()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>38</x>
-     <y>291</y>
+     <x>48</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -1403,8 +1403,8 @@
    <slot>del_tag()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>75</x>
-     <y>287</y>
+     <x>82</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>26</x>
@@ -1419,8 +1419,8 @@
    <slot>move_tag_top()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>375</x>
-     <y>281</y>
+     <x>385</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>315</x>
@@ -1435,8 +1435,8 @@
    <slot>move_tag_up()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>403</x>
-     <y>290</y>
+     <x>419</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>398</x>
@@ -1451,8 +1451,8 @@
    <slot>move_tag_down()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>439</x>
-     <y>285</y>
+     <x>453</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>450</x>
@@ -1467,8 +1467,8 @@
    <slot>move_tag_bottom()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>471</x>
-     <y>289</y>
+     <x>487</x>
+     <y>320</y>
     </hint>
     <hint type="destinationlabel">
      <x>506</x>

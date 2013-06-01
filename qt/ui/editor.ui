@@ -1698,22 +1698,43 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menuImport_Directory">
+    <widget class="QMenu" name="menuImportExport">
      <property name="title">
-      <string>&amp;Import</string>
+      <string>&amp;Import/Export</string>
      </property>
-     <addaction name="actionImportUmdimage"/>
-     <addaction name="actionImportUmdimage2"/>
-     <addaction name="actionImportOther"/>
+     <widget class="QMenu" name="menuImport">
+      <property name="title">
+       <string>Import</string>
+      </property>
+      <addaction name="actionPropogateDupes"/>
+      <addaction name="separator"/>
+      <addaction name="actionImportUmdimage"/>
+      <addaction name="actionImportUmdimage2"/>
+      <addaction name="actionImportOther"/>
+     </widget>
+     <widget class="QMenu" name="menuExport">
+      <property name="title">
+       <string>Export</string>
+      </property>
+      <addaction name="actionExportUnique"/>
+      <addaction name="separator"/>
+      <addaction name="actionExportUmdimage"/>
+      <addaction name="actionExportUmdimage2"/>
+     </widget>
+     <addaction name="actionConvertPNGGIM"/>
+     <addaction name="separator"/>
+     <addaction name="menuImport"/>
+     <addaction name="menuExport"/>
     </widget>
-    <addaction name="menuImport_Directory"/>
-    <addaction name="actionReloadDupesDB"/>
+    <addaction name="menuImportExport"/>
     <addaction name="separator"/>
     <addaction name="actionFontGenerator"/>
     <addaction name="actionTerminology"/>
+    <addaction name="actionScriptDumper"/>
     <addaction name="separator"/>
     <addaction name="actionCalculateProgress"/>
     <addaction name="actionCheckForErrors"/>
+    <addaction name="actionReloadDupesDB"/>
     <addaction name="actionBuild"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -2035,17 +2056,17 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionImportUmdimage">
    <property name="text">
-    <string>To umdimage</string>
+    <string>...to umdimage</string>
    </property>
   </action>
   <action name="actionImportUmdimage2">
    <property name="text">
-    <string>To umdimage2</string>
+    <string>...to umdimage2</string>
    </property>
   </action>
   <action name="actionImportOther">
    <property name="text">
-    <string>To other directory</string>
+    <string>...to other directory</string>
    </property>
   </action>
   <action name="actionExportChanges">
@@ -2141,18 +2162,6 @@ p, li { white-space: pre-wrap; }
     <string>Font Generator</string>
    </property>
   </action>
-  <action name="actionModelEditor">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../res/icons.qrc">
-     <normaloff>:/brick.png</normaloff>:/brick.png</iconset>
-   </property>
-   <property name="text">
-    <string>Model Editor</string>
-   </property>
-  </action>
   <action name="actionConsole">
    <property name="icon">
     <iconset resource="../res/icons.qrc">
@@ -2178,6 +2187,73 @@ p, li { white-space: pre-wrap; }
   <action name="actionCompile_All_wrd_Files">
    <property name="text">
     <string>Compile All wrd Files</string>
+   </property>
+  </action>
+  <action name="actionScriptDumper">
+   <property name="text">
+    <string>Script Dumper</string>
+   </property>
+  </action>
+  <action name="actionConvertPNGGIM">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Convert PNG ↔ GIM</string>
+   </property>
+  </action>
+  <action name="actionConvert_GIM_to_PNG">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Convert GIM to PNG</string>
+   </property>
+  </action>
+  <action name="actionExportUmdimage">
+   <property name="text">
+    <string>...from umdimage</string>
+   </property>
+  </action>
+  <action name="actionExportUmdimage2">
+   <property name="text">
+    <string>...from umdimage2</string>
+   </property>
+  </action>
+  <action name="actionExtractTextures">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Extract/insert textures</string>
+   </property>
+  </action>
+  <action name="actionExportUnique">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Only export unique</string>
+   </property>
+  </action>
+  <action name="actionPropogateDupes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Propogate dupes</string>
    </property>
   </action>
  </widget>

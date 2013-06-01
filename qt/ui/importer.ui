@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>Importer</class>
+ <widget class="QDialog" name="Importer">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,6 +12,10 @@
   </property>
   <property name="windowTitle">
    <string>Import/Export</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../res/icons.qrc">
+    <normaloff>:/monokuma-green.png</normaloff>:/monokuma-green.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -123,7 +127,7 @@
           <bool>true</bool>
          </property>
          <attribute name="headerDefaultSectionSize">
-          <number>200</number>
+          <number>300</number>
          </attribute>
          <attribute name="headerHighlightSections">
           <bool>false</bool>
@@ -338,6 +342,9 @@
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox_3">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="title">
                 <string>Force Quantization (Filename Regex)</string>
                </property>
@@ -606,12 +613,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>Importer</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>257</x>
-     <y>598</y>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -622,12 +629,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>Importer</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>325</x>
-     <y>598</y>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

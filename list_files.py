@@ -18,22 +18,18 @@
 ### If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 
-import os.path
+import os
 
 def list_all_files(dir):
-  
-  files = []
-  
+
   for item in os.listdir(dir):
     full_path = os.path.join(dir, item)
   
     if os.path.isfile(full_path):
-      files.append(full_path)
+      yield full_path
       
-    else:
-      for file in list_all_files(full_path):
-        files.append(file)
-      
-  return files
+    elif os.path.isdir(full_path):
+      for filename in list_all_files(full_path):
+        yield filename
 
 ### EOF ###

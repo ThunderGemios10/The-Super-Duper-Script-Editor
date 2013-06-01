@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\console.ui'
 #
-# Created: Wed May 22 17:24:48 2013
+# Created: Fri May 31 19:20:33 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,17 +27,24 @@ class Ui_Console(object):
         self.verticalLayout.setMargin(2)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.txtConsole = XLoggerWidget(Console)
+        self.txtConsole.setLineWrapMode(QtGui.QTextEdit.NoWrap)
         self.txtConsole.setObjectName(_fromUtf8("txtConsole"))
         self.verticalLayout.addWidget(self.txtConsole)
         self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setSpacing(8)
+        self.horizontalLayout.setContentsMargins(4, -1, 0, -1)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.label = QtGui.QLabel(Console)
-        self.label.setText(QtGui.QApplication.translate("Console", " Logging Level ", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Console", "Logging Level", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
         self.cboLevels = QtGui.QComboBox(Console)
         self.cboLevels.setObjectName(_fromUtf8("cboLevels"))
         self.horizontalLayout.addWidget(self.cboLevels)
+        self.chkWordWrap = QtGui.QCheckBox(Console)
+        self.chkWordWrap.setText(QtGui.QApplication.translate("Console", "Word wrap", None, QtGui.QApplication.UnicodeUTF8))
+        self.chkWordWrap.setObjectName(_fromUtf8("chkWordWrap"))
+        self.horizontalLayout.addWidget(self.chkWordWrap)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.pushButton = QtGui.QPushButton(Console)

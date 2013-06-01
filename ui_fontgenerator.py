@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\fontgen.ui'
 #
-# Created: Wed May 22 17:24:48 2013
+# Created: Fri May 31 19:20:34 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!

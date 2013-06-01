@@ -27,34 +27,18 @@ from list_files import list_all_files
 
 DIR_FORMAT = "%Y.%m.%d_%H.%M.%S"
 
-def backup_dir(source_dir, suffix = "_SAVE"):
+def backup_directory(source_dir, suffix = "_SAVE"):
   files = [file[len(source_dir) + 1:] for file in list_all_files(source_dir)]
   backup_files(source_dir, files, suffix)
 
 # def backup_file(file, suffix = "_SAVE"):
   # backup_files([file], suffix)
 
-def backup_files(source_dir, files, suffix = "_SAVE"):
+def backup_files(source_dir, files, suffix = "_SAVE", backup_dir = None):
   
-  backup_time = time.strftime(DIR_FORMAT + suffix)
-  backup_dir = os.path.join(common.editor_config.backup_dir, backup_time)
-  
-  # umdimage  = common.editor_config.umdimage_dir
-  # umdimage2 = common.editor_config.umdimage2_dir
-  # source_dirs = [umdimage, umdimage2]
-  
-  # clean_files = []
-  # Strip our source directories out of the paths.
-  # for i, file in enumerate(files):
-    # file = os.path.normpath(os.path.normcase(file))
-    
-    # for source in source_dirs:
-      # source = os.path.normpath(os.path.normcase(source))
-      # if source in file.lower():
-        # file = file[len(source) + 1:]
-        # break
-  
-    # clean_files.append(file)
+  if not backup_dir:
+    backup_time = time.strftime(DIR_FORMAT + suffix)
+    backup_dir = os.path.join(common.editor_config.backup_dir, backup_time)
   
   for file in files:
     src = os.path.join(source_dir, file)
@@ -64,7 +48,9 @@ def backup_files(source_dir, files, suffix = "_SAVE"):
       os.makedirs(os.path.dirname(dst))
     except: pass
     
-    shutil.copy(src, dst)
+    shutil.copy2(src, dst)
+  
+  return backup_dir
 
 if __name__ == "__main__":
   # backup_files(

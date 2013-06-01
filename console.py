@@ -35,6 +35,8 @@ class Console(QtGui.QDialog):
     self.ui = Ui_Console()
     self.ui.setupUi(self)
     
+    self.ui.chkWordWrap.stateChanged.connect(lambda x: self.ui.txtConsole.setLineWrapMode(QtGui.QTextEdit.WidgetWidth if self.ui.chkWordWrap.isChecked() else QtGui.QTextEdit.NoWrap))
+    
     self.creating = True
     
     cur_level = common.editor_config.log_level

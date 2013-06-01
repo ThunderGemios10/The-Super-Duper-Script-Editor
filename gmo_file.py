@@ -136,7 +136,7 @@ class GmoFile():
         raise
       else:
         # If we didn't except, that means we succeeded, so we can leave.
-        _LOGGER.info("Quantized PNG to %s" % quantize_order[quantize_id])
+        _LOGGER.debug("Quantized PNG to %s" % quantize_order[quantize_id])
         break
       
       if quantize_id > len(quantize_order):

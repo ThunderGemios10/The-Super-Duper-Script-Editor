@@ -28,7 +28,7 @@ import re
 import shutil
 import tempfile
 
-from bitstring import ConstBitStream
+# from bitstring import ConstBitStream
 
 import common
 
@@ -65,19 +65,62 @@ _LOGGER = logging.getLogger(_LOGGER_NAME)
 ######################################################################
 ### Importing
 ######################################################################
-def import_dir(src, dst, dir_type, convert_png = True, unique = False):
+def import_dir(src, dst, dir_type, convert_png = True, propogate = True):
   if dir_type == DIR_TYPE.umdimage:
-    import_umdimage(src, dst, convert_png, unique)
+    import_umdimage(src, dst, convert_png, propogate)
   elif dir_type == DIR_TYPE.umdimage2:
-    import_umdimage2(src, dst, convert_png, unique)
+    import_umdimage2(src, dst, convert_png, propogate)
   else:
     _LOGGER.error("Unable to import %s. Unknown dirtype %s provided." % (src, dir_type))
 
-def import_umdimage(src, dst, convert_png = True, unique = False):
+def import_umdimage(src, dst, convert_png = True, propogate = True):
   pass
 
-def import_umdimage2(src, dst, convert_png = True, unique = False):
-  pass
+def import_umdimage2(src, dst, convert_png = True, propogate = True):
+  tmp_dst     = tempfile.mkdtemp(prefix = "sdse-")
+  backup_dir  = None
+  
+  for pak_dir in glob.iglob(os.path.join(src, "bg_*.pak")):
+    for image in list_all_files(pak_dir):
+      ext = os.path.splitext(image)[1].lower()
+      if ext == ".png" and not convert_png:
+        continue
+      
+      base_name = image[len(src) + 1:]
+      dst_files = []
+      
+      if propogate:
+        dupe_name = os.path.splitext(base_name)[0] + ".gim"
+        dupe_name = os.path.join("umdimage2", dupe_name)
+        dupe_name = os.path.normpath(os.path.normcase(dupe_name))
+      
+        dupes = _DUPE_DB.files_in_same_group(dupe_name)
+        
+        if dupes == None:
+          dupes = [dupe_name]
+        
+        for dupe in dupes:
+          dst_file = dupe[10:] # chop off the "umdimage2/"
+          dst_file = os.path.splitext(dst_file)[0] + ext # original extension
+          dst_file = os.path.join(tmp_dst, dst_file)
+          dst_files.append(dst_file)
+      
+      else:
+        dst_files = [os.path.join(tmp_dst, base_name)]
+      
+      for dst_file in dst_files:
+        try:
+          os.makedirs(os.path.dirname(dst_file))
+        except:
+          pass
+        shutil.copy(image, dst_file)
+    
+    pak_name    = os.path.basename(pak_dir)
+    backup_dir  = backup_files(dst, [pak_name], suffix = "_IMPORT", backup_dir = backup_dir)
+    
+    insert_textures(os.path.join(tmp_dst, pak_name), os.path.join(dst, pak_name))
+  
+  shutil.rmtree(tmp_dst)
 
 ######################################################################
 ### Exporting
@@ -91,28 +134,14 @@ def export_dir(src, dst, dir_type, convert_gim = True, unique = False):
     _LOGGER.error("Unable to export %s. Unknown dirtype %s provided." % (src, dir_type))
 
 def export_umdimage(src, dst, convert_gim = True, unique = False):
-  pass
-
-def export_umdimage2(src, dst, convert_gim = True, unique = False):
-  if unique:
-    tmp_dst = tempfile.mkdtemp(prefix = "sdse-")
-  else:
-    tmp_dst = dst
+  seen_groups = []
   
-  for pak in glob.iglob(os.path.join(src, "bg_*.pak")):
-    extract_model_pak(pak, tmp_dst, convert_gim)
-    _LOGGER.info("Exported %s to %s" % (pak, tmp_dst))
-  
-  if unique:
-    seen_groups = []
+  for filename in list_all_files(src):
+    base_name = filename[len(src) + 1:]
     
-    _LOGGER.info("Copying unique files to %s" % (dst))
-    for img in list_all_files(tmp_dst):
-      img_base  = img[len(tmp_dst) + 1:]
-      dupe_name = os.path.splitext(img_base)[0] + ".gim"
-      dupe_name = os.path.join("umdimage2", dupe_name)
+    if unique:
+      dupe_name = os.path.join("umdimage", base_name)
       dupe_name = os.path.normpath(os.path.normcase(dupe_name))
-      # print dupe_name
       
       group = _DUPE_DB.group_from_file(dupe_name)
       
@@ -121,17 +150,63 @@ def export_umdimage2(src, dst, convert_gim = True, unique = False):
       
       if not group == None:
         seen_groups.append(group)
-      
-      dst_file = os.path.join(dst, img_base)
-      dst_dir  = os.path.dirname(dst_file)
-      
-      try:
-        os.makedirs(dst_dir)
-      except:
-        pass
-      
-      shutil.copy(img, dst_file)
     
+    dst_file = os.path.join(dst, base_name)
+    dst_dir  = os.path.dirname(dst_file)
+    ext      = os.path.splitext(dst_file)[1].lower()
+    
+    try:
+      os.makedirs(dst_dir)
+    except:
+      pass
+    
+    if ext == ".gim" and convert_gim:
+      dst_file = os.path.splitext(dst_file)[0] + ".png"
+      _CONV.gim_to_png(filename, dst_file)
+    else:
+      shutil.copy(filename, dst_file)
+
+def export_umdimage2(src, dst, convert_gim = True, unique = False):
+  if unique:
+    tmp_dst = tempfile.mkdtemp(prefix = "sdse-")
+  else:
+    tmp_dst = dst
+  
+  seen_groups = []
+  
+  for pak in glob.iglob(os.path.join(src, "bg_*.pak")):
+    out_dir = extract_model_pak(pak, tmp_dst, convert_gim)
+  
+    if unique:
+      for img in list_all_files(out_dir):
+        img_base  = img[len(tmp_dst) + 1:]
+        dupe_name = os.path.splitext(img_base)[0] + ".gim"
+        dupe_name = os.path.join("umdimage2", dupe_name)
+        dupe_name = os.path.normpath(os.path.normcase(dupe_name))
+        # print dupe_name
+        
+        group = _DUPE_DB.group_from_file(dupe_name)
+        
+        if group in seen_groups:
+          continue
+        
+        if not group == None:
+          seen_groups.append(group)
+        
+        dst_file = os.path.join(dst, img_base)
+        dst_dir  = os.path.dirname(dst_file)
+        
+        try:
+          os.makedirs(dst_dir)
+        except:
+          pass
+        
+        shutil.copy(img, dst_file)
+      
+      shutil.rmtree(out_dir)
+    _LOGGER.info("Exported %s to %s" % (pak, dst))
+  
+  if unique:
     shutil.rmtree(tmp_dst)
 
 ######################################################################
@@ -175,6 +250,7 @@ def insert_textures(pak_dir, filename):
       elif ext.lower() == ".png":
         is_png = True
       else:
+        _LOGGER.warning("Did not insert %s into %s" % (img, gmo_name))
         continue
       
       gim_id = int(name)
@@ -196,7 +272,11 @@ if __name__ == "__main__":
   handler = logging.StreamHandler(sys.stdout)
   logging.getLogger(common.LOGGER_NAME).addHandler(handler)
   
-  export_umdimage2("X:/Danganronpa/Danganronpa_BEST/umdimage2", "wip/umdimage3", convert_gim = True, unique = True)
+  # export_umdimage2("Y:/Danganronpa/Danganronpa_BEST/umdimage2", "wip/umdimage3", convert_gim = True, unique = True)
+  # export_umdimage("Y:/Danganronpa/Danganronpa_BEST/umdimage", "wip/umdimage", convert_gim = True, unique = True)
+  # import_umdimage2("Y:/Danganronpa/Danganronpa_BEST/image-editing/umdimage2-edited-png", "wip/umdimage2-orig")
+  import_umdimage2("wip/umdimage2-edited-png", "wip/umdimage2-orig")
+  # export_umdimage2("wip/umdimage2-orig", "wip/umdimage2-test", convert_gim = True, unique = False)
   
   # extract_model_pak("wip/test/bg_042.pak", "wip/test")
   # import_model_pak("wip/test/bg_042-eng", "wip/test/bg_042.pak")

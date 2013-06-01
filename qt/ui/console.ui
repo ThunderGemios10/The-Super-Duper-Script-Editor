@@ -25,14 +25,37 @@
     <number>2</number>
    </property>
    <item>
-    <widget class="XLoggerWidget" name="txtConsole"/>
+    <widget class="XLoggerWidget" name="txtConsole">
+     <property name="lineWrapMode">
+      <enum>QTextEdit::NoWrap</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>8</number>
+     </property>
+     <property name="leftMargin">
+      <number>4</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Clear</string>
+        <string>Logging Level</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cboLevels"/>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="chkWordWrap">
+       <property name="text">
+        <string>Word wrap</string>
        </property>
       </widget>
      </item>
@@ -48,6 +71,13 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -71,8 +101,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>29</x>
-     <y>274</y>
+     <x>493</x>
+     <y>314</y>
     </hint>
     <hint type="destinationlabel">
      <x>50</x>
@@ -80,5 +110,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cboLevels</sender>
+   <signal>currentIndexChanged(QString)</signal>
+   <receiver>Console</receiver>
+   <slot>updateLogLevel(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>112</x>
+     <y>323</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>257</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>updateLogLevel(QString)</slot>
+ </slots>
 </ui>

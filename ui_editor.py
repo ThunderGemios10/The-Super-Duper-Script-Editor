@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\editor.ui'
 #
-# Created: Wed May 22 17:24:47 2013
+# Created: Fri May 31 19:20:33 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -935,6 +935,15 @@ class Ui_Editor(object):
         self.actionExtractTextures.setChecked(True)
         self.actionExtractTextures.setText(QtGui.QApplication.translate("Editor", "Extract/insert textures", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExtractTextures.setObjectName(_fromUtf8("actionExtractTextures"))
+        self.actionExportUnique = QtGui.QAction(Editor)
+        self.actionExportUnique.setCheckable(True)
+        self.actionExportUnique.setText(QtGui.QApplication.translate("Editor", "Only export unique", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExportUnique.setObjectName(_fromUtf8("actionExportUnique"))
+        self.actionPropogateDupes = QtGui.QAction(Editor)
+        self.actionPropogateDupes.setCheckable(True)
+        self.actionPropogateDupes.setChecked(True)
+        self.actionPropogateDupes.setText(QtGui.QApplication.translate("Editor", "Propogate dupes", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPropogateDupes.setObjectName(_fromUtf8("actionPropogateDupes"))
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionReloadDirectory)
         self.menuFile.addAction(self.actionSave)
@@ -945,13 +954,16 @@ class Ui_Editor(object):
         self.menuEdit.addAction(self.actionInsertCLT)
         self.menuEdit.addAction(self.actionSearch)
         self.menuEdit.addAction(self.actionCopyOrig)
+        self.menuImport.addAction(self.actionPropogateDupes)
+        self.menuImport.addSeparator()
         self.menuImport.addAction(self.actionImportUmdimage)
         self.menuImport.addAction(self.actionImportUmdimage2)
         self.menuImport.addAction(self.actionImportOther)
+        self.menuExport.addAction(self.actionExportUnique)
+        self.menuExport.addSeparator()
         self.menuExport.addAction(self.actionExportUmdimage)
         self.menuExport.addAction(self.actionExportUmdimage2)
         self.menuImportExport.addAction(self.actionConvertPNGGIM)
-        self.menuImportExport.addAction(self.actionExtractTextures)
         self.menuImportExport.addSeparator()
         self.menuImportExport.addAction(self.menuImport.menuAction())
         self.menuImportExport.addAction(self.menuExport.menuAction())
