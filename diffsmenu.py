@@ -222,12 +222,12 @@ class DiffsMenu(QtGui.QDialog):
     if not os.path.isfile(file1):
       script1 = ScriptFile()
     else:
-      script1 = ScriptFile(file1, mecab = False)
+      script1 = ScriptFile(file1)
     
     if not os.path.isfile(file2):
       script2 = ScriptFile()
     else:
-      script2 = ScriptFile(file2, mecab = False)
+      script2 = ScriptFile(file2)
     
     # So we can loop this shit.
     to_diff = [

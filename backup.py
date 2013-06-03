@@ -31,9 +31,6 @@ def backup_directory(source_dir, suffix = "_SAVE"):
   files = [file[len(source_dir) + 1:] for file in list_all_files(source_dir)]
   backup_files(source_dir, files, suffix)
 
-# def backup_file(file, suffix = "_SAVE"):
-  # backup_files([file], suffix)
-
 def backup_files(source_dir, files, suffix = "_SAVE", backup_dir = None):
   
   if not backup_dir:

@@ -74,7 +74,7 @@ class ScriptData():
       return
     
     stats = os.stat(filename)
-    data = ScriptFile(filename, mecab = False)
+    data = ScriptFile(filename)
     
     self.filename     = filename
     self.filesize     = int(stats.st_size)

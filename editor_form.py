@@ -47,6 +47,7 @@ import backup
 import common
 from dupe_db import db as dupe_db
 import dir_tools
+from import_export import *
 from progress import calculate_progress
 import script_analytics
 import script_file
@@ -194,6 +195,8 @@ class EditorForm(QtGui.QMainWindow):
     self.ui.actionImportUmdimage.triggered .connect(self.importUmdimage)
     self.ui.actionImportUmdimage2.triggered.connect(self.importUmdimage2)
     self.ui.actionImportOther.triggered    .connect(self.importOther)
+    self.ui.actionExportUmdimage.triggered .connect(self.exportUmdimage)
+    self.ui.actionExportUmdimage2.triggered.connect(self.exportUmdimage2)
     
     self.ui.actionFirstFile.triggered.connect(self.firstFile)
     self.ui.actionPreviousFile.triggered.connect(self.prevFile)
@@ -1396,8 +1399,6 @@ class EditorForm(QtGui.QMainWindow):
     
     self.ui.txtOriginal.setPlainText(self.script_pack[index].original)
     self.ui.txtOriginalNoTags.setPlainText(self.script_pack[index].original_notags)
-    self.ui.txtOriginalSpaces.setPlainText(self.script_pack[index].original_spaced)
-    self.ui.txtOriginalSpacesReadings.setPlainText(self.script_pack[index].original_readings)
     
     filename = os.path.basename(self.script_pack[self.cur_script].filename)
     self.setWindowTitle("The Super Duper Script Editor - " + os.path.join(self.script_pack.directory, filename) + "[*]")
@@ -1820,13 +1821,23 @@ class EditorForm(QtGui.QMainWindow):
     if not self.askUnsavedChanges():
       return
     
-    import_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
-    if not import_dir == "":
-      import_dir = os.path.abspath(import_dir)
+    source_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
+    if not source_dir == "":
+      source_dir = os.path.abspath(source_dir)
     else:
       return
     
-    self.importDirectory(source_dir = import_dir, target_dir = common.editor_config.umdimage_dir)
+    target_dir  = common.editor_config.umdimage_dir
+    convert     = self.ui.actionConvertPNGGIM.isChecked()
+    propogate   = self.ui.actionPropogateDupes.isChecked()
+    import_umdimage(source_dir, target_dir, convert, propogate, parent = self)
+    
+    common.editor_config.last_imported = source_dir
+    common.editor_config.last_import_target = target_dir
+    common.editor_config.save_config()
+    
+    # Reload the directory, so the changes are visible.
+    self.loadDirectory(self.directory, clear_similarity = False, selected_file = os.path.basename(self.script_pack[self.cur_script].filename))
   
   ##############################################################################
   ### @fn   importUmdimage2()
@@ -1837,13 +1848,20 @@ class EditorForm(QtGui.QMainWindow):
     if not self.askUnsavedChanges():
       return
     
-    import_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
-    if not import_dir == "":
-      import_dir = os.path.abspath(import_dir)
+    source_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
+    if not source_dir == "":
+      source_dir = os.path.abspath(source_dir)
     else:
       return
     
-    self.importDirectory(source_dir = import_dir, target_dir = common.editor_config.umdimage2_dir)
+    target_dir  = common.editor_config.umdimage2_dir
+    convert     = self.ui.actionConvertPNGGIM.isChecked()
+    propogate   = self.ui.actionPropogateDupes.isChecked()
+    import_umdimage2(source_dir, target_dir, convert, propogate, parent = self)
+    
+    common.editor_config.last_imported = source_dir
+    common.editor_config.last_import_target = target_dir
+    common.editor_config.save_config()
   
   ##############################################################################
   ### @fn   importOther()
@@ -1854,9 +1872,9 @@ class EditorForm(QtGui.QMainWindow):
     if not self.askUnsavedChanges():
       return
     
-    import_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
-    if not import_dir == "":
-      import_dir = os.path.abspath(import_dir)
+    source_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a source directory", directory = common.editor_config.last_imported)
+    if not source_dir == "":
+      source_dir = os.path.abspath(source_dir)
     else:
       return
     
@@ -1866,217 +1884,58 @@ class EditorForm(QtGui.QMainWindow):
     else:
       return
     
-    self.importDirectory(source_dir = import_dir, target_dir = target_dir)
-  
-  ##############################################################################
-  ### @fn   importDirectory()
-  ### @desc Imports a directory. <3
-  ##############################################################################
-  def importDirectory(self, source_dir, target_dir):
-    
-    if not self.askUnsavedChanges():
-      return
+    convert     = self.ui.actionConvertPNGGIM.isChecked()
+    propogate   = self.ui.actionPropogateDupes.isChecked()
+    import_umdimage(source_dir, target_dir, convert, propogate, parent = self)
     
     common.editor_config.last_imported = source_dir
     common.editor_config.last_import_target = target_dir
     common.editor_config.save_config()
     
-    answer = QtGui.QMessageBox.question(
-      self,
-      "Import Directory",
-      "Importing directory:\n\n" + source_dir + "\n\n" +
-      "into directory:\n\n" + target_dir + "\n\n" +
-      "Any affected files will be backed up. Proceed?",
-      buttons = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,
-      defaultButton = QtGui.QMessageBox.No
-    )
-    
-    if answer == QtGui.QMessageBox.No:
-      return
-    
-    progress = QProgressDialog("Finding files...", QtCore.QString(), 0, len(self.script_pack), self)
-    progress.setWindowTitle("Importing...")
-    progress.setWindowModality(Qt.Qt.WindowModal)
-    progress.setValue(0)
-    progress.setAutoClose(False)
-    progress.setMinimumDuration(0)
-    
-    width = self.width()
-    height = self.height()
-    x = self.x()
-    y = self.y()
-    
-    files = list(list_all_files(source_dir))
-    
-    progress.setValue(0)
-    progress.setMaximum(len(files))
-    
-    # A list of lists, including all dupes of the files being imported, too.
-    affected_files = []
-    file_count = 0
-    
-    # Hacky.
-    if target_dir == common.editor_config.umdimage2_dir:
-      dupe_base = "umdimage2"
-    else:
-      dupe_base = "umdimage"
-    
-    for i, file in enumerate(files):
-      # Strip our base directory, so we have just a relative file list.
-      files[i] = filename = os.path.normpath(os.path.normcase(file[len(source_dir) + 1:]))
-    
-    seen_groups = []
-    
-    count = 0
-    for i, file in enumerate(files):
-      affected_files.append([])
-      
-      count += 1
-      if count % 25 == 0:
-        progress.setLabelText("Finding files...\n" + file)
-        progress.setValue(count)
-        
-        # Re-center the dialog.
-        progress_w = progress.geometry().width()
-        progress_h = progress.geometry().height()
-        
-        new_x = x + ((width - progress_w) / 2)
-        new_y = y + ((height - progress_h) / 2)
-        
-        progress.move(new_x, new_y)
-      
-      file_group = dupe_db.group_from_file(os.path.join(dupe_base, files[i]))
-      
-      if not file_group == None and file_group in seen_groups:
-        continue
-      
-      # If there are no dupes, just add this file.
-      if file_group == None:
-        affected_files[-1].append(files[i])
-        file_count += 1
-        continue
-      
-      seen_groups.append(file_group)
-
-      # Because we need the "umdimage" part in the dupes DB.
-      dupes = dupe_db.files_in_same_group(os.path.join(dupe_base, files[i]))
-      
-      for dupe in dupes:
-        # Minus the "umdimage" part
-        dupe = dupe[len(dupe_base) + 1:]
-        
-        # We obviously don't want to skip THIS one.
-        # But there's no point in saving this multiple times
-        # if it's already in the list of stuff to save.
-        #if not dupe == files[i] and dupe in files:
-          #continue
-        
-        affected_files[-1].append(dupe)
-        file_count += 1
-    
-    progress.setValue(0)
-    progress.setMaximum(file_count)
-    
-    # Make a backup first.
-    backup_time = time.strftime("%Y.%m.%d_%H.%M.%S_IMPORT")
-    backup_dir  = os.path.join(common.editor_config.backup_dir, backup_time)
-    
-    count = 0
-    for file_set in affected_files:
-      for file in file_set:
-        source = os.path.join(target_dir, file)
-        target = os.path.join(backup_dir, file)
-        
-        count += 1
-        if count % 50 == 0:
-          progress.setLabelText("Backing up...\n" + file)
-          progress.setValue(count)
-          
-          # Re-center the dialog.
-          progress_w = progress.geometry().width()
-          progress_h = progress.geometry().height()
-          
-          new_x = x + ((width - progress_w) / 2)
-          new_y = y + ((height - progress_h) / 2)
-          
-          progress.move(new_x, new_y)
-        
-        # It's perfectly possible we want to import some files that
-        # don't already exist. Such as when importing a directory
-        # with added lines.
-        if not os.path.isfile(source):
-          continue
-        
-        basedir = os.path.dirname(target)
-        if not os.path.isdir(basedir):
-          os.makedirs(basedir)
-        
-        shutil.copy(source, target)
-    
-    progress.setValue(0)
-    
-    # And now do our importing.
-    import_all_new = False
-    skip_all_new = False
-    count = 0
-    for index, source in enumerate(files):
-      
-      source = os.path.join(source_dir, source)
-      
-      for file in affected_files[index]:
-        
-        target = os.path.join(target_dir, file)
-        
-        count += 1
-        if count % 25 == 0:
-          progress.setLabelText("Importing...\n" + file)
-          progress.setValue(count)
-          
-          # Re-center the dialog.
-          progress_w = progress.geometry().width()
-          progress_h = progress.geometry().height()
-          
-          new_x = x + ((width - progress_w) / 2)
-          new_y = y + ((height - progress_h) / 2)
-          
-          progress.move(new_x, new_y)
-        
-        # We may be allowed to import files that don't exist, but we're
-        # going to ask them about it anyway.
-        if not os.path.isfile(target):
-          if skip_all_new:
-            continue
-          
-          if not import_all_new:
-            answer = QtGui.QMessageBox.question(
-              self,
-              "File Not Found",
-              "File:\n\n" + file + "\n\n" +
-              "does not exist in the target directory. Import anyway?",
-              buttons = QtGui.QMessageBox.Yes | QtGui.QMessageBox.YesToAll | QtGui.QMessageBox.No | QtGui.QMessageBox.NoToAll,
-              defaultButton = QtGui.QMessageBox.No
-            )
-            
-            if answer == QtGui.QMessageBox.YesToAll:
-              import_all_new = True
-              skip_all_new = False
-            elif answer == QtGui.QMessageBox.NoToAll:
-              skip_all_new = True
-              import_all_new = False
-              continue
-            elif answer == QtGui.QMessageBox.No:
-              continue
-        
-        basedir = os.path.dirname(target)
-        if not os.path.isdir(basedir):
-          os.makedirs(basedir)
-        
-        shutil.copy(source, target)
-    
-    progress.close()
-    
     # Reload the directory, so the changes are visible.
     self.loadDirectory(self.directory, clear_similarity = False, selected_file = os.path.basename(self.script_pack[self.cur_script].filename))
+  
+  ##############################################################################
+  ### @fn   exportUmdimage()
+  ### @desc Exports umdimage to some other directory. <3
+  ##############################################################################
+  def exportUmdimage(self):
+    
+    target_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a target directory", directory = common.editor_config.last_export_target)
+    if not target_dir == "":
+      target_dir = os.path.abspath(target_dir)
+    else:
+      return
+    
+    source_dir  = common.editor_config.umdimage_dir
+    convert     = self.ui.actionConvertPNGGIM.isChecked()
+    unique      = self.ui.actionExportUnique.isChecked()
+    export_umdimage(source_dir, target_dir, convert, unique, parent = self)
+    
+    common.editor_config.last_exported = source_dir
+    common.editor_config.last_export_target = target_dir
+    common.editor_config.save_config()
+  
+  ##############################################################################
+  ### @fn   exportUmdimage2()
+  ### @desc Exports umdimage2 to some other directory. <3
+  ##############################################################################
+  def exportUmdimage2(self):
+    
+    target_dir = QtGui.QFileDialog.getExistingDirectory(self, caption = "Select a target directory", directory = common.editor_config.last_export_target)
+    if not target_dir == "":
+      target_dir = os.path.abspath(target_dir)
+    else:
+      return
+    
+    source_dir  = common.editor_config.umdimage2_dir
+    convert     = self.ui.actionConvertPNGGIM.isChecked()
+    unique      = self.ui.actionExportUnique.isChecked()
+    export_umdimage2(source_dir, target_dir, convert, unique, parent = self)
+    
+    common.editor_config.last_exported = source_dir
+    common.editor_config.last_export_target = target_dir
+    common.editor_config.save_config()
   
   ##############################################################################
   ### @fn   copyFromOrig()
@@ -2324,7 +2183,7 @@ class EditorForm(QtGui.QMainWindow):
       self,
       u"About",
       u"""
-<b>The Super Duper Script Editor</b> v1.0.0.0<br/>
+<b>The Super Duper Script Editor</b> v1.1.0.0<br/>
 Copyright © 2012-2013 BlackDragonHunt, released under the GNU GPL (see file COPYING).<br/>
 <br/>
 Attributions:
@@ -2334,7 +2193,6 @@ Attributions:
 <li>enum: Copyright © 2007–2009 Ben Finney &lt;ben+python@benfinney.id.au&gt;; Licensed under the GNU GPL, Version 3</li>
 <li>GIM2PNG: Copyright (c) 2008; <a href="http://www.geocities.jp/junk2ool/">Website</a></li>
 <li>GIMExport: Copyright © 2012 /a/nonymous scanlations; Used with permission.</li>
-<li>MeCab: Copyright (c) 2001-2008, Taku Kudo; Copyright (c) 2004-2008, Nippon Telegraph and Telephone Corporation; Licensed under the GNU GPL, Version 3</li>
 <li>mkisofs: Copyright (C) 1993-1997 Eric Youngdale (C); Copyright (C) 1997-2010 Joerg Schilling; Licensed under the GNU GPL</li>
 <li>pngquant: Copyright (C) 1989, 1991 by Jef Poskanzer; Copyright (C) 1997, 2000, 2002 by Greg Roelofs, based on an idea by Stefan Schneider; Copyright 2009-2012 by Kornel Lesinski</li>
 <li>ProjexUI: Copyright (c) 2011, Projex Software; Licensed under the LGPL</li>
@@ -2402,10 +2260,10 @@ Attributions:
       base_file = os.path.join(base_dir, file)
       cur_file  = os.path.join(common.editor_config.umdimage_dir, file)
       
-      base_script   = ScriptFile(base_file, mecab = False)
+      base_script   = ScriptFile(base_file)
       
       if os.path.isfile(cur_file):
-        cur_script  = ScriptFile(cur_file, mecab = False)
+        cur_script  = ScriptFile(cur_file)
         
         if not base_script.original.strip() == cur_script.original.strip():
           errors.append(file)

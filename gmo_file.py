@@ -184,29 +184,6 @@ class GmoFile():
         os.remove(out_gim)
 
 if __name__ == "__main__":
-  # gmo = GmoFile(filename = "X:\\Danganronpa\\Danganronpa_BEST\\umdimage2-sfx-tex\\bg_160.pak\\0007.gmo")
-  # gim = gmo.get_gim(4)
-  # gmo.replace_gim_file(4,  "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0004-2-fs8.gim")
-  # gmo.replace_gim_file(24, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0024-2-fs8.gim")
-  # gmo.replace_gim_file(25, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0025-2-fs8.gim")
-  # gmo.replace_gim_file(26, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0026-2-fs8.gim")
-  # gmo.replace_gim_file(27, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0027-2-fs8.gim")
-  # gmo.replace_gim_file(28, "X:\\Danganronpa\\Danganronpa_BEST\\image-editing\\Models\\!done\\0166_bg_160.pak\\0007\\0028-2-fs8.gim")
-  
-  # gmo.save("debug/test.gmo")
-  # with open("debug/test.gim", "wb") as f:
-    # gim.tofile(f)
-  
-  gimconv = GimConverter()
-  # gimconv.gim_to_png("debug/test.gim", "debug/test.png")
-  gimconv.png_to_gim("debug/bloodbathfever.png", "debug/bloodbathfever.gim")
-  
-  gmo = GmoFile(filename = "debug/bg_029_p00.gmo")
-  gmo.replace_gim_file(3, "debug/bloodbathfever.gim")
-  gmo.save("debug/bg_029_p00-test.gmo")
-  
-  # print gmo.gim_count()
-  
-  # gmo.extract("debug/bg_160.pak", to_png = True)
+  pass
 
 ### EOF ###

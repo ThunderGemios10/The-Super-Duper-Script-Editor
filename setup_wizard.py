@@ -54,8 +54,6 @@ EDITED_ISO_DIR  = "!ISO_EDITED"
 EDITED_ISO_FILE = "[PSP] DRBest [Edited].iso"
 
 EDITOR_DATA_DIR = "!editor"
-TOC_FILE        = "!toc.txt"
-TOC2_FILE       = "!toc2.txt"
 DUPES_CSV       = "dupes.csv"
 EBOOT_TEXT      = "eboot_text.csv"
 SIMILARITY_DB   = "similarity-db.sql"
@@ -188,8 +186,6 @@ class SetupWizard(QtGui.QDialog):
     self.edited_iso_dir  = os.path.join(self.workspace_dir, EDITED_ISO_DIR)
     
     self.editor_data_dir = os.path.join(self.workspace_dir, EDITOR_DATA_DIR)
-    self.toc_file        = os.path.join(self.editor_data_dir, TOC_FILE)
-    self.toc2_file       = os.path.join(self.editor_data_dir, TOC2_FILE)
     
   def skip_setup(self):
     
@@ -585,8 +581,6 @@ class SetupWizard(QtGui.QDialog):
     cfg.iso_file      = os.path.join(self.workspace_dir, EDITED_ISO_FILE)
     cfg.similarity_db = os.path.join(self.editor_data_dir, SIMILARITY_DB)
     cfg.terminology   = self.terminology
-    cfg.toc           = self.toc_file
-    cfg.toc2          = self.toc2_file
     cfg.umdimage_dir  = self.umdimage_dir
     cfg.umdimage2_dir = self.umdimage2_dir
     cfg.voice_dir     = self.voice_dir

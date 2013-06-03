@@ -59,8 +59,6 @@ def check_config():
      not os.path.isdir (cfg.iso_dir) or \
      not os.path.isfile(cfg.similarity_db) or \
      not os.path.isfile(cfg.terminology) or \
-     not os.path.isfile(cfg.toc) or \
-     not os.path.isfile(cfg.toc2) or \
      not os.path.isdir (cfg.umdimage_dir) or \
      not os.path.isdir (cfg.umdimage2_dir) or \
      not os.path.isdir (cfg.voice_dir):

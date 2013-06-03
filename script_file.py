@@ -20,7 +20,7 @@
 
 import os
 
-import mecab_parser
+# import mecab_parser
 import re
 from text_files import load_text, save_text
 from scene_info import SceneInfo
@@ -31,19 +31,17 @@ TEXT_PARSER = re.compile(ur"([^\u0000\u0001]+)[\u0000\u0001]+[\n\r]*([^\[]+)?[\n
 TAG_KILLER  = re.compile(ur"\<CLT\>|\<CLT (?P<CLT_INDEX>\d+)\>|<DIG.*?>", re.UNICODE | re.DOTALL)
 
 class ScriptFile():
-  def __init__(self, filename = None, scene_info = None, mecab = True):
+  def __init__(self, filename = None, scene_info = None):
     self.translated = ""
     self.translated_notags = ""
     self.original = ""
     self.original_notags = ""
-    self.original_spaced = ""
-    self.original_readings = ""
     self.comments = ""
     
     self.filename = None
     
     if not filename == None:
-      self.open(filename, mecab = mecab)
+      self.open(filename)
     
       if scene_info == None:
         # Squeeze the file ID out of the filename.
@@ -51,26 +49,24 @@ class ScriptFile():
     
     self.scene_info = scene_info
   
-  def open(self, filename, mecab = True):
+  def open(self, filename):
     
     if not filename or not os.path.isfile(filename):
       return
     
     text = load_text(filename)
     
-    self.from_data(text, mecab)
+    self.from_data(text)
     
     self.filename = filename
   
-  def from_data(self, data, mecab = True):
+  def from_data(self, data):
     
     self.filename = None
     self.translated = ""
     self.translated_notags = ""
     self.original = ""
     self.original_notags = ""
-    self.original_spaced = ""
-    self.original_readings = ""
     self.comments = ""
     
     # Sanitize our line-breaks. The game handles \r\n in some instances,
@@ -95,13 +91,6 @@ class ScriptFile():
         self.comments = third_part
     
     self.original_notags = TAG_KILLER.sub("", self.original)
-    if mecab:
-      self.original_spaced = mecab_parser.get_spaced(self.original_notags).replace(" ", u"  ")  # Easier to read with more spacing.
-      self.original_readings = mecab_parser.get_readings(self.original_spaced)
-    else:
-      self.original_spaced = self.original_notags
-      self.original_readings = self.original_notags
-    
     self.translated_notags = TAG_KILLER.sub("", self.translated)
   
   ##############################################################################

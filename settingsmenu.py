@@ -52,8 +52,6 @@ FILE_LOCATIONS = [
   {TEXT: "txtDupes",        BTN: "btnDupes",        CFG: "dupes_csv",     FN: get_open_file,    FILTER: "dupes.csv (*.csv)"},
   {TEXT: "txtEbootText",    BTN: "btnEbootText",    CFG: "eboot_text",    FN: get_open_file,    FILTER: "eboot_text.csv (*.csv)"},
   {TEXT: "txtSimilarity",   BTN: "btnSimilarity",   CFG: "similarity_db", FN: get_open_file,    FILTER: "similarity-db.sql (*.sql)"},
-  {TEXT: "txtToc",          BTN: "btnToc",          CFG: "toc",           FN: get_open_file,    FILTER: "!toc.txt (*.txt)"},
-  {TEXT: "txtToc2",         BTN: "btnToc2",         CFG: "toc2",          FN: get_open_file,    FILTER: "!toc2.txt (*.txt)"},
   {TEXT: "txtCopy",         BTN: "btnCopy",         CFG: "changes_dir",   FN: get_existing_dir, FILTER: None},
   {TEXT: "txtBackup",       BTN: "btnBackup",       CFG: "backup_dir",    FN: get_existing_dir, FILTER: None},
 ]

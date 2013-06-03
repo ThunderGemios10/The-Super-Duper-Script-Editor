@@ -1330,86 +1330,6 @@ p, li { white-space: pre-wrap; }
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tabSpaces">
-     <attribute name="title">
-      <string>With Spaces</string>
-     </attribute>
-     <widget class="QPlainTextEdit" name="txtOriginalSpaces">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>-1</x>
-        <y>-1</y>
-        <width>447</width>
-        <height>77</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Meiryo UI</family>
-        <pointsize>11</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-        <strikeout>false</strikeout>
-        <kerning>true</kerning>
-       </font>
-      </property>
-      <property name="tabChangesFocus">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-      <property name="plainText">
-       <string/>
-      </property>
-      <property name="tabStopWidth">
-       <number>20</number>
-      </property>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="tabReadings">
-     <attribute name="title">
-      <string>With Spaces and Readings</string>
-     </attribute>
-     <widget class="QPlainTextEdit" name="txtOriginalSpacesReadings">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="geometry">
-       <rect>
-        <x>-1</x>
-        <y>-1</y>
-        <width>447</width>
-        <height>77</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <family>Meiryo UI</family>
-        <pointsize>11</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
-        <strikeout>false</strikeout>
-        <kerning>true</kerning>
-       </font>
-      </property>
-      <property name="tabChangesFocus">
-       <bool>true</bool>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-      <property name="plainText">
-       <string/>
-      </property>
-      <property name="tabStopWidth">
-       <number>20</number>
-      </property>
-     </widget>
-    </widget>
     <widget class="QWidget" name="tabHide">
      <attribute name="title">
       <string>Hide</string>
@@ -2294,8 +2214,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>tabsOriginal</tabstop>
   <tabstop>txtOriginal</tabstop>
   <tabstop>txtOriginalNoTags</tabstop>
-  <tabstop>txtOriginalSpaces</tabstop>
-  <tabstop>txtOriginalSpacesReadings</tabstop>
   <tabstop>txtComments</tabstop>
   <tabstop>lstFiles</tabstop>
   <tabstop>tabRelated</tabstop>

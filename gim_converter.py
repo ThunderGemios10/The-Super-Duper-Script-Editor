@@ -46,6 +46,7 @@ class GimConverter:
     self.temp_dir = tempfile.mkdtemp(prefix = "sdse-")
   
   def __del__(self):
+    import shutil
     shutil.rmtree(self.temp_dir)
   
   def quantize_png(self, png_file, quant_type = QuantizeType.auto):

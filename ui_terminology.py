@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\terminology.ui'
 #
-# Created: Fri May 31 19:20:35 2013
+# Created: Mon Jun 03 01:17:18 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!

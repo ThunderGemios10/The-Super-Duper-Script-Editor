@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\console.ui'
 #
-# Created: Fri May 31 19:20:33 2013
+# Created: Mon Jun 03 01:17:16 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Console(object):
     def setupUi(self, Console):
         Console.setObjectName(_fromUtf8("Console"))
-        Console.resize(552, 333)
+        Console.resize(689, 369)
         Console.setWindowTitle(QtGui.QApplication.translate("Console", "Console", None, QtGui.QApplication.UnicodeUTF8))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/monokuma-green.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)

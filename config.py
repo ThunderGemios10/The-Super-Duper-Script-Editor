@@ -69,8 +69,6 @@ DEFAULT_SETTINGS = {
   "spell_check_lang":   "en_US",
   "terminology":        "X:/My Dropbox/Danganronpa/Terminology.csv",
   "text_repl":          "False",
-  "toc":                "./!toc.txt",
-  "toc2":               "./!toc2.txt",
   "umdimage2_dir":      "./umdimage2",
   "umdimage_dir":       "./umdimage",
   "voice_dir":          "./voice",

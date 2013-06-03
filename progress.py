@@ -202,7 +202,7 @@ def list_untranslated():
   
   for file in text_files:
     try:
-      script_file = ScriptFile(file, mecab = False)
+      script_file = ScriptFile(file)
     except:
       print file
       continue

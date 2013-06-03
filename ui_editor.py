@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'qt\ui\editor.ui'
 #
-# Created: Fri May 31 19:20:33 2013
+# Created: Mon Jun 03 01:17:16 2013
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -518,44 +518,6 @@ class Ui_Editor(object):
         self.txtOriginalNoTags.setTabStopWidth(20)
         self.txtOriginalNoTags.setObjectName(_fromUtf8("txtOriginalNoTags"))
         self.tabsOriginal.addTab(self.tabNoTags, _fromUtf8(""))
-        self.tabSpaces = QtGui.QWidget()
-        self.tabSpaces.setObjectName(_fromUtf8("tabSpaces"))
-        self.txtOriginalSpaces = QtGui.QPlainTextEdit(self.tabSpaces)
-        self.txtOriginalSpaces.setEnabled(True)
-        self.txtOriginalSpaces.setGeometry(QtCore.QRect(-1, -1, 447, 77))
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("Meiryo UI"))
-        font.setPointSize(11)
-        font.setBold(False)
-        font.setWeight(50)
-        font.setStrikeOut(False)
-        font.setKerning(True)
-        self.txtOriginalSpaces.setFont(font)
-        self.txtOriginalSpaces.setTabChangesFocus(True)
-        self.txtOriginalSpaces.setReadOnly(True)
-        self.txtOriginalSpaces.setPlainText(_fromUtf8(""))
-        self.txtOriginalSpaces.setTabStopWidth(20)
-        self.txtOriginalSpaces.setObjectName(_fromUtf8("txtOriginalSpaces"))
-        self.tabsOriginal.addTab(self.tabSpaces, _fromUtf8(""))
-        self.tabReadings = QtGui.QWidget()
-        self.tabReadings.setObjectName(_fromUtf8("tabReadings"))
-        self.txtOriginalSpacesReadings = QtGui.QPlainTextEdit(self.tabReadings)
-        self.txtOriginalSpacesReadings.setEnabled(True)
-        self.txtOriginalSpacesReadings.setGeometry(QtCore.QRect(-1, -1, 447, 77))
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("Meiryo UI"))
-        font.setPointSize(11)
-        font.setBold(False)
-        font.setWeight(50)
-        font.setStrikeOut(False)
-        font.setKerning(True)
-        self.txtOriginalSpacesReadings.setFont(font)
-        self.txtOriginalSpacesReadings.setTabChangesFocus(True)
-        self.txtOriginalSpacesReadings.setReadOnly(True)
-        self.txtOriginalSpacesReadings.setPlainText(_fromUtf8(""))
-        self.txtOriginalSpacesReadings.setTabStopWidth(20)
-        self.txtOriginalSpacesReadings.setObjectName(_fromUtf8("txtOriginalSpacesReadings"))
-        self.tabsOriginal.addTab(self.tabReadings, _fromUtf8(""))
         self.tabHide = QtGui.QWidget()
         self.tabHide.setObjectName(_fromUtf8("tabHide"))
         self.tabsOriginal.addTab(self.tabHide, _fromUtf8(""))
@@ -1040,9 +1002,7 @@ class Ui_Editor(object):
         Editor.setTabOrder(self.btnStopVoice, self.tabsOriginal)
         Editor.setTabOrder(self.tabsOriginal, self.txtOriginal)
         Editor.setTabOrder(self.txtOriginal, self.txtOriginalNoTags)
-        Editor.setTabOrder(self.txtOriginalNoTags, self.txtOriginalSpaces)
-        Editor.setTabOrder(self.txtOriginalSpaces, self.txtOriginalSpacesReadings)
-        Editor.setTabOrder(self.txtOriginalSpacesReadings, self.txtComments)
+        Editor.setTabOrder(self.txtOriginalNoTags, self.txtComments)
         Editor.setTabOrder(self.txtComments, self.lstFiles)
         Editor.setTabOrder(self.lstFiles, self.tabRelated)
         Editor.setTabOrder(self.tabRelated, self.btnExpandAll)
@@ -1062,8 +1022,6 @@ class Ui_Editor(object):
         self.tabRelated.setTabText(self.tabRelated.indexOf(self.tabReferences), QtGui.QApplication.translate("Editor", "0 References", None, QtGui.QApplication.UnicodeUTF8))
         self.tabsOriginal.setTabText(self.tabsOriginal.indexOf(self.tabOrig), QtGui.QApplication.translate("Editor", "Original", None, QtGui.QApplication.UnicodeUTF8))
         self.tabsOriginal.setTabText(self.tabsOriginal.indexOf(self.tabNoTags), QtGui.QApplication.translate("Editor", "No Tags", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabsOriginal.setTabText(self.tabsOriginal.indexOf(self.tabSpaces), QtGui.QApplication.translate("Editor", "With Spaces", None, QtGui.QApplication.UnicodeUTF8))
-        self.tabsOriginal.setTabText(self.tabsOriginal.indexOf(self.tabReadings), QtGui.QApplication.translate("Editor", "With Spaces and Readings", None, QtGui.QApplication.UnicodeUTF8))
         self.tabsOriginal.setTabText(self.tabsOriginal.indexOf(self.tabHide), QtGui.QApplication.translate("Editor", "Hide", None, QtGui.QApplication.UnicodeUTF8))
 
 from superbutton import SuperButton
