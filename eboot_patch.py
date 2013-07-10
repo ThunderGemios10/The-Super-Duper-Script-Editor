@@ -455,12 +455,22 @@ EBOOT_PATCHES = [
       {POS: 0x0005CF0B, ORIG: ConstBitStream(hex = "0x90"), PATCH: ConstBitStream(hex = "0x94")},
     ]
   },
+  {NAME: "CLT Tweaks", ENABLED: True, CFG_ID: "clt_tweak", DATA:
+    [
+      {POS: 0x00101400, ORIG: ConstBitStream(hex = "0x66E6FFFF"), PATCH: ConstBitStream(hex = "0xFFE600FF")},
+      {POS: 0x00101404, ORIG: ConstBitStream(hex = "0x66E6FFFF"), PATCH: ConstBitStream(hex = "0xFFE600FF")},
+      {POS: 0x00101408, ORIG: ConstBitStream(hex = "0x236EFFFF"), PATCH: ConstBitStream(hex = "0xB4640FFF")},
+    ]
+  },
 ]
 
 def apply_sys_lang(eboot):
-  sys_menu_lang = 1
+  
   if LANG_CFG_ID in common.editor_config.hacks:
     sys_menu_lang = common.editor_config.hacks[LANG_CFG_ID]
+  else:
+    sys_menu_lang = 1
+    common.editor_config.hacks[LANG_CFG_ID] = sys_menu_lang
   
   patch_loc = 0x1B300
   patch = ConstBitStream(uintle = sys_menu_lang, length = 8) + ConstBitStream(hex = "0x000224")

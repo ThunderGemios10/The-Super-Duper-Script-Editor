@@ -264,8 +264,11 @@ class SettingsMenu(QtGui.QDialog):
     for lang in eboot_patch.LANGUAGES:
       self.ui.cboHackLang.addItem(lang)
     
-    sys_lang = common.editor_config.hacks[eboot_patch.LANG_CFG_ID]
-    self.ui.cboHackLang.setCurrentIndex(sys_lang)
+    if eboot_patch.LANG_CFG_ID in common.editor_config.hacks:
+      sys_lang = common.editor_config.hacks[eboot_patch.LANG_CFG_ID]
+      self.ui.cboHackLang.setCurrentIndex(sys_lang)
+    else:
+      self.ui.cboHackLang.setCurrentIndex(0)
   
   def apply_hacks(self):
     for i in range(self.ui.lstHacks.count()):

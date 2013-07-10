@@ -174,7 +174,15 @@ class EditorConfig:
       
       for option in options:
         if option == LANG_CFG_ID:
-          self.hacks[option] = config.getint(HACKS_SECTION, option)
+          # Because the defaultdict is bool (which is cool for everything else)
+          # our LANG_CFG_ID ends up being False instead of a number if it's
+          # automatically generated and never actually set through the
+          # settings menu. So, instead of fixing the source of the problem,
+          # we're hacking around it.
+          try:
+            self.hacks[option] = config.getint(HACKS_SECTION, option)
+          except ValueError:
+            self.hacks[option] = int(config.getboolean(HACKS_SECTION, option))
         else:
           self.hacks[option] = config.getboolean(HACKS_SECTION, option)
     
