@@ -26,10 +26,12 @@ from bitstring import BitStream, ConstBitStream
 from tempfile import TemporaryFile
 
 import codecs
+import io
 import logging
-import os.path
+import os
 import re
 import shutil
+import struct
 import sys
 import tempfile
 import time
@@ -216,15 +218,13 @@ class DatPacker():
       # Causes memory issues if I use the original order, for whatever reason.
       file_list = None
       
-      archive_data, table_of_contents = self.pack_dir(archive["dir"], file_list = file_list, eof = archive["eof"])
+      with io.FileIO(archive["dat"], "w") as handler:
+        table_of_contents = self.pack_dir(archive["dir"], handler, file_list = file_list, eof = archive["eof"])
       
       # We're playing fast and loose with the file count anyway, so why not?
       self.file_count += 1
       self.progress.setValue(self.file_count)
       self.progress.setLabelText("Saving " + archive["name"] + "...")
-      
-      with open(archive["dat"], "wb") as f:
-        archive_data.tofile(f)
       
       if archive["toc"]:
         for entry in table_of_contents:
@@ -238,7 +238,6 @@ class DatPacker():
           eboot.overwrite(BitStream(uintle = file_pos, length = 32),  toc_info[entry][0] * 8)
           eboot.overwrite(BitStream(uintle = file_size, length = 32), toc_info[entry][1] * 8)
       
-      del archive_data
       del table_of_contents
     
     self.progress.setLabelText("Saving EBOOT.BIN...")
@@ -273,7 +272,7 @@ class DatPacker():
     
     self.progress.close()
 
-  def pack_dir(self, dir, file_list = None, align_toc = 16, align_files = 16, eof = False):
+  def pack_dir(self, dir, handler, file_list = None, align_toc = 16, align_files = 16, eof = False):
     
     table_of_contents = {}
     
@@ -290,13 +289,12 @@ class DatPacker():
     if toc_length % align_toc > 0:
       toc_length += align_toc - (toc_length % align_toc)
     
-    archive_data = BitStream(uintle = 0, length = toc_length * 8)
-    archive_data.overwrite(bitstring.pack("uintle:32", num_files), 0)
+    handler.seek(0)
+    handler.write(struct.pack("<I", num_files))
+    handler.write(bytearray(toc_length - 4))
     
     for file_num, item in enumerate(file_list):
       full_path = os.path.join(dir, item)
-      
-      data = BitStream()
     
       if os.path.isfile(full_path):
         
@@ -305,17 +303,16 @@ class DatPacker():
         
         # Special handling for certain data types.
         if ext == ".txt":
-          
           data = self.pack_txt(full_path)
         
         # anagram_81.dat is not a valid anagram file. <_>
         elif basename[:8] == "anagram_" and ext == ".dat" and not basename == "anagram_81":
           anagram = AnagramFile(full_path)
-          data    = anagram.pack(for_game = True)
+          data    = anagram.pack(for_game = True).bytes
         
         else:
           with open(full_path, "rb") as f:
-            data = BitStream(bytes = f.read())
+            data = f.read()
       
       else:
       
@@ -333,19 +330,25 @@ class DatPacker():
           data = self.pack_lin(full_path)
         
         else:
-          data, toc_discard = self.pack_dir(full_path, align_toc = temp_align_toc, align_files = temp_align_files, eof = eof)
-          del toc_discard
+          data = io.BytesIO()
+          with io.BufferedWriter(data) as fh:
+            self.pack_dir(full_path, fh, align_toc = temp_align_toc, align_files = temp_align_files, eof = eof)
+            fh.flush()
+            data = data.getvalue()
       
-      file_size = data.len / 8
+      data = bytearray(data)
+      file_size = len(data)
       padding = 0
       
       if file_size % align_files > 0:
         padding = align_files - (file_size % align_files)
-        data.append(BitStream(uintle = 0, length = padding * 8))
+        data.extend(bytearray(padding))
       
-      file_pos = archive_data.len / 8
-      archive_data.overwrite(bitstring.pack("uintle:32", file_pos), (file_num + 1) * 32)
-      archive_data.append(data)
+      handler.seek(0, io.SEEK_END)
+      file_pos = handler.tell()
+      handler.write(data)
+      handler.seek((file_num + 1) * 4)
+      handler.write(struct.pack("<I", file_pos))
       
       del data
       
@@ -368,9 +371,12 @@ class DatPacker():
       table_of_contents[item]["pos"]  = file_pos
     
     if eof:
-      archive_data.overwrite(bitstring.pack("uintle:32", archive_data.len / 8), (num_files + 1) * 32)
+      handler.seek(0, io.SEEK_END)
+      archive_len = handler.tell()
+      handler.seek((num_files + 1) * 4)
+      handler.write(struct.pack("<I", archive_len))
     
-    return archive_data, table_of_contents
+    return table_of_contents
   
   def pack_txt(self, filename):
     
@@ -387,7 +393,7 @@ class DatPacker():
     if is_nonstop and not text[-1] == "\n":
       text += "\n"
     
-    return SCRIPT_BOM + BitStream(bytes = bytearray(text, encoding = "UTF-16LE")) + SCRIPT_NULL
+    return SCRIPT_BOM.bytes + bytearray(text, encoding = "UTF-16LE") + SCRIPT_NULL.bytes
     
   def pack_lin(self, dir):
     
@@ -428,12 +434,16 @@ class DatPacker():
     # Pack the text files in-place to save us a bunch of copying
     # and then move it to the tmp directory with the wrd file.
     if txt:
-      data, temp_toc = self.pack_dir(dir, file_list = txt)
-      with open(os.path.join(temp_dir, "1.dat"), "wb") as f:
-        data.tofile(f)
+      with io.FileIO(os.path.join(temp_dir, "1.dat"), "w") as h:
+        self.pack_dir(dir, h, file_list = txt)
     
     # Then pack it like normal.
-    data, temp_toc = self.pack_dir(temp_dir)
+    data = io.BytesIO()
+    with io.BufferedWriter(data) as h:
+      self.pack_dir(temp_dir, h)
+      h.flush()
+      data = data.getvalue()
+    
     shutil.rmtree(temp_dir)
     
     return data
@@ -444,8 +454,8 @@ if __name__ == "__main__":
   
   packer = DatPacker()
   
-  #start = time.time()
+  # start = time.time()
   packer.create_archives()
-  #print "Took %s seconds to create the archives." % (time.time() - start)
+  # print "Took %s seconds to create the archives." % (time.time() - start)
 
 ### EOF ###

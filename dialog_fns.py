@@ -22,9 +22,12 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import QFileDialog
 
 import os
+from common import qt_to_unicode
 
 def get_save_file(parent, default, filter = ""):
   file = QFileDialog.getSaveFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
+  file = qt_to_unicode(file)
+  
   if not file == "":
     return os.path.abspath(file)
   else:
@@ -32,6 +35,8 @@ def get_save_file(parent, default, filter = ""):
 
 def get_open_file(parent, default, filter = ""):
   file = QFileDialog.getOpenFileName(parent, directory = default, filter = filter + ";;All files (*.*)")
+  file = qt_to_unicode(file)
+  
   if not file == "":
     return os.path.abspath(file)
   else:
@@ -39,6 +44,8 @@ def get_open_file(parent, default, filter = ""):
 
 def get_existing_dir(parent, default):
   dir = QFileDialog.getExistingDirectory(parent, directory = default)
+  dir = qt_to_unicode(dir)
+  
   if not dir == "":
     return os.path.abspath(dir)
   else:
