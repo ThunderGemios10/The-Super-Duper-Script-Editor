@@ -197,6 +197,9 @@ def replace_all_colors(image, color):
   
   new_img = image.copy()
   
+  if not new_img.format() is QImage.Format_ARGB32_Premultiplied:
+    new_img = new_img.convertToFormat(QImage.Format_ARGB32_Premultiplied)
+  
   color_img = QImage(new_img.width(), new_img.height(), QImage.Format_ARGB32_Premultiplied)
   color_img.fill(color.rgba())
   
@@ -217,6 +220,9 @@ def add_v_gradient(image, colors):
     return image
   
   new_img = image.copy()
+  
+  if not new_img.format() is QImage.Format_ARGB32_Premultiplied:
+    new_img = new_img.convertToFormat(QImage.Format_ARGB32_Premultiplied)
   
   gradient = QtGui.QLinearGradient(0, 0, 0, new_img.height())
   
@@ -331,6 +337,10 @@ def draw_centering_guides(image, target_x, target_y, target_w, guide_h):
   bottom_y = top_y + guide_h
   
   new_img = image.copy()
+  
+  if not new_img.format() is QImage.Format_ARGB32_Premultiplied:
+    new_img = new_img.convertToFormat(QImage.Format_ARGB32_Premultiplied)
+  
   painter = QPainter(new_img)
   
   pen = painter.pen()
@@ -676,6 +686,9 @@ def get_box(scene_info):
       button = QImage(os.path.join(TEXTBOX_DIR, "button_%s.png" % box_color))
       nametag_color = QColor(60, 60, 60, 255)
       nametag_offset = (10, 180)
+  
+      if not box.format() is QImage.Format_ARGB32_Premultiplied:
+        box = box.convertToFormat(QImage.Format_ARGB32_Premultiplied)
       
       box_painter = QPainter(box)
       box_painter.setRenderHint(QPainter.Antialiasing, True)
@@ -823,6 +836,9 @@ def get_trial(scene_info, show_bg = True, show_sprite = True, show_box = True):
   else:
     out = QImage(IMG_W, IMG_H, QImage.Format_ARGB32_Premultiplied)
     out.fill(QColor(0, 0, 0, 0).rgba())
+  
+  if not out.format() is QImage.Format_ARGB32_Premultiplied:
+    out = out.convertToFormat(QImage.Format_ARGB32_Premultiplied)
   
   painter = QPainter(out)
   painter.setRenderHint(QPainter.Antialiasing, True)
@@ -1174,6 +1190,9 @@ def draw_anagram(anagram):
   if len(text) == 0:
     return out
   
+  if not out.format() is QImage.Format_ARGB32_Premultiplied:
+    out = out.convertToFormat(QImage.Format_ARGB32_Premultiplied)
+  
   painter = QPainter(out)
   painter.setRenderHint(QPainter.Antialiasing, True)
   
@@ -1235,6 +1254,9 @@ def draw_scene(scene_info, text = None):
       overlay = get_ammo_menu(scene_info.file_id)
     else:
       overlay = get_present_icon(scene_info.file_id)
+  
+    if not bg.format() is QImage.Format_ARGB32_Premultiplied:
+      bg = bg.convertToFormat(QImage.Format_ARGB32_Premultiplied)
     
     painter = QPainter(bg)
     painter.drawImage(bg.rect(), overlay, overlay.rect())
@@ -1262,6 +1284,9 @@ def draw_scene(scene_info, text = None):
       overlay = get_event_icon(scene_info.file_id)
     else:
       overlay = get_movie_icon(scene_info.file_id)
+  
+    if not bg.format() is QImage.Format_ARGB32_Premultiplied:
+      bg = bg.convertToFormat(QImage.Format_ARGB32_Premultiplied)
     
     painter = QPainter(bg)
     painter.drawImage(bg.rect(), overlay, overlay.rect())
@@ -1276,6 +1301,9 @@ def draw_scene(scene_info, text = None):
   else:
     bg = QImage(IMG_W, IMG_H, QImage.Format_ARGB32_Premultiplied)
     bg.fill(QColor(0, 0, 0, 255).rgba())
+  
+  if not bg.format() is QImage.Format_ARGB32_Premultiplied:
+    bg = bg.convertToFormat(QImage.Format_ARGB32_Premultiplied)
   
   if scene_info.cutin != -1:
     cutin = get_cutin(scene_info.cutin)
